@@ -1,39 +1,154 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#000000">
 <title>Entrar — SevIA SST 4.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--accent:#FA6905;--fg:#000;--muted:#3F3F3F;--border:#C9C9C9}
-*{box-sizing:border-box}body{margin:0;font:16px/1.45 system-ui,sans-serif;color:var(--fg);background:#fff;display:grid;place-items:center;min-height:100vh;padding:16px}
-main{width:100%;max-width:400px}.logo{font-weight:800;font-size:34px}.logo i{font-style:normal;color:var(--accent)}.sub{letter-spacing:.2em;font-size:11px;font-weight:700;margin:0 0 24px}
-label{display:block;font-weight:600;margin:14px 0 6px}input{width:100%;min-height:50px;font:inherit;padding:10px 12px;border:2px solid var(--border);border-radius:10px}
-input:focus{outline:3px solid #1D5FBF;outline-offset:1px}button{margin-top:20px;width:100%;min-height:54px;font:inherit;font-weight:700;border:0;border-radius:10px;background:var(--accent);color:#000;cursor:pointer}
-button:disabled{opacity:.55}
-main{background:#fff;border:1px solid var(--border);border-radius:18px;padding:28px 22px;box-shadow:0 6px 24px rgba(0,0,0,.07)}
-.pwd{position:relative}.pwd input{padding-right:84px}.pwd .ver{position:absolute;right:6px;top:4px;margin:0;width:auto;min-height:42px;padding:0 12px;background:none;color:#000;border:0;font-weight:700;text-decoration:underline}
-.foot{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
-body{background:#F7F7F7}.msg{margin-top:14px;color:#B3261E;min-height:1.4em}.hint{color:var(--muted);font-size:14px}[hidden]{display:none}
-</style></head><body><main>
-<div class="logo">Sev<i>IA</i></div><p class="sub">SST 4.0</p>
+:root{
+  --laranja:#FA6905;
+  --preto:#000;
+  --branco:#fff;
+  --texto:#111;
+  --apoio:#3F3F3F;
+  --borda:#8A8A8A;
+  --erro:#B3261E;
+  --foco:#1D5FBF;
+  --fonte:"Schibsted Grotesk",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font:400 16px/1.5 var(--fonte);color:var(--texto);background:var(--branco);min-height:100vh;min-height:100dvh}
+[hidden]{display:none!important}
 
-<form id="f-login">
-  <h1 style="font-size:22px;margin:0 0 4px">Entrar</h1>
-  <label for="em">Usuário</label><input id="em" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="ex.: maria.silva" required>
-  <label for="pw">Senha</label><div class="pwd"><input id="pw" type="password" autocomplete="current-password" required><button type="button" class="ver" data-ver="pw" aria-label="Mostrar senha">Mostrar</button></div>
-  <button id="b1" type="submit">Entrar</button>
-</form>
+/* ---------- estrutura: celular em coluna, computador em duas metades ---------- */
+.tela{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+.marca{background:var(--preto);color:var(--branco);padding:max(28px,env(safe-area-inset-top)) 24px 28px}
+.faixa{height:14px;background:repeating-linear-gradient(-45deg,var(--laranja) 0 14px,var(--preto) 14px 28px);flex:none}
+.form-lado{flex:1;display:flex;justify-content:center;padding:32px 24px max(32px,env(safe-area-inset-bottom))}
+.form-caixa{width:100%;max-width:400px}
 
-<form id="f-troca" hidden>
-  <h1 style="font-size:22px;margin:0 0 4px">Crie sua senha</h1>
-  <p class="hint">Este é o seu primeiro acesso. Troque a senha provisória por uma senha só sua (mínimo 8 caracteres).</p>
-  <label for="n1">Nova senha</label><div class="pwd"><input id="n1" type="password" autocomplete="new-password" minlength="8" required><button type="button" class="ver" data-ver="n1" aria-label="Mostrar senha">Mostrar</button></div>
-  <label for="n2">Repita a nova senha</label><input id="n2" type="password" autocomplete="new-password" minlength="8" required>
-  <button id="b2" type="submit">Salvar e entrar</button>
-</form>
-<p class="msg" id="msg" role="alert"></p>
-<p class="foot">Esqueceu a senha ou ainda não tem acesso? Fale com a administradora do sistema.</p>
-</main>
+.logo{font-size:44px;line-height:1;font-weight:800;letter-spacing:-.03em;margin:0}
+.logo i{font-style:normal;color:var(--laranja)}
+.versao{margin:6px 0 0;font-size:13px;font-weight:700;letter-spacing:.18em;color:#D9D9D9}
+.chamada{display:none}
+
+h1{font-size:30px;line-height:1.15;font-weight:800;letter-spacing:-.02em;margin:0 0 4px}
+.sub{margin:0 0 24px;color:var(--apoio)}
+
+label{display:block;font-weight:600;margin:18px 0 6px}
+.campo{position:relative}
+input{display:block;width:100%;min-height:52px;font:inherit;font-size:16px;color:var(--texto);background:var(--branco);padding:12px 14px;border:2px solid var(--borda);border-radius:8px;transition:border-color .15s}
+input::placeholder{color:#767676}
+input:hover{border-color:#000}
+input:focus{outline:3px solid var(--foco);outline-offset:2px;border-color:#000}
+.campo input{padding-right:56px}
+.olho{position:absolute;right:4px;top:4px;width:44px;height:44px;margin:0;padding:0;display:grid;place-items:center;background:none;border:0;border-radius:6px;color:#000;cursor:pointer}
+.olho:hover{background:#F0F0F0}
+.olho:focus-visible{outline:3px solid var(--foco);outline-offset:0}
+.olho svg{display:block}
+
+.btn{position:relative;display:block;width:100%;min-height:56px;margin-top:26px;font:700 17px/1 var(--fonte);color:#000;background:var(--laranja);border:2px solid #000;border-radius:8px;cursor:pointer;box-shadow:4px 4px 0 #000;transition:transform .12s,box-shadow .12s}
+.btn:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 #000}
+.btn:active{transform:translate(4px,4px);box-shadow:0 0 0 #000}
+.btn:focus-visible{outline:3px solid var(--foco);outline-offset:3px}
+.btn:disabled{cursor:progress;opacity:.8;transform:none;box-shadow:4px 4px 0 #000}
+.btn .gira{display:none;width:20px;height:20px;border:3px solid #000;border-right-color:transparent;border-radius:50%;animation:gira .7s linear infinite;position:absolute;right:18px;top:50%;margin-top:-10px}
+.btn[aria-busy="true"] .gira{display:block}
+@keyframes gira{to{transform:rotate(360deg)}}
+
+.msg{display:flex;gap:10px;align-items:flex-start;margin:18px 0 0;padding:12px 14px;border-left:5px solid var(--erro);background:#FDECEA;color:#600;font-weight:500;border-radius:0 6px 6px 0}
+.msg svg{flex:none;margin-top:2px}
+.dica{color:var(--apoio);font-size:15px;margin:0 0 4px}
+.ajuda{margin:36px 0 0;padding-top:18px;border-top:1px solid #DADADA;color:var(--apoio);font-size:15px}
+
+@media (min-width:900px){
+  .tela{flex-direction:row}
+  .marca{width:46%;max-width:640px;display:flex;flex-direction:column;justify-content:space-between;padding:56px 56px 56px}
+  .faixa{width:16px;height:auto;background:repeating-linear-gradient(-45deg,var(--laranja) 0 16px,var(--preto) 16px 32px)}
+  .logo{font-size:64px}
+  .versao{font-size:14px}
+  .chamada{display:block;margin:0;max-width:16ch;font-size:40px;line-height:1.1;font-weight:700;letter-spacing:-.02em}
+  .chamada small{display:block;margin-top:18px;max-width:34ch;font-size:17px;line-height:1.5;font-weight:400;letter-spacing:0;color:#D9D9D9}
+  .form-lado{align-items:center;padding:48px}
+  h1{font-size:34px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation-duration:1ms!important}}
+</style>
+</head>
+<body>
+<div class="tela">
+  <header class="marca">
+    <div>
+      <p class="logo" aria-label="SevIA">Sev<i>IA</i></p>
+      <p class="versao">SST 4.0</p>
+    </div>
+    <p class="chamada">Inspeção e relatório de campo, do celular ao PDF.<small>Tire as fotos, registre o risco e entregue o relatório pronto ao cliente.</small></p>
+  </header>
+  <div class="faixa" aria-hidden="true"></div>
+
+  <main class="form-lado">
+    <div class="form-caixa">
+
+      <form id="f-login" novalidate>
+        <h1>Entrar</h1>
+        <p class="sub">Use o usuário e a senha que a administradora passou para você.</p>
+        <label for="em">Usuário</label>
+        <input id="em" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="nome.sobrenome" required>
+        <label for="pw">Senha</label>
+        <div class="campo">
+          <input id="pw" type="password" autocomplete="current-password" required>
+          <button type="button" class="olho" data-ver="pw" aria-label="Mostrar senha" aria-pressed="false"></button>
+        </div>
+        <button id="b1" class="btn" type="submit"><span>Entrar</span><i class="gira" aria-hidden="true"></i></button>
+      </form>
+
+      <form id="f-troca" hidden novalidate>
+        <h1>Crie sua senha</h1>
+        <p class="dica">É o seu primeiro acesso. Troque a senha provisória por uma só sua, com no mínimo 8 caracteres.</p>
+        <label for="n1">Nova senha</label>
+        <div class="campo">
+          <input id="n1" type="password" autocomplete="new-password" minlength="8" required>
+          <button type="button" class="olho" data-ver="n1" aria-label="Mostrar senha" aria-pressed="false"></button>
+        </div>
+        <label for="n2">Repita a nova senha</label>
+        <div class="campo">
+          <input id="n2" type="password" autocomplete="new-password" minlength="8" required>
+          <button type="button" class="olho" data-ver="n2" aria-label="Mostrar senha" aria-pressed="false"></button>
+        </div>
+        <button id="b2" class="btn" type="submit"><span>Salvar e entrar</span><i class="gira" aria-hidden="true"></i></button>
+      </form>
+
+      <div id="msg" role="alert" aria-live="polite"></div>
+      <p class="ajuda">Esqueceu a senha ou ainda não tem acesso? Peça à administradora do sistema.</p>
+    </div>
+  </main>
+</div>
+
+<!-- olhinho: script comum, funciona mesmo se o módulo do Supabase demorar -->
+<script>
+(function(){
+  var OLHO='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+  var CORTADO='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.94 17.94A10.9 10.9 0 0 1 12 19C5 19 1 12 1 12a19.8 19.8 0 0 1 5.06-5.94M9.9 4.24A10.7 10.7 0 0 1 12 4c7 0 11 8 11 8a19.9 19.9 0 0 1-3.17 4.19M14.12 14.12A3 3 0 1 1 9.88 9.88"/><path d="M1 1l22 22"/></svg>';
+  var bs=document.querySelectorAll('.olho');
+  for(var i=0;i<bs.length;i++){(function(b){
+    b.innerHTML=OLHO;
+    b.addEventListener('click',function(){
+      var c=document.getElementById(b.getAttribute('data-ver')),mostrar=c.type==='password';
+      c.type=mostrar?'text':'password';
+      b.innerHTML=mostrar?CORTADO:OLHO;
+      b.setAttribute('aria-label',mostrar?'Ocultar senha':'Mostrar senha');
+      b.setAttribute('aria-pressed',mostrar?'true':'false');
+    });
+  })(bs[i]);}
+})();
+</script>
 
 <script src="config.js"></script>
-<script>document.querySelectorAll(".ver").forEach((b)=>b.addEventListener("click",()=>{const i=document.getElementById(b.dataset.ver);const m=i.type==="password";i.type=m?"text":"password";b.textContent=m?"Ocultar":"Mostrar";}));</script>
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm";
 const { url: SUPABASE_URL, anonKey: SUPABASE_ANON_KEY } = window.SEVIA_CONFIG; // vem de config.js
@@ -43,7 +158,9 @@ const loginDe = (u) => `${u.trim().toLowerCase().replace(/\s+/g, "")}@${DOMINIO}
 
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const $ = (s) => document.querySelector(s);
-const msg = (t) => ($("#msg").textContent = t || "");
+const ICONE_ERRO = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 16.5v.5"/></svg>';
+const msg = (t) => { const m = $("#msg"); m.innerHTML = ""; m.className = ""; if (!t) return; m.className = "msg"; m.innerHTML = ICONE_ERRO; const s = document.createElement("span"); s.textContent = t; m.appendChild(s); };
+const ocupado = (btn, on) => { btn.disabled = on; btn.setAttribute("aria-busy", on ? "true" : "false"); };
 
 async function perfilAtual() {
   const { data: { user } } = await sb.auth.getUser();
@@ -60,11 +177,15 @@ async function depoisDoLogin() {
 }
 
 $("#f-login").addEventListener("submit", async (e) => {
-  e.preventDefault(); msg(""); $("#b1").disabled = true;
+  e.preventDefault(); msg("");
+  if (!$("#em").value.trim() || !$("#pw").value) { msg("Preencha o usuário e a senha."); return; }
+  ocupado($("#b1"), true);
   const { error } = await sb.auth.signInWithPassword({ email: loginDe($("#em").value), password: $("#pw").value });
-  $("#b1").disabled = false;
-  if (error) { msg("Usuário ou senha incorretos."); return; }
-  depoisDoLogin();
+  ocupado($("#b1"), false);
+  if (error) { msg("Usuário ou senha incorretos. Confira e tente de novo."); return; }
+  ocupado($("#b1"), true);
+  await depoisDoLogin();
+  ocupado($("#b1"), false);
 });
 
 $("#f-troca").addEventListener("submit", async (e) => {
@@ -73,13 +194,15 @@ $("#f-troca").addEventListener("submit", async (e) => {
   if (a.length < 8) { msg("Use ao menos 8 caracteres."); return; }
   if (a !== b) { msg("As senhas não são iguais."); return; }
   if (a === $("#pw").value) { msg("Escolha uma senha diferente da provisória."); return; }
-  $("#b2").disabled = true;
+  ocupado($("#b2"), true);
   const { error } = await sb.auth.updateUser({ password: a });
-  if (error) { $("#b2").disabled = false; msg("Não foi possível trocar a senha: " + error.message); return; }
+  if (error) { ocupado($("#b2"), false); msg("Não foi possível trocar a senha: " + error.message); return; }
   await sb.rpc("sevia_concluir_troca_senha");
   location.href = APP_URL;
 });
 
 // já logado? segue o mesmo caminho (e força a troca, se pendente)
 sb.auth.getSession().then(({ data }) => { if (data.session) depoisDoLogin(); });
-</script></body></html>
+</script>
+</body>
+</html>
