@@ -1,0 +1,85 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Entrar — SevIA SST 4.0</title>
+<style>
+:root{--accent:#FA6905;--fg:#000;--muted:#3F3F3F;--border:#C9C9C9}
+*{box-sizing:border-box}body{margin:0;font:16px/1.45 system-ui,sans-serif;color:var(--fg);background:#fff;display:grid;place-items:center;min-height:100vh;padding:16px}
+main{width:100%;max-width:400px}.logo{font-weight:800;font-size:34px}.logo i{font-style:normal;color:var(--accent)}.sub{letter-spacing:.2em;font-size:11px;font-weight:700;margin:0 0 24px}
+label{display:block;font-weight:600;margin:14px 0 6px}input{width:100%;min-height:50px;font:inherit;padding:10px 12px;border:2px solid var(--border);border-radius:10px}
+input:focus{outline:3px solid #1D5FBF;outline-offset:1px}button{margin-top:20px;width:100%;min-height:54px;font:inherit;font-weight:700;border:0;border-radius:10px;background:var(--accent);color:#000;cursor:pointer}
+button:disabled{opacity:.55}
+main{background:#fff;border:1px solid var(--border);border-radius:18px;padding:28px 22px;box-shadow:0 6px 24px rgba(0,0,0,.07)}
+.pwd{position:relative}.pwd input{padding-right:84px}.pwd .ver{position:absolute;right:6px;top:4px;margin:0;width:auto;min-height:42px;padding:0 12px;background:none;color:#000;border:0;font-weight:700;text-decoration:underline}
+.foot{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
+body{background:#F7F7F7}.msg{margin-top:14px;color:#B3261E;min-height:1.4em}.hint{color:var(--muted);font-size:14px}[hidden]{display:none}
+</style></head><body><main>
+<div class="logo">Sev<i>IA</i></div><p class="sub">SST 4.0</p>
+
+<form id="f-login">
+  <h1 style="font-size:22px;margin:0 0 4px">Entrar</h1>
+  <label for="em">Usuário</label><input id="em" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="ex.: maria.silva" required>
+  <label for="pw">Senha</label><div class="pwd"><input id="pw" type="password" autocomplete="current-password" required><button type="button" class="ver" data-ver="pw" aria-label="Mostrar senha">Mostrar</button></div>
+  <button id="b1" type="submit">Entrar</button>
+</form>
+
+<form id="f-troca" hidden>
+  <h1 style="font-size:22px;margin:0 0 4px">Crie sua senha</h1>
+  <p class="hint">Este é o seu primeiro acesso. Troque a senha provisória por uma senha só sua (mínimo 8 caracteres).</p>
+  <label for="n1">Nova senha</label><div class="pwd"><input id="n1" type="password" autocomplete="new-password" minlength="8" required><button type="button" class="ver" data-ver="n1" aria-label="Mostrar senha">Mostrar</button></div>
+  <label for="n2">Repita a nova senha</label><input id="n2" type="password" autocomplete="new-password" minlength="8" required>
+  <button id="b2" type="submit">Salvar e entrar</button>
+</form>
+<p class="msg" id="msg" role="alert"></p>
+<p class="foot">Esqueceu a senha ou ainda não tem acesso? Fale com a administradora do sistema.</p>
+</main>
+
+<script src="config.js"></script>
+<script>document.querySelectorAll(".ver").forEach((b)=>b.addEventListener("click",()=>{const i=document.getElementById(b.dataset.ver);const m=i.type==="password";i.type=m?"text":"password";b.textContent=m?"Ocultar":"Mostrar";}));</script>
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm";
+const { url: SUPABASE_URL, anonKey: SUPABASE_ANON_KEY } = window.SEVIA_CONFIG; // vem de config.js
+const APP_URL = "./index.html"; // página do sistema, depois do login
+const DOMINIO = "login.sevia.interno"; // o mesmo da função admin-usuarios
+const loginDe = (u) => `${u.trim().toLowerCase().replace(/\s+/g, "")}@${DOMINIO}`;
+
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const $ = (s) => document.querySelector(s);
+const msg = (t) => ($("#msg").textContent = t || "");
+
+async function perfilAtual() {
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) return null;
+  const { data } = await sb.from("sevia_perfis").select("nome,perfil,ativo,trocar_senha").eq("id", user.id).single();
+  return data;
+}
+
+async function depoisDoLogin() {
+  const p = await perfilAtual();
+  if (!p || !p.ativo) { await sb.auth.signOut(); msg("Acesso desativado ou não cadastrado. Fale com a administradora."); return; }
+  if (p.trocar_senha) { $("#f-login").hidden = true; $("#f-troca").hidden = false; $("#n1").focus(); return; }
+  location.href = APP_URL;
+}
+
+$("#f-login").addEventListener("submit", async (e) => {
+  e.preventDefault(); msg(""); $("#b1").disabled = true;
+  const { error } = await sb.auth.signInWithPassword({ email: loginDe($("#em").value), password: $("#pw").value });
+  $("#b1").disabled = false;
+  if (error) { msg("Usuário ou senha incorretos."); return; }
+  depoisDoLogin();
+});
+
+$("#f-troca").addEventListener("submit", async (e) => {
+  e.preventDefault(); msg("");
+  const a = $("#n1").value, b = $("#n2").value;
+  if (a.length < 8) { msg("Use ao menos 8 caracteres."); return; }
+  if (a !== b) { msg("As senhas não são iguais."); return; }
+  if (a === $("#pw").value) { msg("Escolha uma senha diferente da provisória."); return; }
+  $("#b2").disabled = true;
+  const { error } = await sb.auth.updateUser({ password: a });
+  if (error) { $("#b2").disabled = false; msg("Não foi possível trocar a senha: " + error.message); return; }
+  await sb.rpc("sevia_concluir_troca_senha");
+  location.href = APP_URL;
+});
+
+// já logado? segue o mesmo caminho (e força a troca, se pendente)
+sb.auth.getSession().then(({ data }) => { if (data.session) depoisDoLogin(); });
+</script></body></html>
