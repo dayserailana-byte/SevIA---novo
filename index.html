@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-19-2255 responsavel-tecnico --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-19-2305 responsavel-tecnico --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -650,7 +650,7 @@ function viewPainel(){
   var h=new Date().getHours(),t=h<12?'Bom dia':(h<18?'Boa tarde':'Boa noite');
   var nome=String(S.me&&S.me.name||'').trim().split(/\s+/)[0];
   var bv=(!nome||/[aeizhl]$/i.test(nome))?'bem\u2011vinda':'bem\u2011vindo';
-  return '<p class="bv2">Seja '+bv+(nome?', <b>'+esc(nome)+'</b>':'')+'!<br>'+t+'!</p><h2 class="cn">Criar novo + <svg class="cn-seta" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v15M5.5 12.5 12 19l6.5-6.5"/></svg></h2>'+acoesRapidas('');
+  return '<p class="bv2">Seja '+bv+(nome?', <b>'+esc(nome)+'</b>':'')+'!<br>'+t+'!</p><h2 class="cn">Criar novo <svg class="cn-seta" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v15M5.5 12.5 12 19l6.5-6.5"/></svg></h2>'+acoesRapidas('');
 }
 
 /* ---------- dashboards: concluídas e indicadores ---------- */
