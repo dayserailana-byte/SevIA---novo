@@ -31,6 +31,7 @@
     if (!r.data || !r.data.ativo || r.data.trocar_senha) { await sb.auth.signOut(); return toLogin(); }
     perfil = r.data;
     window.SEVIA_PERFIL = perfil.perfil;
+    window.SEVIA_EU = { nome: perfil.nome || "", funcao: perfil.funcao || "", registro: perfil.registro_prof || "" };
     return true;
   })();
   var ehAdmin = function () { return perfil && (perfil.perfil === "Administradora" || perfil.perfil === "Técnico ADM"); };
@@ -39,7 +40,7 @@
   /* ---------- perfis -> "usuarios" do app ---------- */
   function usuarioDe(r) {
     return { id: r.id, nome: r.nome, usuario: r.usuario, email: r.email || "", telefone: r.telefone || "",
-      perfil: r.perfil, empresaId: r.empresa_id || "", ativo: r.ativo,
+      perfil: r.perfil, funcao: r.funcao || "", registroProf: r.registro_prof || "", empresaId: r.empresa_id || "", ativo: r.ativo,
       status: r.trocar_senha ? "Aguardando primeiro acesso" : "Ativo", trocarSenha: r.trocar_senha,
       atualizadoEm: new Date(r.criado_em).getTime() };
   }
@@ -55,11 +56,11 @@
   }
   window.SEVIA_API = {
     criarUsuario: async function (p) {
-      var d = await chamar("admin-usuarios", { acao: "criar", nome: p.nome, email: p.email, telefone: p.telefone, perfil: p.perfil, empresa_id: p.empresaId || null });
+      var d = await chamar("admin-usuarios", { acao: "criar", nome: p.nome, email: p.email, telefone: p.telefone, perfil: p.perfil, funcao: p.funcao || "", registro_prof: p.registroProf || "", empresa_id: p.empresaId || null });
       return { id: d.id, usuario: d.usuario, senha: d.senha_provisoria };
     },
     atualizarUsuario: function (id, p) {
-      return chamar("admin-usuarios", { acao: "atualizar", id: id, nome: p.nome, email: p.email, telefone: p.telefone, perfil: p.perfil, empresa_id: p.empresaId || null, ativo: p.ativo });
+      return chamar("admin-usuarios", { acao: "atualizar", id: id, nome: p.nome, email: p.email, telefone: p.telefone, perfil: p.perfil, funcao: p.funcao || "", registro_prof: p.registroProf || "", empresa_id: p.empresaId || null, ativo: p.ativo });
     },
     resetarUsuario: async function (id) {
       var d = await chamar("admin-usuarios", { acao: "resetar", id: id });
