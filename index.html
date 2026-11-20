@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-19-2215 responsavel-tecnico --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-19-2235 responsavel-tecnico --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -478,7 +478,7 @@ async function camAbrir(kind,g){
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){msg('Câmera do app indisponível neste aparelho/aplicativo (sem acesso à câmera).');return}
   var stm;
   try{stm=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920}},audio:false})}
-  catch(e){console.error(e);msg('Câmera bloqueada: '+(e&&e.name||'erro')+(e&&e.message?' — '+e.message:'')+'. Veja o Diagnóstico da câmera em Teste do sistema.');return}
+  catch(e){console.error(e);msg('Câmera bloqueada: '+(e&&e.name||'erro')+(e&&e.message?' — '+e.message:'')+'.');return}
   var box=document.createElement('div');box.id='cam';box.setAttribute('role','dialog');box.setAttribute('aria-label','Câmera');
   box.innerHTML='<video playsinline muted autoplay></video><div class="cam-bar"><button type="button" class="btn btn-ghost" data-cam="fechar" style="background:#fff">Fechar</button><button type="button" class="btn btn-primary" data-cam="foto" style="min-width:150px">&#128247; Capturar</button><span class="cam-n" id="cam-n">0 fotos</span></div>';
   document.body.appendChild(box);var v=box.querySelector('video');v.srcObject=stm;
@@ -521,7 +521,7 @@ function renderNav(){
     [null,[['painel','Início',0,0]]],
     ['Registrar',[['inspecoes','Relatórios e inspeções',0,0],['relatorios','Baixar relatórios',0,0]]],
     ['Acompanhar',(temIns?[['ncs','Não conformidades',ncAb,0],['acoes','Plano de ação',venc,1]]:[]).concat([['concluidas','Relatórios concluídos',0,0],['indicadores','Indicadores',0,0]])],
-    ['Cadastros',[['empresas','Empresa',0,0],['contratos','Contratos',0,0],['cadastros','Listas padrão',0,0]].concat(ehAdm()?[['usuarios','Usuários e acessos',0,0]]:[],[['teste','Teste do sistema',0,0]])]
+    ['Cadastros',[['empresas','Empresa',0,0],['contratos','Contratos',0,0],['cadastros','Listas padrão',0,0]].concat(ehAdm()?[['usuarios','Usuários e acessos',0,0]]:[])]
   ];
   $('#nav').innerHTML=grupos.map(function(g){
     return (g[0]?'<p class="nav-g">'+g[0]+'</p>':'')+g[1].map(function(it){
@@ -647,7 +647,7 @@ function viewPainel(){
   var h=new Date().getHours(),t=h<12?'Bom dia':(h<18?'Boa tarde':'Boa noite');
   var nome=String(S.me&&S.me.name||'').trim().split(/\s+/)[0];
   var bv=(!nome||/[aeizhl]$/i.test(nome))?'bem\u2011vinda':'bem\u2011vindo';
-  return '<p class="bv2">Seja '+bv+(nome?', <b>'+esc(nome)+'</b>':'')+'! '+t+'!</p><h2 class="cn">Criar novo +</h2>'+acoesRapidas('');
+  return '<p class="bv2">Seja '+bv+(nome?', <b>'+esc(nome)+'</b>':'')+'!<br>'+t+'!</p><h2 class="cn">Criar novo +</h2>'+acoesRapidas('');
 }
 
 /* ---------- dashboards: concluídas e indicadores ---------- */
