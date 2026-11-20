@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-19-2305 responsavel-tecnico --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-19-2355 icone-sevia --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -529,7 +529,7 @@ function renderNav(){
   $('#nav').innerHTML=grupos.map(function(g){
     return (g[0]?'<p class="nav-g">'+g[0]+'</p>':'')+g[1].map(function(it){
     return '<a href="#'+it[0]+'"'+(S.view===it[0]?' aria-current="page"':'')+'><span class="nl">'+ico(it[0])+'<span>'+it[1]+'</span></span>'+(it[2]?'<span class="badge'+(it[3]?' bad':'')+'" aria-label="'+it[2]+(it[3]?' vencidas':' abertas')+'">'+it[2]+'</span>':'')+'</a>'}).join('')}).join('');
-  $('#nav').insertAdjacentHTML('beforeend','<p class="menu-perfil">Perfil: '+esc(S.perfil)+(S.me.name?' · '+esc(S.me.name):'')+'</p>'+(window.SEVIA_SAIR?'<p class="menu-perfil"><button type="button" class="btn btn-ghost" data-act="sair">Sair</button></p>':''));
+  $('#nav').insertAdjacentHTML('beforeend','<p class="menu-perfil">Perfil: '+esc(S.perfil)+(S.me.name?' · '+esc(S.me.name):'')+'</p>'+(jaInstalado()?'':'<p class="menu-perfil"><button type="button" class="btn btn-ghost" data-act="instalar">Instalar app no telefone</button></p>')+(window.SEVIA_SAIR?'<p class="menu-perfil"><button type="button" class="btn btn-ghost" data-act="sair">Sair</button></p>':''));
 }
 function banner(){
   var h='',n=S.insp.concat(S.ncs,S.acoes,S.empresas).filter(function(x){return x.exemplo}).length;
@@ -748,7 +748,13 @@ var PERFIS=[
   ['Técnico SST','Técnico SST','Cria e edita relatórios, inspeções, fotos e planos de ação de todas as empresas e gera os relatórios finais (PDF, Word e Excel). Não gerencia usuários.'],
   ['Cliente','Cliente / ADM','Só consulta e baixa os relatórios e indicadores da empresa vinculada. Não cria nem edita.']
 ];
-function ehAdm(){return S.perfil==='Administradora'||S.perfil==='Técnico ADM'}
+function jaInstalado(){try{return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true}catch(e){return false}}
+function instalarApp(){
+  if(window.__pwa){var pr=window.__pwa;window.__pwa=null;pr.prompt();return}
+  var ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  toast(ios?'No iPhone: toque em Compartilhar e depois em "Adicionar à Tela de Início".':'Toque nos 3 pontinhos do navegador e escolha "Instalar app" ou "Adicionar à tela inicial".');
+}
+function ehAdm(){return S.perfil==='Administradora'}
 function perfilNome(p){var x=PERFIS.filter(function(a){return a[0]===p})[0];return x?x[1]:(p||'-')}
 function viewUsuarios(){
   if(!ehAdm())return head('Usuários e acessos')+'<div class="card"><p>Somente administradoras gerenciam usuários.</p></div>';
@@ -1915,6 +1921,7 @@ document.addEventListener('click',function(e){
     case 'edit-empresa':var em=empDe(id);go({name:'empresa-form',id:id,draft:{nome:em.nome,cnpj:em.cnpj||'',contato:em.contato||'',logo:em.logo||'',unidades:unObjs(em)}});break;
     case 'del-empresa':confirmar('Excluir empresa','As inspeções já registradas continuam, mas deixam de estar ligadas a esta empresa.','Excluir',async function(){try{await S.db.doc('empresas/'+id).delete();limpaRota();toast('Empresa excluída.')}catch(er){console.error(er);toast('Não foi possível excluir.')}renderMain()});break;
     case 'emp-logo-rm':if(S.route&&S.route.draft){S.route.draft.logo='';var bx2=$('#emp-logo');if(bx2)bx2.innerHTML=empLogoHtml('')}break;
+    case 'instalar':instalarApp();break;
     case 'sair':if(window.SEVIA_SAIR)window.SEVIA_SAIR();break;
     case 'recarregar':recarregar();break;
     case 'tt-c-open':var cc=$('#tt-c');if(cc)cc.click();var ts=$('#tt-simples');if(ts)ts.textContent='C: pedido enviado ao aparelho. Se nada abriu, está bloqueado.';break;
