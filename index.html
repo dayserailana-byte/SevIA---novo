@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-20-1400 sem-unidade-setor-realizado --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-20-1500 ia-foto-a-foto --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -1086,18 +1086,35 @@ async function preencherIA(){
   (rt.draft.grupos||[]).forEach(function(g){if(g.ia===false)return;(g.fotos||[]).forEach(function(id){fotos.push(id);rot.push(g.titulo||'Registros')})});
   if(!fotos.length){toast('Adicione fotos em um grupo marcado para a IA, como Registros das atividades.');return}
   var run=$('#au-run'),stop=$('#au-stop'),out=$('#au-out');
-  run.disabled=true;stop.hidden=false;out.textContent='Analisando as fotos… pode levar alguns segundos.';
+  run.disabled=true;stop.hidden=false;out.textContent='Analisando as fotos uma a uma…';
   auCtl=new AbortController();
   try{
     var caps=await S.sample.limits().catch(function(){return null});
     if(!(caps&&caps.images)){out.textContent='As fotos não puderam ser enviadas à IA nesta visualização.';return}
-    var n=Math.min(fotos.length,caps.images.maxCount||6,8);
-    var blobs=(await Promise.all(fotos.slice(0,n).map(fotoBlob)));
-    var ok=[],lab=[];blobs.forEach(function(b,i){if(b){ok.push(b);lab.push((ok.length)+'. '+rot[i])}});
-    if(!ok.length){out.textContent='Nenhuma foto pôde ser lida.';return}
+    var n=Math.min(fotos.length,20);
+    var achados=[],lidas=0,falhas=0,ultErr=null;
+    for(var i=0;i<n;i++){
+      if(S.route!==rt)return;
+      if(auCtl.signal.aborted){var ce=new Error('cancelled');ce.code='cancelled';throw ce}
+      out.textContent='Analisando a foto '+(i+1)+' de '+n+'… (uma por vez, pode levar alguns minutos)';
+      var b=await fotoBlob(fotos[i]);
+      if(!b){falhas++;continue}
+      lidas++;
+      var p1='Você é engenheiro de segurança do trabalho no Brasil. Analise APENAS esta foto (grupo: '+rot[i]+'; empresa '+(empNomeDe(rt.draft.empresaId)||'não informada')+').\n\nRegras:\n- Liste somente riscos e não conformidades que a foto realmente mostra; não presuma o que não aparece.\n- Classifique cada achado em gravidade "Alta", "Média" ou "Baixa" (Alta = risco de lesão grave, incêndio, queda, choque elétrico ou exposição séria).\n- Não identifique pessoas.\n- Português do Brasil, frases curtas.\n\nResponda somente com JSON: {"achados":[{"descricao":"...","categoria":"físico|químico|biológico|ergonômico|acidente","gravidade":"Alta|Média|Baixa","evidencia":"o que se vê na foto"}],"verificar":["o que confirmar no local"]}. Se não houver riscos visíveis, use "achados":[].';
+      try{
+        var r1=await S.sample.json(p1,{signal:auCtl.signal,images:[b]});
+        (Array.isArray(r1&&r1.achados)?r1.achados:[]).forEach(function(a){if(a&&a.descricao)achados.push({foto:i+1,grupo:rot[i],descricao:String(a.descricao),categoria:String(a.categoria||''),gravidade:String(a.gravidade||'Média'),evidencia:String(a.evidencia||'')})});
+        (Array.isArray(r1&&r1.verificar)?r1.verificar:[]).forEach(function(v){if(v)achados.push({verificar:String(v)})});
+      }catch(e1){if(e1&&e1.code==='cancelled')throw e1;ultErr=e1;falhas++;console.error(e1)}
+    }
+    if(!lidas){out.textContent='Nenhuma foto pôde ser lida.';return}
+    if(falhas>=lidas&&!achados.length)throw (ultErr||new Error('ia'));
+    var riscos=achados.filter(function(a){return !a.verificar}),verif=achados.filter(function(a){return a.verificar}).map(function(a){return a.verificar});
+    if(!riscos.length){out.innerHTML='<p><b>A IA não identificou riscos visíveis nas '+lidas+' fotos analisadas.</b> Preencha os campos manualmente se necessário.</p>';return}
+    out.textContent='Reunindo os riscos de maior gravidade…';
     var chaves=CAMPOS.filter(function(c){return ['execNome','execCnpj','representante','equipe','codigoLocal','endereco','regProf','respNome','respFuncao','ordemServico','exames'].indexOf(c[0])<0}).map(function(c){return '"'+c[0]+'": '+(c[2]==='ta'?'["item", "item"]':'"texto"')+'  // '+c[1]});
-    var prompt='Você é engenheiro de segurança do trabalho no Brasil e vai preencher o RELATÓRIO DE CAMPO de uma inspeção a partir das fotos anexas.\n\nFotos (na ordem), com o título do grupo informado pelo inspetor:\n'+lab.join('\n')+'\n\nContexto: empresa '+(empNomeDe(rt.draft.empresaId)||'não informada')+', setor '+(rt.draft.setor||'não informado')+'.\n\nRegras obrigatórias:\n- Preencha um campo somente com o que as fotos realmente mostram. Se não der para saber, deixe o campo vazio ("" ou []).\n- EPI: liste apenas o que se vê em uso ou ausente; não conclua sobre treinamento, ordem de serviço, APR ou exames, pois isso só se confirma no local.\n- Não identifique pessoas, não cite nomes nem dados de saúde.\n- Riscos: use categorias físicos, químicos, biológicos, ergonômicos e acidentes, só quando houver evidência na foto.\n- Português do Brasil, frases curtas.\n- Em "verificar", liste o que precisa ser confirmado presencialmente.\n\nResponda somente com JSON neste formato:\n{"campos":{\n'+chaves.join(',\n')+'\n},"verificar":["..."]}';
-    var r=await S.sample.json(prompt,{signal:auCtl.signal,images:ok});
+    var prompt='Você é engenheiro de segurança do trabalho no Brasil e vai preencher o RELATÓRIO DE CAMPO de uma inspeção. Cada foto já foi analisada separadamente; os achados estão abaixo (JSON).\n\nAchados:\n'+JSON.stringify(riscos)+'\n\nContexto: empresa '+(empNomeDe(rt.draft.empresaId)||'não informada')+', setor '+(rt.draft.setor||'não informado')+'.\n\nRegras obrigatórias:\n- Use nos campos APENAS os riscos de gravidade Alta. Se não houver nenhum de gravidade Alta, use no máximo os 3 mais graves. Ignore os riscos menores.\n- Junte achados repetidos em um só e não invente nada além dos achados.\n- Se não der para saber, deixe o campo vazio ("" ou []).\n- EPI: liste apenas o que consta nos achados; não conclua sobre treinamento, ordem de serviço, APR ou exames.\n- Não identifique pessoas.\n- Riscos: categorias físicos, químicos, biológicos, ergonômicos e acidentes, só com evidência.\n- Português do Brasil, frases curtas.\n- Em "verificar", liste o que precisa ser confirmado presencialmente.\n\nResponda somente com JSON neste formato:\n{"campos":{\n'+chaves.join(',\n')+'\n},"verificar":["..."]}';
+    var r=await S.sample.json(prompt,{signal:auCtl.signal});
     if(S.route!==rt)return;
     var c=(r&&r.campos&&typeof r.campos==='object')?r.campos:{},n2=0,el=f.elements;
     CAMPOS.forEach(function(cc){
@@ -1106,8 +1123,8 @@ async function preencherIA(){
       if(!v||el[k].value.trim())return;
       el[k].value=v.slice(0,2000);n2++;
     });
-    var ver=(Array.isArray(r&&r.verificar)?r.verificar:[]).map(function(x){return String(x||'').trim()}).filter(Boolean).slice(0,8);
-    out.innerHTML='<p><b>'+n2+(n2===1?' campo preenchido':' campos preenchidos')+' pela IA.</b> Revise cada um antes de salvar; campos que você já tinha preenchido não foram alterados.</p>'+(ver.length?'<p><b>Confirmar no local:</b></p><ul>'+ver.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>':'')+(fotos.length>n?'<p class="muted">A IA analisou as '+n+' primeiras fotos.</p>':'');
+    var ver=(Array.isArray(r&&r.verificar)?r.verificar:[]).concat(verif).map(function(x){return String(x||'').trim()}).filter(function(x,j,a){return x&&a.indexOf(x)===j}).slice(0,8);
+    out.innerHTML='<p><b>'+n2+(n2===1?' campo preenchido':' campos preenchidos')+' pela IA.</b> As '+lidas+' fotos foram analisadas uma a uma e só os riscos de maior gravidade foram usados. Revise cada campo antes de salvar; campos que você já tinha preenchido não foram alterados.</p>'+(ver.length?'<p><b>Confirmar no local:</b></p><ul>'+ver.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>':'')+(falhas?'<p class="muted">'+falhas+(falhas===1?' foto não pôde ser analisada.':' fotos não puderam ser analisadas.')+'</p>':'')+(fotos.length>n?'<p class="muted">A IA analisou as '+n+' primeiras fotos.</p>':'');
   }catch(e){
     if(S.route!==rt)return;
     var m={cancelled:'Análise interrompida.',not_granted:'Você não permitiu o uso do Claude nesta página.',rate_limited:'Limite de uso atingido. Tente de novo mais tarde.',image_rejected:'Alguma foto não pôde ser lida pela IA.',invalid_json:'A resposta veio em formato inesperado. Tente de novo.',sampling_disabled:'O Claude não está disponível para esta conta.'}[e&&e.code]||'Não foi possível analisar agora. Preencha manualmente ou tente de novo.';
