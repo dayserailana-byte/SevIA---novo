@@ -40,7 +40,7 @@
   /* ---------- perfis -> "usuarios" do app ---------- */
   function usuarioDe(r) {
     return { id: r.id, nome: r.nome, usuario: r.usuario, email: r.email || "", telefone: r.telefone || "",
-      perfil: r.perfil, funcao: r.funcao || "", registroProf: r.registro_prof || "", empresaId: r.empresa_id || "", ativo: r.ativo,
+      perfil: r.perfil, funcao: r.funcao || "", registroProf: r.registro_prof || "", empresaId: r.empresa_id || "", empresasAcesso: r.empresas_acesso || [], ativo: r.ativo,
       status: r.trocar_senha ? "Aguardando primeiro acesso" : "Ativo", trocarSenha: r.trocar_senha,
       atualizadoEm: new Date(r.criado_em).getTime() };
   }
@@ -56,11 +56,11 @@
   }
   window.SEVIA_API = {
     criarUsuario: async function (p) {
-      var d = await chamar("admin-usuarios", { acao: "criar", nome: p.nome, email: p.email, telefone: p.telefone, perfil: p.perfil, funcao: p.funcao || "", registro_prof: p.registroProf || "", empresa_id: p.empresaId || null });
+      var d = await chamar("admin-usuarios", { acao: "criar", nome: p.nome, email: p.email, telefone: p.telefone, perfil: p.perfil, funcao: p.funcao || "", registro_prof: p.registroProf || "", empresa_id: p.empresaId || null, empresas_acesso: p.empresasAcesso || [] });
       return { id: d.id, usuario: d.usuario, senha: d.senha_provisoria };
     },
     atualizarUsuario: function (id, p) {
-      return chamar("admin-usuarios", { acao: "atualizar", id: id, nome: p.nome, email: p.email, telefone: p.telefone, perfil: p.perfil, funcao: p.funcao || "", registro_prof: p.registroProf || "", empresa_id: p.empresaId || null, ativo: p.ativo });
+      return chamar("admin-usuarios", { acao: "atualizar", id: id, nome: p.nome, email: p.email, telefone: p.telefone, perfil: p.perfil, funcao: p.funcao || "", registro_prof: p.registroProf || "", empresa_id: p.empresaId || null, empresas_acesso: p.empresasAcesso || [], ativo: p.ativo });
     },
     resetarUsuario: async function (id) {
       var d = await chamar("admin-usuarios", { acao: "resetar", id: id });
@@ -74,7 +74,7 @@
 
   async function lerColecao(col) {
     if (col === "usuarios") {
-      if (!ehAdmin()) return [];
+      if (!perfil || perfil.perfil !== "Administradora") return [];
       var u = await sb.from("sevia_perfis").select("*").order("nome");
       if (u.error) throw u.error;
       return u.data.map(function (r) { return { id: r.id, d: usuarioDe(r) }; });
