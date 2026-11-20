@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-19-2130 responsavel-tecnico --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-19-2140 responsavel-tecnico --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -639,20 +639,13 @@ function acoesRapidas(titulo){
   '<button type="button" class="qa-c" data-act="new-insp"><span class="qa-i" aria-hidden="true">&#128247;</span><span class="qa-t"><b>Relatório fotográfico</b><small>Fotos em grupos, serviços e responsável técnico</small></span>'+chev+'</button>'+
   '<button type="button" class="qa-c" data-act="new-insp" data-tipo="inspecao"><span class="qa-i" aria-hidden="true">&#9989;</span><span class="qa-t"><b>Inspeção de segurança</b><small>Itens com risco, requisito legal e plano de ação</small></span>'+chev+'</button></div>';
 }
+function saudacao(){
+  var h=new Date().getHours(),t=h<12?'Bom dia':(h<18?'Boa tarde':'Boa noite');
+  var nome=String(S.me&&S.me.name||'').trim().split(/\s+/)[0];
+  return nome?t+', '+nome:t;
+}
 function viewPainel(){
-  var sub='Acompanhe seus relatórios fotográficos.';
-  if(!S.insp.length&&ehAdm()){
-    var nome=String(S.me.name||'').split(' ')[0];
-    return '<section class="hero"><p class="hero-k">Bem-vinda'+(nome?', '+esc(nome):'')+'</p><h1>Vamos começar</h1><p class="hero-s">Escolha o que você quer criar.</p></section>'+acoesRapidas('Criar agora');
-  }
-  var fi=filtrados().fi;
-  var mes=isoDate(new Date()).slice(0,7);
-  var noMes=fi.filter(function(i){return String(i.data||'').slice(0,7)===mes}).length;
-  var nf=0;fi.forEach(function(i){nf+=(i.fotos||[]).length;(i.grupos||[]).forEach(function(g){nf+=(g.fotos||[]).length})});
-  var emps={};fi.forEach(function(i){emps[i.empresaId||empNome(i)]=1});
-  var recentes=fi.slice().sort(function(a,b){return String(b.data||'').localeCompare(String(a.data||''))||((b.numero||0)-(a.numero||0))}).slice(0,6);
-  return head('Painel',sub)+acoesRapidas('Criar novo')+
-  '<section class="card"><div class="card-h"><h2>Últimos relatórios</h2></div><div class="list">'+recentes.map(function(i){return '<button type="button" class="row" data-act="open-insp" data-id="'+esc(i.id)+'"><span class="row-main" style="cursor:inherit"><span class="insp-num">'+tr(i)+' Nº '+num(i)+'</span><b>'+esc(i.setor)+' · '+esc(i.unidade)+'</b><span class="muted small">'+fmt(i.data)+' · '+esc(empNome(i))+'</span></span></button>'}).join('')+'</div></section>';
+  return '<section class="hero"><h1>'+esc(saudacao())+'</h1></section>'+acoesRapidas('Criar novo');
 }
 
 /* ---------- dashboards: concluídas e indicadores ---------- */
