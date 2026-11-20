@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-19-2355 icone-sevia --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-20-0010 indicadores --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -329,7 +329,7 @@ var GRP=[['Empresa executante',['execNome','execCnpj','representante','equipe','
 var S={marca:null,db:null,assets:null,downloads:null,sample:null,dbFail:false,insp:[],ncs:[],acoes:[],empresas:[],contratos:[],cad:null,user:null,me:{id:'',name:''},perfil:'Administradora',canWrite:true,acessos:null,mig:false,skipHash:false,
   R:{insp:[],ncs:[],acoes:[],empresas:[],contratos:[],usuarios:[]},
   loaded:{i:false,n:false,a:false,e:false,c:false,k:false,x:false,p:false},view:'painel',route:null,hist:[],
-  f:{insp:'todas',nc:'todas',acoes:'todas',q:''},pf:{empresa:'todas',unidade:'todas',periodo:'12m'},modalOk:null,saving:false};
+  f:{insp:'todas',nc:'todas',acoes:'todas',q:''},pf:{empresa:'todas',unidade:'todas',periodo:'12m',tipo:'todos'},modalOk:null,saving:false};
 
 /* ---------- utilidades ---------- */
 function isoDate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
@@ -700,16 +700,34 @@ function viewConcluidas(){
     return '<button type="button" class="row" data-act="open-insp" data-id="'+esc(i.id)+'"><span class="row-main" style="cursor:inherit"><span class="insp-num">'+tr(i)+' Nº '+num(i)+'</span><b>'+esc(i.setor)+' · '+esc(i.unidade)+'</b><span class="muted small">'+esc(empNome(i))+' · realizada em '+fmt(i.data)+' · concluída em '+fmt(c.dc)+' · '+ncsDe(i.id).length+' itens</span></span><span class="row-side">'+chip('Concluída','st-ok')+'</span></button>'}).join(''):'<p class="muted pad">Nenhuma inspeção concluída neste filtro.</p>')+'</div></section>';
 }
 function viewIndicadores(){
-  var fi=filtrados().fi;
-  function conta(list,fx,top){var o={};list.forEach(function(x){var k=fx(x)||'Sem informação';o[k]=(o[k]||0)+1});return Object.keys(o).map(function(k){return {l:k,v:o[k]}}).sort(function(a,b){return b.v-a.v}).slice(0,top||6)}
-  var nf=0,ng=0;fi.forEach(function(i){nf+=(i.fotos||[]).length;(i.grupos||[]).forEach(function(g){ng++;nf+=(g.fotos||[]).length})});
-  var porEmp=conta(fi,function(i){return empNome(i)}),porUn=conta(fi,function(i){return i.unidade}),porSet=conta(fi,function(i){return i.setor});
-  return head('Indicadores','Desempenho dos relatórios fotográficos.')+filtrosPainel()+
-  '<div class="tiles">'+tile(fi.length,'Relatórios','#inspecoes')+tile(ng,'Grupos de fotos','#inspecoes')+tile(nf,'Fotos registradas','#inspecoes')+tile(fi.length?Math.round(nf/fi.length):'-','Fotos por relatório','#inspecoes')+'</div>'+
-  '<section class="card"><div class="card-h"><h2>Relatórios por mês</h2><span class="muted small">Últimos 12 meses</span></div>'+barrasMes(serieMes(fi.map(function(i){return i.data})),'Relatórios por mês, total '+fi.length)+'</section>'+
-  '<div class="cols"><section class="card"><div class="card-h"><h2>Por empresa</h2></div>'+barList(porEmp)+'</section>'+
-  '<section class="card"><div class="card-h"><h2>Por unidade</h2></div>'+barList(porUn)+'</section></div>'+
-  '<section class="card"><div class="card-h"><h2>Por setor</h2></div>'+barList(porSet)+'</section>';
+  var base=filtrados(),tp=S.pf.tipo||'todos';
+  var fi=base.fi.filter(function(i){return tp==='todos'||(tp==='insp')===isIns(i)});
+  var is={};fi.forEach(function(i){is[i.id]=1});
+  var fn=base.fn.filter(function(n){return is[n.inspId]}),ns={};fn.forEach(function(n){ns[n.id]=1});
+  var fa=base.fa.filter(function(a){return ns[a.ncId]});
+  var nIns=fi.filter(isIns).length,nFot=fi.length-nIns;
+  var nc=fn.filter(function(n){return n.classificacao!=='Conformidade'}),conf=fn.length-nc.length;
+  var cp=fn.length?pct(conf,fn.length):null;
+  var atras=fa.filter(vencida).length,conc=fa.filter(function(a){return a.status==='Concluída'}).length,andam=fa.length-conc-atras;
+  var gr={};GRAUS.forEach(function(g){gr[g]=0});nc.forEach(function(n){var g=grau(n);if(gr[g]!=null)gr[g]++});
+  var CG={'Crítico':'#7F1D1D','Alto':'#E5483D','Médio':'#F5B342','Baixo':'#7BB77F'};
+  var tema={};nc.forEach(function(n){var k=(!n.norma||n.norma===PENDENTE)?'Norma a definir':String(n.norma).split(/[—\-\(,;]/)[0].trim().slice(0,38);tema[k]=(tema[k]||0)+1});
+  var temas=Object.keys(tema).map(function(k){return {l:k,v:tema[k]}}).sort(function(a,b){return b.v-a.v}).slice(0,6);
+  var un={};fi.forEach(function(i){var k=(S.pf.empresa==='todas'?empNome(i)+' · ':'')+(i.unidade||'Sem unidade');var o=un[k]||(un[k]={f:0,s:0,n:0,c:0});if(isIns(i))o.s++;else o.f++;ncsDe(i.id).forEach(function(x){if(x.classificacao==='Conformidade')o.c++;else o.n++})});
+  var uL=Object.keys(un).sort(function(a,b){return (un[b].f+un[b].s)-(un[a].f+un[a].s)}).slice(0,12);
+  function seg(id,l){return '<button type="button" class="btn '+(tp===id?'btn-primary':'btn-ghost')+'" data-act="pf-tipo" data-id="'+id+'" aria-pressed="'+(tp===id)+'">'+l+'</button>'}
+  function cor(p){return p>=85?'var(--ok)':(p>=70?'var(--warn,#8A6100)':'var(--danger)')}
+  return head('Indicadores','Relatórios fotográficos e inspeções de segurança.')+filtrosPainel()+
+  '<div class="actions" role="group" aria-label="Tipo de documento">'+seg('todos','Tudo')+seg('foto','Fotográficos')+seg('insp','Inspeções')+'</div>'+
+  '<div class="tiles">'+tile(nFot,'Relatórios fotográficos','#inspecoes')+tile(nIns,'Inspeções de segurança','#inspecoes')+tile(nc.length,'Não conformidades','#ncs')+tile(atras,'Ações atrasadas','#acoes',atras>0)+'</div>'+
+  (nIns||fn.length?'<section class="card"><div class="card-h"><h2>Conformidade geral</h2><span class="muted small">Itens das inspeções</span></div>'+donut([{l:'Conformes',v:conf,c:'var(--ok)'},{l:'Não conformes',v:nc.length,c:'var(--danger)'}],fn.length,cp==null?'':cp+'% conf.','Conformidade: '+conf+' itens conformes e '+nc.length+' não conformes')+'</section>':'')+
+  '<div class="cols"><section class="card"><div class="card-h"><h2>Relatórios por tipo</h2></div>'+donut([{l:'Fotográficos',v:nFot,c:'var(--accent)'},{l:'Inspeções',v:nIns,c:'#000000'}],fi.length,'relatórios',fi.length+' documentos por tipo')+'</section>'+
+  '<section class="card"><div class="card-h"><h2>Risco das não conformidades</h2></div>'+donut(GRAUS.map(function(g){return {l:g,v:gr[g],c:CG[g]}}),nc.length,'itens','Não conformidades por grau de risco')+'</section></div>'+
+  '<div class="cols"><section class="card"><div class="card-h"><h2>Planos de ação</h2></div>'+donut([{l:'Concluídas',v:conc,c:'var(--ok)'},{l:'Em andamento',v:andam,c:'#F5B342'},{l:'Atrasadas',v:atras,c:'var(--danger)'}],fa.length,'ações',fa.length+' ações por situação')+'</section>'+
+  '<section class="card"><div class="card-h"><h2>Não conformidades por norma</h2></div>'+barList(temas)+'</section></div>'+
+  '<section class="card"><div class="card-h"><h2>Por mês</h2><span class="muted small">Últimos 12 meses</span></div>'+barrasMes(serieMes(fi.map(function(i){return i.data})),'Documentos por mês, total '+fi.length)+'</section>'+
+  '<section class="card"><div class="card-h"><h2>Por empresa e unidade</h2></div>'+(uL.length?'<div class="list">'+uL.map(function(k){var o=un[k],t=o.c+o.n,pc=t?pct(o.c,t):null;
+    return '<div class="row"><span class="row-main"><b>'+esc(k)+'</b><span class="muted small">'+o.f+(o.f===1?' fotográfico':' fotográficos')+' · '+o.s+(o.s===1?' inspeção':' inspeções')+' · '+o.n+(o.n===1?' não conformidade':' não conformidades')+'</span></span><span class="row-side"><b style="color:'+(pc==null?'inherit':cor(pc))+'">'+(pc==null?'-':pc+'%')+'</b></span></div>'}).join('')+'</div>':'<p class="muted pad">Sem dados ainda neste filtro.</p>')+'</section>';
 }
 
 /* ---------- empresa ---------- */
@@ -1922,6 +1940,7 @@ document.addEventListener('click',function(e){
     case 'del-empresa':confirmar('Excluir empresa','As inspeções já registradas continuam, mas deixam de estar ligadas a esta empresa.','Excluir',async function(){try{await S.db.doc('empresas/'+id).delete();limpaRota();toast('Empresa excluída.')}catch(er){console.error(er);toast('Não foi possível excluir.')}renderMain()});break;
     case 'emp-logo-rm':if(S.route&&S.route.draft){S.route.draft.logo='';var bx2=$('#emp-logo');if(bx2)bx2.innerHTML=empLogoHtml('')}break;
     case 'instalar':instalarApp();break;
+    case 'pf-tipo':S.pf.tipo=id;renderMain();break;
     case 'sair':if(window.SEVIA_SAIR)window.SEVIA_SAIR();break;
     case 'recarregar':recarregar();break;
     case 'tt-c-open':var cc=$('#tt-c');if(cc)cc.click();var ts=$('#tt-simples');if(ts)ts.textContent='C: pedido enviado ao aparelho. Se nada abriu, está bloqueado.';break;
