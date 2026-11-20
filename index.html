@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-20-0100 indicadores-filtro-tipo --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-20-1015 sem-listas-padrao --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -84,6 +84,9 @@ p{margin:0}
 
 .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;min-width:0}
 .card-h{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 16px;margin-bottom:12px}
+.field .chk-row{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:12px;min-height:44px;font-weight:400;text-align:left;width:100%;cursor:pointer}
+.field .chk-row input{width:22px;height:22px;min-height:0;flex:none;margin:0;padding:0}
+.field .chk-row span{flex:1;text-align:left}
 .ix{display:flex;flex-direction:column;gap:14px}
 .ix-card{background:#fff;border-radius:18px;padding:16px;border:1px solid #E3E3DF;display:flex;flex-direction:column;gap:12px}
 .ix-card h2{margin:0;font-size:17px;font-weight:600}
@@ -556,7 +559,7 @@ function renderNav(){
     [null,[['painel','Início',0,0]]],
     ['Registrar',[['inspecoes','Relatórios e inspeções',0,0],['relatorios','Baixar relatórios',0,0]]],
     ['Acompanhar',(temIns?[['ncs','Não conformidades',ncAb,0],['acoes','Plano de ação',venc,1]]:[]).concat([['concluidas','Relatórios concluídos',0,0],['indicadores','Indicadores',0,0]])],
-    ['Cadastros',[['empresas','Empresa',0,0],['contratos','Contratos',0,0],['cadastros','Listas padrão',0,0]].concat(ehAdm()?[['usuarios','Usuários e acessos',0,0]]:[])]
+    ['Cadastros',[['empresas','Empresa',0,0],['contratos','Contratos',0,0]].concat(ehAdm()?[['usuarios','Usuários e acessos',0,0]]:[])]
   ];
   $('#nav').innerHTML=grupos.map(function(g){
     return (g[0]?'<p class="nav-g">'+g[0]+'</p>':'')+g[1].map(function(it){
@@ -799,11 +802,11 @@ function viewIndicadores(){
 /* ---------- empresa ---------- */
 function viewEmpresas(){
   var L=S.empresas.slice().sort(function(a,b){return String(a.nome).localeCompare(String(b.nome))});
-  return head('Empresa','Empresa, unidades e setores.',btn('Nova empresa','new-empresa','','btn-primary'))+
+  return head('Empresa',podeEmpresa()?'Empresa, unidades e setores.':'Empresa, unidades e setores. Somente a Administradora e o Técnico ADM cadastram empresas.',podeEmpresa()?btn('Nova empresa','new-empresa','','btn-primary'):'')+
   '<div class="card"><div class="list">'+(L.length?L.map(function(e){
     var n=S.insp.filter(function(i){return i.empresaId===e.id}).length,us=unObjs(e),ns=us.reduce(function(a,u){return a+u.setores.length},0);
     var cs=S.contratos.filter(function(c){return c.empresaId===e.id}).map(stCont),cst=cs.indexOf('Vigente')>-1?'Vigente':(cs.indexOf('A vencer')>-1?'A vencer':(cs.length?cs[0]:''));
-    return '<button type="button" class="row" data-act="edit-empresa" data-id="'+esc(e.id)+'"><span class="row-main" style="cursor:inherit"><b>'+esc(e.nome)+'</b><span class="muted small">'+(e.cnpj?'CNPJ '+esc(e.cnpj)+' · ':'')+us.length+(us.length===1?' unidade':' unidades')+' · '+ns+(ns===1?' setor':' setores')+' · '+n+(n===1?' inspeção':' inspeções')+'</span></span><span class="row-side">'+(cst?chip('Contrato '+cst.toLowerCase(),ck(cst)):chip('Sem contrato','neutral'))+'<span class="btn btn-ghost" aria-hidden="true">Editar</span></span></button>'}).join(''):'<p class="muted pad">Nenhuma empresa cadastrada. Cadastre a primeira para ligar as inspeções a ela.</p><div class="pad">'+btn('Atualizar lista','recarregar','','btn-ghost')+'</div>')+'</div></div>';
+    return '<button type="button" class="row" data-act="edit-empresa" data-id="'+esc(e.id)+'"><span class="row-main" style="cursor:inherit"><b>'+esc(e.nome)+'</b><span class="muted small">'+(e.cnpj?'CNPJ '+esc(e.cnpj)+' · ':'')+us.length+(us.length===1?' unidade':' unidades')+' · '+ns+(ns===1?' setor':' setores')+' · '+n+(n===1?' inspeção':' inspeções')+'</span></span><span class="row-side">'+(cst?chip('Contrato '+cst.toLowerCase(),ck(cst)):chip('Sem contrato','neutral'))+''+(podeEmpresa()?'<span class="btn btn-ghost" aria-hidden="true">Editar</span>':'')+'</span></button>'}).join(''):'<p class="muted pad">Nenhuma empresa cadastrada. '+(podeEmpresa()?'Cadastre a primeira para ligar as inspeções a ela.':'Peça à Administradora para cadastrar a empresa.')+'</p><div class="pad">'+btn('Atualizar lista','recarregar','','btn-ghost')+'</div>')+'</div></div>';
 }
 function unBlk(u){
   return '<div class="un-blk" data-un-blk><div class="fields"><label class="field"><span>Unidade <span class="req" aria-hidden="true">*</span></span><input data-un="nome" required value="'+esc(u.nome)+'" placeholder="Ex.: Unidade Central"></label><label class="field"><span>Setores desta unidade (separe por vírgula)</span><textarea data-un="setores" placeholder="Produção, Manutenção, Almoxarifado">'+esc((u.setores||[]).join(', '))+'</textarea></label></div><div class="actions"><button type="button" class="btn btn-ghost" data-act="un-rm">Remover unidade</button></div></div>';
@@ -839,15 +842,16 @@ function instalarApp(){
   toast(ios?'No iPhone: toque em Compartilhar e depois em "Adicionar à Tela de Início".':'Toque nos 3 pontinhos do navegador e escolha "Instalar app" ou "Adicionar à tela inicial".');
 }
 function ehAdm(){return S.perfil==='Administradora'}
+function podeEmpresa(){return S.perfil==='Administradora'||S.perfil==='Técnico ADM'}
 function perfilNome(p){var x=PERFIS.filter(function(a){return a[0]===p})[0];return x?x[1]:(p||'-')}
 function viewUsuarios(){
   if(!ehAdm())return head('Usuários e acessos')+'<div class="card"><p>Somente administradoras gerenciam usuários.</p></div>';
   var L=(S.R.usuarios||[]).slice().sort(function(a,b){return String(a.nome).localeCompare(String(b.nome))});
   return head('Usuários e acessos','Quem pode entrar no sistema e o que cada perfil faz.',btn('Novo usuário','new-usuario','','btn-primary'))+
   '<div class="card"><div class="list">'+(L.length?L.map(function(u){
-    var emp=u.perfil==='Cliente'?(empNomeDe(u.empresaId)||'sem empresa'):'todas as empresas';
+    var emp=u.perfil==='Cliente'?(empNomeDe(u.empresaId)||'sem empresa'):(u.perfil==='Administradora'?'todas as empresas':((u.empresasAcesso||[]).length?((u.empresasAcesso||[]).length===1?(empNomeDe(u.empresasAcesso[0])||'1 empresa'):u.empresasAcesso.length+' empresas'):'nenhuma empresa liberada'));
     var st=u.ativo===false?['Inativo','danger']:(u.status==='Ativo'?['Ativo','ok']:['Aguardando primeiro acesso','warn']);
-    return '<button type="button" class="row" data-act="edit-usuario" data-id="'+esc(u.id)+'"><span class="row-main" style="cursor:inherit"><b>'+esc(u.nome)+'</b><span class="muted small">Usuário: '+esc(u.usuario||u.email||'-')+' · '+esc(perfilNome(u.perfil))+' · '+esc(emp)+'</span></span><span class="row-side">'+chip(st[0],st[1])+'<span class="btn btn-ghost" aria-hidden="true">Editar</span></span></button>'}).join(''):'<p class="muted pad">Nenhum usuário cadastrado. Toque em "Novo usuário".</p>')+'</div></div>'+
+    return '<button type="button" class="row" data-act="edit-usuario" data-id="'+esc(u.id)+'"><span class="row-main" style="cursor:inherit"><b>'+esc(u.nome)+'</b><span class="muted small">Usuário: '+esc(u.usuario||u.email||'-')+' · '+esc(perfilNome(u.perfil))+' · '+esc(emp)+'</span></span><span class="row-side">'+chip(st[0],st[1])+''+(podeEmpresa()?'<span class="btn btn-ghost" aria-hidden="true">Editar</span>':'')+'</span></button>'}).join(''):'<p class="muted pad">Nenhum usuário cadastrado. Toque em "Novo usuário".</p>')+'</div></div>'+
   '<section class="card"><div class="card-h"><h2>O que cada perfil pode fazer</h2></div><div class="list">'+PERFIS.map(function(x){return '<div class="row"><span class="row-main"><b>'+esc(x[1])+'</b><span class="muted small">'+esc(x[2])+'</span></span></div>'}).join('')+'</div></section>'+
   '<section class="card"><div class="card-h"><h2>Como o acesso é liberado</h2></div><p class="muted small">Você cadastra o usuário e o sistema gera uma senha provisória, que você passa à pessoa. No primeiro acesso ela é obrigada a trocar a senha. Nada é enviado por e-mail e a senha provisória não fica guardada. O login real passa a funcionar quando o sistema estiver publicado no seu domínio, ligado ao Supabase.</p></section>';
 }
@@ -882,10 +886,13 @@ function formUsuario(r){
     field('Telefone (opcional)','u-tel','<input id="u-tel" name="telefone" type="tel" inputmode="tel" value="'+esc(d.telefone)+'">')+
     field('Função (aparece nos relatórios)','u-func','<input id="u-func" name="funcao" placeholder="Ex.: Técnico em Segurança do Trabalho" value="'+esc(d.funcao)+'">')+
     field('Registro profissional (REG / MTE)','u-reg','<input id="u-reg" name="registroProf" value="'+esc(d.registroProf)+'">')+
-    field('Perfil de acesso','u-perf','<select id="u-perf" name="perfil" required>'+opts(PERFIS.map(function(x){return [x[0],x[1]]}),d.perfil)+'</select>')+
+    field('Perfil de acesso','u-perf','<select id="u-perf" name="perfil" required data-chg="u-perf">'+opts(PERFIS.map(function(x){return [x[0],x[1]]}),d.perfil)+'</select>')+
     field('Empresa (obrigatória para Cliente)','u-emp','<select id="u-emp" name="empresaId">'+opts([['','Todas / não se aplica']].concat(S.empresas.map(function(e){return [e.id,e.nome]})),d.empresaId)+'</select>','full')+
+    '<div class="field full" id="emp-acc"'+(['Técnico ADM','Técnico SST'].indexOf(d.perfil)>-1?'':' hidden')+'><span class="lbl">Empresas que este perfil pode acessar</span>'+
+      '<div id="emp-lst">'+(S.empresas.length?S.empresas.slice().sort(function(a,b){return String(a.nome).localeCompare(String(b.nome))}).map(function(e){return '<label class="chk-row"><input type="checkbox" data-emp-acc value="'+esc(e.id)+'"'+((d.empresasAcesso||[]).indexOf(e.id)>-1?' checked':'')+'><span>'+esc(e.nome)+'</span></label>'}).join(''):'<p class="muted small">Nenhuma empresa cadastrada ainda.</p>')+'</div>'+
+      '<p class="muted small">Marque as empresas que este usuário pode ver e editar. Sem nenhuma marcada, ele não vê empresa alguma. Empresas novas criadas por você ficam bloqueadas até você marcá-las aqui; as que o Técnico ADM criar entram automaticamente na lista dele.</p></div>'+
     (r.id?field('Situação','u-at','<select id="u-at" name="ativo">'+opts([['sim','Ativo'],['nao','Inativo']],d.ativo===false?'nao':'sim')+'</select>'):'')+
-  '</div><p class="muted small">Ativo consegue entrar no sistema; Inativo fica bloqueado. Administradora, Técnico ADM e Técnico SST veem todas as empresas. Cliente vê somente a empresa escolhida.'+(r.id?'':' Ao salvar, o sistema gera a senha provisória.')+'</p>'+
+  '</div><p class="muted small">Ativo consegue entrar no sistema; Inativo fica bloqueado. A Administradora vê todas as empresas. Técnico ADM e Técnico SST veem só as empresas marcadas acima. Cliente vê somente a empresa escolhida.'+(r.id?'':' Ao salvar, o sistema gera a senha provisória.')+'</p>'+
   '<div class="actions"><button class="btn btn-primary" type="submit">'+(r.id?'Salvar usuário':'Criar acesso')+'</button><button type="button" class="btn btn-ghost" data-act="back">Cancelar</button>'+(r.id?btn('Gerar nova senha provisória','reset-usuario',r.id,'btn-ghost')+btn('Excluir','del-usuario',r.id,'btn-danger'):'')+'</div></form>';
 }
 
@@ -896,7 +903,7 @@ function viewContratos(){
   (S.empresas.length?'':'<div class="card"><p>Cadastre uma empresa primeiro para vincular o contrato.</p></div>')+
   '<div class="card"><div class="list">'+(L.length?L.map(function(c){
     var s=stCont(c),e=empDe(c.empresaId);
-    return '<button type="button" class="row" data-act="edit-contrato" data-id="'+esc(c.id)+'"><span class="row-main" style="cursor:inherit"><b>'+esc(e?e.nome:(c.empresaNome||'Empresa removida'))+'</b><span class="muted small">Vigência: '+fmt(c.inicio)+' a '+fmt(c.fim)+(c.servicos?' · '+esc(c.servicos.slice(0,90)):'')+'</span>'+(s==='Vencido'&&c.fim?'<span class="muted small">Retenção dos registros prevista até '+fmt(addDias(c.fim,60))+' (60 dias após o vencimento, sujeita à validação jurídica). Nada é excluído automaticamente.</span>':'')+'</span><span class="row-side">'+chip(s,ck(s))+'<span class="btn btn-ghost" aria-hidden="true">Editar</span></span></button>'}).join(''):'<p class="muted pad">Nenhum contrato cadastrado.</p>')+'</div></div>';
+    return '<button type="button" class="row" data-act="edit-contrato" data-id="'+esc(c.id)+'"><span class="row-main" style="cursor:inherit"><b>'+esc(e?e.nome:(c.empresaNome||'Empresa removida'))+'</b><span class="muted small">Vigência: '+fmt(c.inicio)+' a '+fmt(c.fim)+(c.servicos?' · '+esc(c.servicos.slice(0,90)):'')+'</span>'+(s==='Vencido'&&c.fim?'<span class="muted small">Retenção dos registros prevista até '+fmt(addDias(c.fim,60))+' (60 dias após o vencimento, sujeita à validação jurídica). Nada é excluído automaticamente.</span>':'')+'</span><span class="row-side">'+chip(s,ck(s))+''+(podeEmpresa()?'<span class="btn btn-ghost" aria-hidden="true">Editar</span>':'')+'</span></button>'}).join(''):'<p class="muted pad">Nenhum contrato cadastrado.</p>')+'</div></div>';
 }
 function formContrato(r){
   var d=r.draft,empOpts=[['','Selecione a empresa']].concat(S.empresas.map(function(e){return [e.id,e.nome]}));
@@ -1472,7 +1479,7 @@ async function salvar(form){
       if(slugU(v.nome).length<2){nao('Informe o nome completo.');return}
       var usr=(old&&old.usuario)||usuarioDe(v.nome,old&&old.id);
       if(v.perfil==='Cliente'&&!v.empresaId){nao('Escolha a empresa do cliente.');return}
-      data={nome:v.nome,usuario:usr,email:em2,telefone:v.telefone||'',funcao:(v.funcao||'').trim(),registroProf:(v.registroProf||'').trim(),perfil:v.perfil,empresaId:v.perfil==='Cliente'?v.empresaId:'',ativo:r.id?v.ativo!=='nao':true,status:(old&&old.status&&old.status!=='Convite pendente')?old.status:'Aguardando primeiro acesso',trocarSenha:old?old.trocarSenha!==false:true};
+      data={nome:v.nome,usuario:usr,email:em2,telefone:v.telefone||'',funcao:(v.funcao||'').trim(),registroProf:(v.registroProf||'').trim(),empresasAcesso:(['Técnico ADM','Técnico SST'].indexOf(v.perfil)>-1)?Array.prototype.map.call(form.querySelectorAll('[data-emp-acc]:checked'),function(c){return c.value}):[],perfil:v.perfil,empresaId:v.perfil==='Cliente'?v.empresaId:'',ativo:r.id?v.ativo!=='nao':true,status:(old&&old.status&&old.status!=='Convite pendente')?old.status:'Aguardando primeiro acesso',trocarSenha:old?old.trocarSenha!==false:true};
     }else if(kind==='contrato'){
       col='contratos';old=r.id?S.contratos.filter(function(c){return c.id===r.id})[0]:null;
       if(v.fim<v.inicio){nao('O término da vigência não pode ser antes do início.');return}
@@ -1485,7 +1492,7 @@ async function salvar(form){
     }
     var apiSenha=null,ref;
     if(kind==='usuario'&&window.SEVIA_API){
-      var pl={nome:data.nome,email:data.email,telefone:data.telefone,funcao:data.funcao,registroProf:data.registroProf,perfil:data.perfil,empresaId:data.empresaId};
+      var pl={nome:data.nome,email:data.email,telefone:data.telefone,funcao:data.funcao,registroProf:data.registroProf,perfil:data.perfil,empresaId:data.empresaId,empresasAcesso:data.empresasAcesso||[]};
       if(old){await window.SEVIA_API.atualizarUsuario(old.id,Object.assign({ativo:data.ativo},pl));ref={id:old.id,set:async function(){}}}
       else{var rs=await window.SEVIA_API.criarUsuario(pl);data.usuario=rs.usuario;apiSenha=rs.senha;ref={id:rs.id,set:async function(){}}}
     }else ref=r.id?S.db.doc(col+'/'+r.id):S.db.collection(col).doc();
@@ -1997,13 +2004,13 @@ document.addEventListener('click',function(e){
     case 'usuarios-fim':limpaRota();renderMain();window.scrollTo(0,0);break;
     case 'copiar-cred':var tx='Usuário: '+($('#cr-mail').textContent)+'\nSenha provisória: '+($('#cr-pass').textContent)+'\nNo primeiro acesso você deverá criar uma senha nova.';(function(){function man(){var rg=document.createRange();rg.selectNodeContents($('#cr-pass'));var sl=getSelection();sl.removeAllRanges();sl.addRange(rg);toast('Selecionei a senha. Copie manualmente.')}try{navigator.clipboard.writeText(tx).then(function(){toast('Copiado.')},man)}catch(er){man()}})();break;
     case 'reset-usuario':var ur=S.R.usuarios.filter(function(u){return u.id===id})[0];if(ur&&window.SEVIA_API){window.SEVIA_API.resetarUsuario(id).then(function(rs){S.route={name:'usuario-ok',draft:{nome:ur.nome,usuario:ur.usuario,senha:rs.senha}};S.hist=[];renderMain();window.scrollTo(0,0)}).catch(function(er){console.error(er);toast('Não foi possível gerar a senha: '+(er&&er.message||'erro'))})}else if(ur){S.db.doc('usuarios/'+id).update({usuario:ur.usuario||usuarioDe(ur.nome,ur.id),status:'Aguardando primeiro acesso',trocarSenha:true,atualizadoEm:Date.now()}).then(function(){S.route={name:'usuario-ok',draft:{nome:ur.nome,usuario:ur.usuario||usuarioDe(ur.nome,ur.id),senha:senhaProv()}};S.hist=[];renderMain();window.scrollTo(0,0)}).catch(function(er){console.error(er);toast('Não foi possível gerar a senha.')})}break;
-    case 'new-usuario':abre('usuarios',{name:'usuario-form',draft:{nome:'',email:'',telefone:'',funcao:'',registroProf:'',perfil:'Técnico SST',empresaId:'',ativo:true}});break;
-    case 'edit-usuario':var us1=S.R.usuarios.filter(function(u){return u.id===id})[0];if(us1)go({name:'usuario-form',id:id,draft:{nome:us1.nome,usuario:us1.usuario||'',email:us1.email||'',telefone:us1.telefone||'',funcao:us1.funcao||'',registroProf:us1.registroProf||'',perfil:us1.perfil,empresaId:us1.empresaId||'',ativo:us1.ativo!==false}});break;
+    case 'new-usuario':abre('usuarios',{name:'usuario-form',draft:{nome:'',email:'',telefone:'',funcao:'',registroProf:'',perfil:'Técnico SST',empresaId:'',empresasAcesso:[],ativo:true}});break;
+    case 'edit-usuario':var us1=S.R.usuarios.filter(function(u){return u.id===id})[0];if(us1)go({name:'usuario-form',id:id,draft:{nome:us1.nome,usuario:us1.usuario||'',email:us1.email||'',telefone:us1.telefone||'',funcao:us1.funcao||'',registroProf:us1.registroProf||'',perfil:us1.perfil,empresaId:us1.empresaId||'',empresasAcesso:(us1.empresasAcesso||[]).slice(),ativo:us1.ativo!==false}});break;
     case 'bloq-usuario':var ub=S.R.usuarios.filter(function(u){return u.id===id})[0];if(!ub)break;if(S.me&&S.me.id&&id===S.me.id){toast('Você não pode bloquear o seu próprio acesso.');break}var desb=ub.ativo===false;confirmar(desb?'Desbloquear acesso':'Bloquear acesso',desb?'O usuário volta a conseguir entrar no sistema.':'O usuário não consegue mais entrar e perde o acesso aos dados na hora. Os registros dele são mantidos e você pode desbloquear quando quiser.',desb?'Desbloquear':'Bloquear',async function(){try{if(window.SEVIA_API)await window.SEVIA_API.atualizarUsuario(id,{nome:ub.nome,email:ub.email||'',telefone:ub.telefone||'',perfil:ub.perfil,empresaId:ub.empresaId||'',ativo:desb});else await S.db.doc('usuarios/'+id).update({ativo:desb,atualizadoEm:Date.now()});upsert('usuarios',id,Object.assign({},ub,{ativo:desb,atualizadoEm:Date.now()}));limpaRota();renderMain();toast(desb?'Acesso desbloqueado.':'Acesso bloqueado.')}catch(er){console.error(er);toast('Não foi possível alterar o acesso: '+(er&&er.message||'erro'))}});break;
     case 'del-usuario':confirmar('Excluir usuário','O usuário deixa de constar na lista de acessos.','Excluir',async function(){try{if(window.SEVIA_API)await window.SEVIA_API.excluirUsuario(id);else await S.db.doc('usuarios/'+id).delete();S.R.usuarios=S.R.usuarios.filter(function(u){return u.id!==id});limpaRota();renderMain();toast('Usuário excluído.')}catch(er){console.error(er);toast('Não foi possível excluir.')}});break;
-    case 'new-empresa':abre('empresas',{name:'empresa-form',draft:{nome:'',cnpj:'',contato:'',unidades:[{nome:'',setores:[]}]}});break;
-    case 'edit-empresa':var em=empDe(id);go({name:'empresa-form',id:id,draft:{nome:em.nome,cnpj:em.cnpj||'',contato:em.contato||'',logo:em.logo||'',unidades:unObjs(em)}});break;
-    case 'del-empresa':confirmar('Excluir empresa','As inspeções já registradas continuam, mas deixam de estar ligadas a esta empresa.','Excluir',async function(){try{await S.db.doc('empresas/'+id).delete();limpaRota();toast('Empresa excluída.')}catch(er){console.error(er);toast('Não foi possível excluir.')}renderMain()});break;
+    case 'new-empresa':if(!podeEmpresa()){toast('Somente a Administradora e o Técnico ADM cadastram e editam empresas.');break}abre('empresas',{name:'empresa-form',draft:{nome:'',cnpj:'',contato:'',unidades:[{nome:'',setores:[]}]}});break;
+    case 'edit-empresa':if(!podeEmpresa()){toast('Somente a Administradora e o Técnico ADM cadastram e editam empresas.');break}var em=empDe(id);go({name:'empresa-form',id:id,draft:{nome:em.nome,cnpj:em.cnpj||'',contato:em.contato||'',logo:em.logo||'',unidades:unObjs(em)}});break;
+    case 'del-empresa':if(!podeEmpresa()){toast('Somente a Administradora e o Técnico ADM cadastram e editam empresas.');break}confirmar('Excluir empresa','As inspeções já registradas continuam, mas deixam de estar ligadas a esta empresa.','Excluir',async function(){try{await S.db.doc('empresas/'+id).delete();limpaRota();toast('Empresa excluída.')}catch(er){console.error(er);toast('Não foi possível excluir.')}renderMain()});break;
     case 'emp-logo-rm':if(S.route&&S.route.draft){S.route.draft.logo='';var bx2=$('#emp-logo');if(bx2)bx2.innerHTML=empLogoHtml('')}break;
     case 'instalar':instalarApp();break;
     case 'pf-tipo':S.pf.tipo=id;renderMain();break;
@@ -2066,6 +2073,7 @@ document.addEventListener('change',function(e){
     case 'f-nc':S.f.nc=el.value;$('#lista').innerHTML=listaNc();break;
     case 'f-acoes':S.f.acoes=el.value;$('#lista').innerHTML=listaAcoes();break;
     case 'pf-empresa':S.pf.empresa=el.value;S.pf.unidade='todas';renderMain();break;
+    case 'u-perf':var ea=$('#emp-acc');if(ea)ea.hidden=['Técnico ADM','Técnico SST'].indexOf(el.value)<0;break;
     case 'pf-unidade':S.pf.unidade=el.value;renderMain();break;
     case 'pf-periodo':S.pf.periodo=el.value;renderMain();break;
     case 'insp-emp':syncDraft();S.route.draft.unidade='';S.route.draft.setor='';renderMain();break;
