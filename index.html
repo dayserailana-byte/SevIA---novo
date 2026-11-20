@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-20-1330 confirma-tudo --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-20-1400 rascunho-5min --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -510,7 +510,7 @@ async function recarregar(){
   }catch(e){console.error(e);toast('Não foi possível ler o banco: '+(e&&(e.code||e.message)||'erro')+'.')}
 }
 var CAM=null;
-document.addEventListener('click',function(e){var inp=e.target;if(!inp||inp.type!=='file'||!inp.hasAttribute('capture'))return;var id=inp.dataset.g,kind=inp.dataset.chg==='foto-g'?'fgst-':(inp.dataset.chg==='foto-i'?'fist-':'');var got=false;inp.addEventListener('change',function(){got=true},{once:true});setTimeout(function(){if(got||!kind)return;var el=document.getElementById(kind+id);if(el&&!el.textContent)el.textContent='Se a câmera não abriu, este aplicativo bloqueou o acesso. Toque em "Câmera do app".'},4000)});
+document.addEventListener('click',function(e){var inp=e.target;if(!inp||inp.type!=='file'||!inp.hasAttribute('capture'))return;var id=inp.dataset.g,kind=inp.dataset.chg==='foto-g'?'fgst-':(inp.dataset.chg==='foto-i'?'fist-':'');var got=false;inp.addEventListener('change',function(){got=true},{once:true});setTimeout(function(){if(got||!kind)return;var el=document.getElementById(kind+id);if(el&&!el.textContent)el.textContent='Se a câmera não abriu, este aplicativo bloqueou o acesso. Use o botão "Galeria".'},4000)});
 async function camAbrir(kind,g){
   function msg(t){toast(t);var el=kind==='g'?$('#fgst-'+g):(kind==='i'?$('#fist-'+g):$('#tt-foto'));if(el)el.textContent=t}
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){msg('Câmera do app indisponível neste aparelho/aplicativo (sem acesso à câmera).');return}
@@ -1046,9 +1046,9 @@ function thumbsG(ids,k){
 function gruposHtml(d){
   return (d.grupos||[]).map(function(g,k){
     return '<div class="un-blk ph-blk" data-g-blk><div class="ph-head"><b>'+(g.titulo?esc(g.titulo):'Grupo '+(k+1))+'</b>'+(S.assets?'<button type="button" class="ph-rm" data-act="g-rm" data-g="'+k+'">Remover grupo</button>':'')+'</div>'+
-    '<label class="field"><span>Título do grupo de fotos</span><input data-gtitulo value="'+esc(g.titulo)+'" placeholder="Ex.: Instalações área externa"></label>'+(S.sample?'<label class="chk"><input type="checkbox" data-gia'+(g.ia!==false?' checked':'')+'> A IA analisa as fotos deste grupo</label>':'')+
+    '<label class="field"><span>Título do grupo de fotos</span><input data-gtitulo value="'+esc(g.titulo)+'" placeholder="Ex.: Instalações área externa"></label>'+
     '<div id="fg-'+k+'">'+thumbsG(g.fotos,k)+'</div>'+
-    (S.assets?'<div class="ph-actions"><label class="btn btn-primary file-btn"><input class="sr-only" type="file" accept="image/*" capture="environment" data-chg="foto-g" data-g="'+k+'">&#128247; Tirar foto</label><label class="btn btn-ghost file-btn"><input class="sr-only" type="file" accept="image/*" multiple data-chg="foto-g" data-g="'+k+'">&#128193; Galeria</label><button type="button" class="btn btn-ghost ph-cam" data-act="cam-open" data-kind="g" data-g="'+k+'">&#127909; Câmera do app</button></div><p class="muted small" id="fgst-'+k+'" aria-live="polite"></p>':'<p class="muted small">O envio de fotos exige permissão de edição.</p>')+'</div>'}).join('');
+    (S.assets?'<div class="ph-actions"><label class="btn btn-primary file-btn"><input class="sr-only" type="file" accept="image/*" capture="environment" data-chg="foto-g" data-g="'+k+'">&#128247; Tirar foto</label><label class="btn btn-ghost file-btn"><input class="sr-only" type="file" accept="image/*" multiple data-chg="foto-g" data-g="'+k+'">&#128193; Galeria</label></div><p class="muted small" id="fgst-'+k+'" aria-live="polite"></p>':'<p class="muted small">O envio de fotos exige permissão de edição.</p>')+'</div>'}).join('');
 }
 function gruposField(d){
   return '<div class="field"><span class="lbl">Registros fotográficos</span><div id="grupos">'+gruposHtml(d)+'</div><button type="button" class="btn btn-ghost ph-add" data-act="g-add">+ Adicionar grupo de fotos</button></div>';
@@ -1081,7 +1081,7 @@ function itensHtml(d){
     var conf=it.classificacao==='Conformidade',dsug=PRAZO_G[it.gravidade];
     return '<div class="un-blk ph-blk" data-item-blk><div class="ph-head"><b>Item '+(k+1)+(it.origemIA?' · sugerido pela IA':'')+'</b><button type="button" class="ph-rm" data-act="i-rm" data-g="'+k+'">Remover item</button></div>'+
     '<h4 class="stp-h">1. Evidência fotográfica</h4><div><div id="fi-'+k+'">'+thumbsI(it.fotos,k)+'</div></div>'+
-    (S.assets?'<div class="ph-actions"><label class="btn btn-primary file-btn"><input class="sr-only" type="file" accept="image/*" capture="environment" data-chg="foto-i" data-g="'+k+'">&#128247; Tirar foto</label><label class="btn btn-ghost file-btn"><input class="sr-only" type="file" accept="image/*" multiple data-chg="foto-i" data-g="'+k+'">&#128193; Galeria</label><button type="button" class="btn btn-ghost ph-cam" data-act="cam-open" data-kind="i" data-g="'+k+'">&#127909; Câmera do app</button></div><p class="muted small" id="fist-'+k+'" aria-live="polite"></p>':'')+
+    (S.assets?'<div class="ph-actions"><label class="btn btn-primary file-btn"><input class="sr-only" type="file" accept="image/*" capture="environment" data-chg="foto-i" data-g="'+k+'">&#128247; Tirar foto</label><label class="btn btn-ghost file-btn"><input class="sr-only" type="file" accept="image/*" multiple data-chg="foto-i" data-g="'+k+'">&#128193; Galeria</label></div><p class="muted small" id="fist-'+k+'" aria-live="polite"></p>':'')+
     (S.sample?'<div class="ia-btns"><button type="button" class="btn btn-ghost" data-act="ia-item" data-g="'+k+'">&#10024; Preencher item com IA a partir da foto</button><button type="button" class="btn btn-ghost" id="fiia-stop-'+k+'" data-act="ia-item-stop" hidden>Parar</button></div><div id="fiia-'+k+'" aria-live="polite" class="small ia-out"></div>':'')+
     '<h4 class="stp-h">2. Constatação</h4><div class="fields">'+
     F('Setor / local','setor','<input data-ik="setor" value="'+esc(it.setor||d.setor||'')+'" placeholder="Ex.: Almoxarifado, cobertura, sala de máquinas">',true)+
@@ -1330,7 +1330,7 @@ function viewTeste(){
   '<section class="card"><div class="card-h"><h2>1. Recursos</h2></div><div class="list">'+det+'</div><p class="muted small">Perfil: '+esc(S.perfil)+(S.me.name?' · '+esc(S.me.name):'')+'</p></section>'+
   '<section class="card"><div class="card-h"><h2>2. Foto, envio e IA</h2></div>'+
     '<p class="muted small">Tire uma foto qualquer. O teste mostra se a câmera funciona, se a foto é enviada ao armazenamento e se a IA consegue vê-la.</p>'+
-    '<div class="ph-actions"><label class="btn btn-primary file-btn"><input class="sr-only" type="file" accept="image/*" capture="environment" data-chg="tt-foto">&#128247; Tirar foto</label><label class="btn btn-ghost file-btn"><input class="sr-only" type="file" accept="image/*" data-chg="tt-foto">&#128193; Galeria</label><button type="button" class="btn btn-ghost ph-cam" data-act="cam-open" data-kind="t" data-g="0">&#127909; Câmera do app</button></div>'+
+    '<div class="ph-actions"><label class="btn btn-primary file-btn"><input class="sr-only" type="file" accept="image/*" capture="environment" data-chg="tt-foto">&#128247; Tirar foto</label><label class="btn btn-ghost file-btn"><input class="sr-only" type="file" accept="image/*" data-chg="tt-foto">&#128193; Galeria</label></div>'+
     '<div id="tt-foto" class="small ia-out" aria-live="polite"></div>'+
     '<div class="actions"><button type="button" class="btn btn-ghost" data-act="diag-cam">Diagnóstico da câmera</button></div><div id="tt-diag" class="small ia-out" aria-live="polite"></div>'+
     '<h3 style="margin:16px 0 6px">Teste simples de arquivo</h3><p class="muted small">Três jeitos de abrir a lista de arquivos. Diga qual abriu.</p>'+
@@ -1980,6 +1980,19 @@ function syncDraft(){
   var f=$('form[data-form="insp"]');if(!f||!S.route||!S.route.draft)return;syncGrupos();syncItens();
   Array.prototype.forEach.call(f.elements,function(el){if(el.name&&el.type!=='file')S.route.draft[el.name]=el.value});
 }
+function salvaRascunho(){
+  try{var r=S.route;if(!r||r.name!=='insp-form'||!r.draft)return;syncDraft();
+    localStorage.setItem('sevia.rascunho',JSON.stringify({uid:S.me.id,quando:Date.now(),id:r.id||'',draft:r.draft}))}catch(e){}
+}
+window.__seviaRascunho=salvaRascunho;
+function restauraRascunho(){
+  var o=null;try{o=JSON.parse(localStorage.getItem('sevia.rascunho')||'null');localStorage.removeItem('sevia.rascunho')}catch(e){}
+  if(!o||!o.draft||!S.me.id||o.uid!==S.me.id||Date.now()-o.quando>7*864e5)return;
+  var q=new Date(o.quando),hh=('0'+q.getHours()).slice(-2)+':'+('0'+q.getMinutes()).slice(-2);
+  confirmar('Rascunho não salvo','Você estava preenchendo um relatório e o sistema bloqueou por falta de uso (às '+hh+'). Quer continuar de onde parou? Se escolher Cancelar, o rascunho será descartado.','Continuar rascunho',function(){
+    S.view='inspecoes';S.skipHash=true;location.hash='#inspecoes';S.hist=[];
+    var rt={name:'insp-form',draft:o.draft};if(o.id)rt.id=o.id;S.route=rt;renderMain();window.scrollTo(0,0)});
+}
 document.addEventListener('click',function(e){
   var nvEl=$('#nav'),fab=$('#fab'),bg=$('#menu-bg');
   function menu(on){nvEl.classList.toggle('open',on);bg.hidden=!on;fab.setAttribute('aria-expanded',on?'true':'false');fab.setAttribute('aria-label',on?'Fechar menu':'Abrir menu')}
@@ -2198,7 +2211,7 @@ var espera=setInterval(function(){
       S.perfil=r.ow?(window.SEVIA_PERFIL==='Técnico ADM'?'Técnico ADM':'Administradora'):(r.ed?'Técnico SST':'Cliente/ADM');S.canWrite=r.ow||r.ed;
     }
     $('#app').classList.toggle('ro',!S.canWrite);
-    S.loaded.p=true;escopo();refresh();
+    S.loaded.p=true;escopo();refresh();setTimeout(restauraRascunho,800);
   });
 })();
 })();
@@ -2206,8 +2219,8 @@ var espera=setInterval(function(){
 <script>
 /* Bloqueio por inatividade: sai do sistema depois de alguns minutos sem uso. */
 (function(){
-  var LIMITE=10*60*1000, AVISO=60*1000, ultimo=Date.now(), aviso=null, saindo=false;
-  function sair(){if(saindo)return;saindo=true;try{sessionStorage.setItem('sevia.inativo','1')}catch(e){}
+  var LIMITE=5*60*1000, AVISO=60*1000, ultimo=Date.now(), aviso=null, saindo=false;
+  function sair(){if(saindo)return;saindo=true;try{if(window.__seviaRascunho)window.__seviaRascunho()}catch(e){}try{sessionStorage.setItem('sevia.inativo','1')}catch(e){}
     if(window.SEVIA_SAIR)window.SEVIA_SAIR();else location.replace('login.html')}
   function fechaAviso(){if(aviso){aviso.remove();aviso=null}}
   function atividade(){if(saindo)return;ultimo=Date.now();fechaAviso()}
