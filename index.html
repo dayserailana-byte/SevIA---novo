@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-20-1500 ia-foto-a-foto --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-20-1800 unidade-fotografico --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -409,6 +409,7 @@ function stGrupo(acs,vazio){
   return acs.some(vencida)?'Vencida':'Em andamento';
 }
 function stNc(n){if(n.classificacao==='Conformidade')return 'Concluída';return stGrupo(acoesDe(n.id),'Em andamento')}
+function unOk(i){return S.pf.unidade==='todas'||i.unidade===S.pf.unidade}
 function isIns(i){return !!i&&(i.tipo==='inspecao'||ncsDe(i.id).length>0)}
 function tr(i){return isIns(i)?'Inspeção':'Relatório'}
 function stInsp(i){
@@ -440,7 +441,7 @@ function escopo(){
 }
 function migra(){
   if(S.mig||!S.canWrite||!S.db||!ready())return;
-  var sem=S.R.insp.filter(function(i){return !i.numero});if(!sem.length)return;
+  var sem=S.R.insp.filter(function(i){return !i.numero&&!i.rascunho});if(!sem.length)return;
   S.mig=true;var max=Math.max.apply(null,S.R.insp.map(function(i){return i.numero||0}).concat([0]));
   sem.sort(function(a,b){return (a.criadoEm||0)-(b.criadoEm||0)||String(a.data).localeCompare(String(b.data))});
   Promise.all(sem.map(function(i,k){return S.db.doc('inspecoes/'+i.id).update({numero:max+k+1})})).catch(function(e){console.error(e);S.mig=false});
@@ -669,7 +670,7 @@ function evolucao(){
   for(k=11;k>=0;k--){var d=new Date(now.getFullYear(),now.getMonth()-k,1);ms.push({key:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'),l:MESES[d.getMonth()],v:0})}
   S.insp.forEach(function(i){
     if(S.pf.empresa!=='todas'&&i.empresaId!==S.pf.empresa)return;
-    if(S.pf.unidade!=='todas'&&i.unidade!==S.pf.unidade)return;
+    if(!unOk(i))return;
     var key=String(i.data||'').slice(0,7);ms.forEach(function(m){if(m.key===key)m.v++});
   });
   var max=Math.max.apply(null,ms.map(function(m){return m.v}).concat([1])),step=Math.max(1,Math.ceil(Math.max(4,max)/4)),yMax=step*4;
@@ -708,7 +709,7 @@ function viewPainel(){
 function filtrados(){
   var min='';
   if(S.pf.periodo!=='tudo'){var d=new Date();d.setDate(d.getDate()-({'30d':30,'90d':90,'12m':365}[S.pf.periodo]));min=isoDate(d)}
-  var fi=S.insp.filter(function(i){return (S.pf.empresa==='todas'||i.empresaId===S.pf.empresa)&&(S.pf.unidade==='todas'||i.unidade===S.pf.unidade)&&(!min||(i.data||'')>=min)});
+  var fi=S.insp.filter(function(i){return (S.pf.empresa==='todas'||i.empresaId===S.pf.empresa)&&unOk(i)&&(!min||(i.data||'')>=min)});
   var is={};fi.forEach(function(i){is[i.id]=1});
   var fn=S.ncs.filter(function(n){return is[n.inspId]}),ns={};fn.forEach(function(n){ns[n.id]=1});
   var fa=S.acoes.filter(function(a){return ns[a.ncId]});
@@ -771,7 +772,7 @@ function viewIndicadores(){
   /* período anterior (mesmo tamanho) para comparar a conformidade */
   var ant=null,dd={'30d':30,'90d':90,'12m':365}[S.pf.periodo];
   if(dd&&cp!=null){var d1=new Date(),d2=new Date(),d3=new Date();d1.setDate(d1.getDate()-dd);d2.setDate(d2.getDate()-2*dd);var mn=isoDate(d2),mx=isoDate(d1);
-    var ids2={};S.insp.forEach(function(i){if((S.pf.empresa==='todas'||i.empresaId===S.pf.empresa)&&(S.pf.unidade==='todas'||i.unidade===S.pf.unidade)&&noTipo(i)&&(i.data||'')>=mn&&(i.data||'')<mx)ids2[i.id]=1});
+    var ids2={};S.insp.forEach(function(i){if((S.pf.empresa==='todas'||i.empresaId===S.pf.empresa)&&unOk(i)&&noTipo(i)&&(i.data||'')>=mn&&(i.data||'')<mx)ids2[i.id]=1});
     var n2=S.ncs.filter(function(n){return ids2[n.inspId]}),c2=n2.filter(function(n){return n.classificacao==='Conformidade'}).length;
     if(n2.length)ant=cp-pct(c2,n2.length)}
   var atras=fa.filter(vencida).length,conc=fa.filter(function(a){return a.status==='Concluída'}).length,andam=fa.length-conc-atras;
@@ -1028,8 +1029,8 @@ function listaInsp(){
   var L=S.insp.slice().sort(function(a,b){return (b.numero||0)-(a.numero||0)||byData(a,b)}).filter(function(i){
     return (S.f.insp==='todas'||stInsp(i)===S.f.insp)&&(!q||(num(i)+' '+empNome(i)+' '+i.unidade+' '+i.setor+' '+i.responsavel).toLowerCase().indexOf(q)>-1)});
   if(!L.length)return '<p class="muted pad">'+(S.insp.length?'Nenhum relatório com esse filtro.':'Nenhum relatório registrado ainda.')+'</p>';
-  return L.map(function(i){var n=ncsDe(i.id).length,en=empNome(i),s=stInsp(i);
-    return '<button type="button" class="row" data-act="open-insp" data-id="'+esc(i.id)+'"><span class="row-main" style="cursor:inherit"><span class="insp-num">'+tr(i)+' Nº '+num(i)+'</span><b>'+esc(locDe(i)||empNome(i)||'Relatório')+'</b><span class="muted small">'+fmt(i.data)+(en?' · '+esc(en):'')+' · '+esc(i.responsavel||'sem responsável')+' · '+n+(n===1?' item':' itens')+(i.fotos&&i.fotos.length?' · '+i.fotos.length+' foto(s)':'')+'</span></span><span class="row-side">'+chip(s,sk(s))+'</span></button>'}).join('');
+  return L.map(function(i){var n=ncsDe(i.id).length,en=empNome(i),s=i.rascunho?'Rascunho':stInsp(i);
+    return '<button type="button" class="row" data-act="open-insp" data-id="'+esc(i.id)+'"><span class="row-main" style="cursor:inherit"><span class="insp-num">'+tr(i)+' Nº '+num(i)+'</span><b>'+esc(locDe(i)||empNome(i)||'Relatório')+'</b><span class="muted small">'+fmt(i.data)+(en?' · '+esc(en):'')+' · '+esc(i.responsavel||'sem responsável')+' · '+n+(n===1?' item':' itens')+(i.fotos&&i.fotos.length?' · '+i.fotos.length+' foto(s)':'')+'</span></span><span class="row-side">'+(i.rascunho?chip('Rascunho','neutral'):chip(s,sk(s)))+'</span></button>'}).join('');
 }
 function stp(n,t,h,inner,open){return '<details class="stp"'+(open?' open':'')+'><summary><span class="stp-n">'+n+'</span><span class="stp-t"><b>'+esc(t)+'</b><small>'+esc(h)+'</small></span></summary><div class="stp-b">'+inner+'</div></details>'}
 function formInsp(r){
@@ -1037,13 +1038,13 @@ function formInsp(r){
   var empOpts=[['','Selecione a empresa']].concat(S.empresas.map(function(e){return [e.id,e.nome]}));
   var uns=unidadesDe(d.empresaId||'__');if(d.unidade&&uns.indexOf(d.unidade)<0)uns.push(d.unidade);
   var sets=setoresDe(d.empresaId,d.unidade);if(d.setor&&sets.indexOf(d.setor)<0)sets.push(d.setor);
-  var respFixo=!!S.me.name;if(!d.grupos)d.grupos=gruposNovos();
+  var respFixo=!!S.me.name;if(!d.grupos)d.grupos=gruposNovos();var rasc=!!(r.id&&(inspDe(r.id)||{}).rascunho);
   return backBtn()+head(r.id?'Editar '+tr(inspDe(r.id)).toLowerCase()+' Nº '+num(inspDe(r.id)):(d.tipo==='inspecao'?'Nova inspeção de segurança':'Novo relatório fotográfico'))+
   (S.empresas.length?'':'<div class="banner"><span>Cadastre uma empresa com unidades e setores antes de criar o relatório.</span><button type="button" class="btn" data-act="new-empresa">Cadastrar empresa</button></div>')+
   '<form class="form stepform" data-form="insp" autocomplete="off">'+
-  stp(1,'Identificação',(d.tipo==='inspecao'?'Data, empresa, unidade e setor':'Data e empresa'),
+  stp(1,'Identificação',(d.tipo==='inspecao'?'Data, empresa, unidade e setor':'Data, empresa e unidade'),
     '<div class="fields">'+
-    field('Nº do relatório','f-num','<input id="f-num" value="'+(r.id?num(inspDe(r.id)):'Gerado ao salvar ('+String(proxNumero()).padStart(5,'0')+')')+'" readonly>')+
+    field('Nº do relatório','f-num','<input id="f-num" value="'+(r.id?(rasc?'Gerado ao finalizar':num(inspDe(r.id))):'Gerado ao salvar ('+String(proxNumero()).padStart(5,'0')+')')+'" readonly>')+
     field('Data','f-data','<input id="f-data" name="data" type="date" required value="'+esc(d.data)+'">')+
     field('Empresa','f-emp','<select id="f-emp" name="empresaId" required data-chg="insp-emp">'+opts(empOpts,d.empresaId||'')+'</select>')+
     field('CNPJ da empresa','f-cnpj','<input id="f-cnpj" value="'+esc(empCnpjDe(d.empresaId))+'" readonly placeholder="Aparece ao escolher a empresa">'+(d.empresaId&&!empCnpjDe(d.empresaId)?'<span class="muted small">Esta empresa ainda não tem CNPJ. Cadastre em Empresa &gt; Editar para ele sair nos documentos.</span>':''))+
@@ -1051,16 +1052,16 @@ function formInsp(r){
     field('Unidade','f-unidade','<select id="f-unidade" name="unidade" required data-chg="insp-un">'+opts([['','Selecione a unidade']].concat(uns),d.unidade||'')+'</select>')+
     field('Setor','f-setor','<select id="f-setor" name="setor" required>'+opts([['','Selecione o setor']].concat(sets),d.setor||'')+'</select>')+
     field('Realizado por','f-resp','<input id="f-resp" name="responsavel" '+(respFixo?'readonly':'required')+' value="'+esc(respFixo?S.me.name:d.responsavel)+'">')
-    :'<input type="hidden" name="unidade" value="'+esc(d.unidade||'')+'"><input type="hidden" name="setor" value="'+esc(d.setor||'')+'"><input type="hidden" name="responsavel" value="'+esc(respFixo?S.me.name:(d.responsavel||lsGet('sevia.resp')))+'">')+
+    :field('Unidade','f-unidade','<select id="f-unidade" name="unidade"'+(uns.length?' required':'')+' data-chg="insp-un">'+opts([['','Selecione a unidade']].concat(uns),d.unidade||'')+'</select>')+'<input type="hidden" name="setor" value="'+esc(d.setor||'')+'"><input type="hidden" name="responsavel" value="'+esc(respFixo?S.me.name:(d.responsavel||lsGet('sevia.resp')))+'">')+
     '</div>',true)+
   (d.tipo==='inspecao'?
-    (r.id?'<p class="muted small">As fotos e os dados de cada item são editados na tela da inspeção, em "Itens e não conformidades".</p>':stp(2,'Itens da inspeção','Foto, risco, classificação, requisito legal, criticidade e plano de ação',itensField(d),true))
+    (r.id&&!rasc?'<p class="muted small">As fotos e os dados de cada item são editados na tela da inspeção, em "Itens e não conformidades".</p>':stp(2,'Itens da inspeção','Foto, risco, classificação, requisito legal, criticidade e plano de ação',itensField(d),true))
   :
   stp(2,'Empresa executante','Quem executou o serviço',  '<div class="fields">'+camposCab(d)+'</div>',!!(d.execNome||d.execCnpj||!r.id))+
   stp(3,'Fotos','',gruposField(d)+autoPanel(),true)+
   stp(4,'Detalhes do serviço','Serviços, segurança, riscos e observações',camposForm(d,1,4,true)+field('Observações','f-obs','<textarea id="f-obs" name="observacoes" placeholder="Condições gerais do local, perigos identificados">'+esc(d.observacoes)+'</textarea>','full'),!!r.id)+
   stp(5,'Responsável técnico','Nome, função e registro profissional',camposForm(d,4,5,true),true))+
-  '<div class="savebar"><button type="button" class="btn btn-ghost" data-act="back">Cancelar</button><button class="btn btn-primary" type="submit">'+(d.tipo==='inspecao'?'Salvar inspeção':'Salvar relatório')+'</button></div></form>';
+  '<div class="savebar"><button type="button" class="btn btn-ghost" data-act="back">Cancelar</button><button type="button" class="btn btn-ghost" data-act="save-draft">Salvar rascunho</button><button class="btn btn-primary" type="submit">'+(rasc?'Finalizar e salvar':(d.tipo==='inspecao'?'Salvar inspeção':'Salvar relatório'))+'</button></div></form>';
 }
 function autoPanel(){
   return '<section class="ia ia2" aria-labelledby="au-t"><div class="ia-h"><h3 id="au-t"><span aria-hidden="true">&#10024;</span> Preenchimento automático</h3></div>'+
@@ -1092,7 +1093,7 @@ async function preencherIA(){
     var caps=await S.sample.limits().catch(function(){return null});
     if(!(caps&&caps.images)){out.textContent='As fotos não puderam ser enviadas à IA nesta visualização.';return}
     var n=Math.min(fotos.length,20);
-    var achados=[],lidas=0,falhas=0,ultErr=null;
+    var achados=[],obs=[],lidas=0,falhas=0,ultErr=null;
     for(var i=0;i<n;i++){
       if(S.route!==rt)return;
       if(auCtl.signal.aborted){var ce=new Error('cancelled');ce.code='cancelled';throw ce}
@@ -1100,20 +1101,21 @@ async function preencherIA(){
       var b=await fotoBlob(fotos[i]);
       if(!b){falhas++;continue}
       lidas++;
-      var p1='Você é engenheiro de segurança do trabalho no Brasil. Analise APENAS esta foto (grupo: '+rot[i]+'; empresa '+(empNomeDe(rt.draft.empresaId)||'não informada')+').\n\nRegras:\n- Liste somente riscos e não conformidades que a foto realmente mostra; não presuma o que não aparece.\n- Classifique cada achado em gravidade "Alta", "Média" ou "Baixa" (Alta = risco de lesão grave, incêndio, queda, choque elétrico ou exposição séria).\n- Não identifique pessoas.\n- Português do Brasil, frases curtas.\n\nResponda somente com JSON: {"achados":[{"descricao":"...","categoria":"físico|químico|biológico|ergonômico|acidente","gravidade":"Alta|Média|Baixa","evidencia":"o que se vê na foto"}],"verificar":["o que confirmar no local"]}. Se não houver riscos visíveis, use "achados":[].';
+      var p1='Você é engenheiro de segurança do trabalho no Brasil. Analise APENAS esta foto (grupo: '+rot[i]+'; empresa '+(empNomeDe(rt.draft.empresaId)||'não informada')+').\n\nRegras:\n- Liste somente riscos e não conformidades que a foto realmente mostra; não presuma o que não aparece.\n- Classifique cada achado em gravidade "Alta", "Média" ou "Baixa" (Alta = risco de lesão grave, incêndio, queda, choque elétrico ou exposição séria).\n- Não identifique pessoas.\n- Português do Brasil, frases curtas.\n\nAlém dos achados, registre o que a foto mostra de: EPI (em uso ou ausentes), isolamento e sinalização, ferramentas e equipamentos, atividade e ambiente. E identifique, como engenheiro de segurança, os perigos ocupacionais prováveis para o que aparece, por categoria (ex.: ferramenta elétrica ou motorizada, como furadeira, esmerilhadeira, serra, roçadeira ou compressor, indica risco físico de ruído e vibração; poeira, tintas, solventes ou produtos químicos indicam risco químico; esgoto, lixo, mofo ou animais indicam risco biológico; postura, carga ou repetição indicam risco ergonômico; altura, eletricidade, piso irregular ou máquina sem proteção indicam risco de acidente).\n\nResponda somente com JSON: {"achados":[{"descricao":"...","categoria":"físico|químico|biológico|ergonômico|acidente","gravidade":"Alta|Média|Baixa","evidencia":"o que se vê na foto"}],"observacoes":{"epi":"","isolamento":"","ferramentas":"","atividade":""},"riscos":{"fisicos":"","quimicos":"","biologicos":"","ergonomicos":"","acidentes":""},"verificar":["o que confirmar no local"]}. Deixe vazio o que a foto não permitir concluir.';
       try{
         var r1=await S.sample.json(p1,{signal:auCtl.signal,images:[b]});
         (Array.isArray(r1&&r1.achados)?r1.achados:[]).forEach(function(a){if(a&&a.descricao)achados.push({foto:i+1,grupo:rot[i],descricao:String(a.descricao),categoria:String(a.categoria||''),gravidade:String(a.gravidade||'Média'),evidencia:String(a.evidencia||'')})});
         (Array.isArray(r1&&r1.verificar)?r1.verificar:[]).forEach(function(v){if(v)achados.push({verificar:String(v)})});
+        if(r1&&(r1.observacoes||r1.riscos))obs.push({foto:i+1,grupo:rot[i],observacoes:r1.observacoes||{},riscos:r1.riscos||{}});
       }catch(e1){if(e1&&e1.code==='cancelled')throw e1;ultErr=e1;falhas++;console.error(e1)}
     }
     if(!lidas){out.textContent='Nenhuma foto pôde ser lida.';return}
     if(falhas>=lidas&&!achados.length)throw (ultErr||new Error('ia'));
     var riscos=achados.filter(function(a){return !a.verificar}),verif=achados.filter(function(a){return a.verificar}).map(function(a){return a.verificar});
-    if(!riscos.length){out.innerHTML='<p><b>A IA não identificou riscos visíveis nas '+lidas+' fotos analisadas.</b> Preencha os campos manualmente se necessário.</p>';return}
+    if(!riscos.length&&!obs.length){out.innerHTML='<p><b>A IA não identificou riscos visíveis nas '+lidas+' fotos analisadas.</b> Preencha os campos manualmente se necessário.</p>';return}
     out.textContent='Reunindo os riscos de maior gravidade…';
-    var chaves=CAMPOS.filter(function(c){return ['execNome','execCnpj','representante','equipe','codigoLocal','endereco','regProf','respNome','respFuncao','ordemServico','exames'].indexOf(c[0])<0}).map(function(c){return '"'+c[0]+'": '+(c[2]==='ta'?'["item", "item"]':'"texto"')+'  // '+c[1]});
-    var prompt='Você é engenheiro de segurança do trabalho no Brasil e vai preencher o RELATÓRIO DE CAMPO de uma inspeção. Cada foto já foi analisada separadamente; os achados estão abaixo (JSON).\n\nAchados:\n'+JSON.stringify(riscos)+'\n\nContexto: empresa '+(empNomeDe(rt.draft.empresaId)||'não informada')+', setor '+(rt.draft.setor||'não informado')+'.\n\nRegras obrigatórias:\n- Use nos campos APENAS os riscos de gravidade Alta. Se não houver nenhum de gravidade Alta, use no máximo os 3 mais graves. Ignore os riscos menores.\n- Junte achados repetidos em um só e não invente nada além dos achados.\n- Se não der para saber, deixe o campo vazio ("" ou []).\n- EPI: liste apenas o que consta nos achados; não conclua sobre treinamento, ordem de serviço, APR ou exames.\n- Não identifique pessoas.\n- Riscos: categorias físicos, químicos, biológicos, ergonômicos e acidentes, só com evidência.\n- Português do Brasil, frases curtas.\n- Em "verificar", liste o que precisa ser confirmado presencialmente.\n\nResponda somente com JSON neste formato:\n{"campos":{\n'+chaves.join(',\n')+'\n},"verificar":["..."]}';
+    var chaves=CAMPOS.filter(function(c){return ['execNome','execCnpj','representante','equipe','codigoLocal','endereco','regProf','respNome','respFuncao'].indexOf(c[0])<0}).map(function(c){return '"'+c[0]+'": '+(c[2]==='ta'?'["item", "item"]':'"texto"')+'  // '+c[1]});
+    var prompt='Você é engenheiro de segurança do trabalho no Brasil e vai preencher o RELATÓRIO DE CAMPO de uma inspeção. Cada foto já foi analisada separadamente; os achados estão abaixo (JSON).\n\nAchados (riscos):\n'+JSON.stringify(riscos)+'\n\nObservações e perigos prováveis por foto:\n'+JSON.stringify(obs)+'\n\nContexto: empresa '+(empNomeDe(rt.draft.empresaId)||'não informada')+', setor '+(rt.draft.setor||'não informado')+'.\n\nRegras obrigatórias:\n- Campos de riscos (rFis, rQuim, rBio, rErgo, rAcid): preencha cada um com TODOS os riscos identificados na categoria, desde o menor até o maior, a partir dos achados e dos perigos prováveis por foto, sem omitir os de gravidade Baixa; ordene do mais grave para o menos grave e junte os repetidos. Se não houver evidência para a categoria, escreva "Não identificado nas fotos analisadas."\n- Ruído: se aparecer ferramenta elétrica ou motorizada (furadeira, esmerilhadeira, serra, roçadeira, compressor etc.), registre em rFis o risco de ruído (e vibração, quando couber) e que a medição quantitativa (dosimetria ou decibelímetro) deve confirmar.\n- EPI, isolamento e sinalização, condições de ferramentas, atividades, serviços e local de trabalho: descreva o que as observações mostram (EPI em uso ou ausentes; isolamento e sinalização presentes ou ausentes). Se nada aparecer, escreva o que não foi possível verificar.\n- APR / procedimentos, ordem de serviço e exames ocupacionais são documentos e não aparecem em fotos: escreva "Não verificável pelas fotos; conferir no local."\n- Junte achados repetidos em um só e não invente nada além do que as fotos e os achados indicam.\n- Não identifique pessoas.\n- Riscos: categorias físicos, químicos, biológicos, ergonômicos e acidentes, só com evidência.\n- Português do Brasil, frases curtas.\n- Em "verificar", liste o que precisa ser confirmado presencialmente.\n\nResponda somente com JSON neste formato:\n{"campos":{\n'+chaves.join(',\n')+'\n},"verificar":["..."]}';
     var r=await S.sample.json(prompt,{signal:auCtl.signal});
     if(S.route!==rt)return;
     var c=(r&&r.campos&&typeof r.campos==='object')?r.campos:{},n2=0,el=f.elements;
@@ -1124,7 +1126,7 @@ async function preencherIA(){
       el[k].value=v.slice(0,2000);n2++;
     });
     var ver=(Array.isArray(r&&r.verificar)?r.verificar:[]).concat(verif).map(function(x){return String(x||'').trim()}).filter(function(x,j,a){return x&&a.indexOf(x)===j}).slice(0,8);
-    out.innerHTML='<p><b>'+n2+(n2===1?' campo preenchido':' campos preenchidos')+' pela IA.</b> As '+lidas+' fotos foram analisadas uma a uma e só os riscos de maior gravidade foram usados. Revise cada campo antes de salvar; campos que você já tinha preenchido não foram alterados.</p>'+(ver.length?'<p><b>Confirmar no local:</b></p><ul>'+ver.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>':'')+(falhas?'<p class="muted">'+falhas+(falhas===1?' foto não pôde ser analisada.':' fotos não puderam ser analisadas.')+'</p>':'')+(fotos.length>n?'<p class="muted">A IA analisou as '+n+' primeiras fotos.</p>':'');
+    out.innerHTML='<p><b>'+n2+(n2===1?' campo preenchido':' campos preenchidos')+' pela IA.</b> As '+lidas+' fotos foram analisadas uma a uma e todos os riscos identificados em cada categoria foram listados, do maior ao menor. Revise cada campo antes de salvar; campos que você já tinha preenchido não foram alterados.</p>'+(ver.length?'<p><b>Confirmar no local:</b></p><ul>'+ver.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>':'')+(falhas?'<p class="muted">'+falhas+(falhas===1?' foto não pôde ser analisada.':' fotos não puderam ser analisadas.')+'</p>':'')+(fotos.length>n?'<p class="muted">A IA analisou as '+n+' primeiras fotos.</p>':'');
   }catch(e){
     if(S.route!==rt)return;
     var m={cancelled:'Análise interrompida.',not_granted:'Você não permitiu o uso do Claude nesta página.',rate_limited:'Limite de uso atingido. Tente de novo mais tarde.',image_rejected:'Alguma foto não pôde ser lida pela IA.',invalid_json:'A resposta veio em formato inesperado. Tente de novo.',sampling_disabled:'O Claude não está disponível para esta conta.'}[e&&e.code]||'Não foi possível analisar agora. Preencha manualmente ou tente de novo.';
@@ -1269,6 +1271,7 @@ function draftInsp(i){
   var d={tipo:i.tipo||'',data:i.data,empresaId:i.empresaId||'',unidade:i.unidade||'',setor:i.setor||'',responsavel:i.responsavel||'',observacoes:i.observacoes||'',fotos:(i.fotos||[]).slice(),grupos:(i.grupos||[]).map(function(g){return {titulo:g.titulo||'',fotos:(g.fotos||[]).slice(),ia:g.ia!==false}})};
   CAMPOS.forEach(function(c){d[c[0]]=i[c[0]]||''});
   if(!d.grupos.length)d.grupos=gruposNovos();
+  if(i.rascunho&&i.tipo==='inspecao')d.itens=(i.itensRascunho&&i.itensRascunho.length)?i.itensRascunho:[itemVazio(d)];
   return d;
 }
 function camposView(i){
@@ -1292,7 +1295,7 @@ function viewInsp(id){
   var i=inspDe(id);if(!i){limpaRota();return viewTab()}
   var L=ncsDe(id).sort(byGrau),en=empNome(i),si=stInsp(i);
   return backBtn()+head(tr(i)+' Nº '+num(i),(locDe(i)?locDe(i)+' · ':'')+fmt(i.data)+(en?' · '+en:''),
-    (S.downloads?btn('Relatório em PDF','pdf',id,'btn-primary')+btn('Relatório em Word','word',id,'btn-primary')+(isIns(i)?btn('Excel','excel',id,'btn-primary'):''):'')+btn('Editar','edit-insp',id)+btn('Excluir','del-insp',id,'btn-danger'))+
+    (i.rascunho?btn('Continuar rascunho','edit-insp',id,'btn-primary'):'')+(S.downloads&&!i.rascunho?btn('Relatório em PDF','pdf',id,'btn-primary')+btn('Relatório em Word','word',id,'btn-primary')+(isIns(i)?btn('Excel','excel',id,'btn-primary'):''):'')+(i.rascunho?'':btn('Editar','edit-insp',id))+btn('Excluir','del-insp',id,'btn-danger'))+(i.rascunho?'<div class="banner"><span><b>Rascunho.</b> Este documento ainda não foi finalizado. Clique em "Continuar rascunho" para completar; o PDF e o Word só ficam disponíveis depois de finalizar.</span></div>':'')+
   '<section class="card"><dl class="kv"><div><dt>'+(isIns(i)?'Nº da inspeção':'Nº do relatório')+'</dt><dd>'+num(i)+'</dd></div><div><dt>Data</dt><dd>'+fmt(i.data)+'</dd></div><div><dt>Empresa</dt><dd>'+esc(en||'-')+'</dd></div>'+(i.unidade?'<div><dt>Unidade</dt><dd>'+esc(i.unidade)+'</dd></div>':'')+(i.setor?'<div><dt>Setor</dt><dd>'+esc(i.setor)+'</dd></div>':'')+'<div><dt>Realizado por</dt><dd>'+esc(i.responsavel||'-')+'</dd></div><div'+(isIns(i)?'':' hidden')+'><dt>Situação</dt><dd>'+chip(si,sk(si))+'</dd></div></dl>'+
   (i.observacoes?'<h3 style="margin-top:16px">Observações</h3><p class="text-block">'+esc(i.observacoes)+'</p>':'')+
   (i.fotos&&i.fotos.length?'<h3 style="margin:16px 0 8px">Evidências fotográficas</h3>'+thumbs(i.fotos):'')+'</section>'+camposView(i)+(isIns(i)?'<section class="card"><div class="card-h"><h2>Itens e não conformidades</h2>'+btn('Registrar item','new-nc',id,'btn-primary')+'</div>'+(L.length?'<div class="list">'+L.map(rowNc).join('')+'</div>':'<p class="muted">Nenhum item registrado nesta inspeção. Toque em "Registrar item": no item, a IA sugere a não conformidade e a ação a partir da foto.</p>')+'</section>':'');
@@ -1398,7 +1401,7 @@ function viewRel(){
   return head('Relatórios','Baixe o relatório fotográfico em Word ou PDF, com os grupos de fotos e o responsável técnico.')+
   (S.downloads?'':'<div class="card"><p class="muted">O download de arquivos não está disponível nesta visualização.</p></div>')+
   '<div class="card"><div class="list">'+(L.length?L.map(function(i){var n=ncsDe(i.id).length,en=empNome(i),s=stInsp(i);
-    return '<div class="row"><div class="row-main" style="cursor:default"><span class="insp-num">'+tr(i)+' Nº '+num(i)+'</span><b>'+esc(locDe(i)||empNome(i)||'Relatório')+'</b><span class="muted small">'+fmt(i.data)+(en?' · '+esc(en):'')+'</span></div><div class="row-side">'+chip(s,sk(s))+(S.downloads?btn('PDF','pdf',i.id,'btn-primary')+btn('Word','word',i.id,'btn-primary')+(n?btn('Excel','excel',i.id,'btn-primary'):''):'')+'</div></div>'}).join(''):'<p class="muted pad">Registre uma inspeção para emitir o relatório.</p>')+'</div></div>';
+    return '<div class="row"><div class="row-main" style="cursor:default"><span class="insp-num">'+tr(i)+' Nº '+num(i)+'</span><b>'+esc(locDe(i)||empNome(i)||'Relatório')+'</b><span class="muted small">'+fmt(i.data)+(en?' · '+esc(en):'')+'</span></div><div class="row-side">'+chip(s,sk(s))+(S.downloads?btn('PDF','pdf',i.id,'btn-primary')+btn('Word','word',i.id,'btn-primary')+(n?btn('Excel','excel',i.id,'btn-primary'):''):'')+(S.canWrite?btn('Excluir','del-insp',i.id,'btn-danger'):'')+'</div></div>'}).join(''):'<p class="muted pad">Registre uma inspeção para emitir o relatório.</p>')+'</div></div>';
 }
 
 
@@ -1524,7 +1527,7 @@ async function addFotos(files){
 }
 
 /* ---------- gravação ---------- */
-async function salvar(form){
+async function salvar(form,rascunho){
   if(S.saving||!S.db||!S.canWrite)return;
   var r=S.route,kind=form.dataset.form,fd=new FormData(form),v={};
   fd.forEach(function(val,key){v[key]=String(val).trim()});
@@ -1536,15 +1539,19 @@ async function salvar(form){
       col='inspecoes';old=r.id?inspDe(r.id):null;
       var emp=v.empresaId&&empDe(v.empresaId);
       var ehInspTipo=((old&&old.tipo)||r.draft.tipo)==='inspecao';
-      if(!v.empresaId||(ehInspTipo&&(!v.unidade||!v.setor))){nao(ehInspTipo?'Escolha empresa, unidade e setor.':'Escolha a empresa.');return}
+      if(!rascunho&&!ehInspTipo&&v.empresaId&&unidadesDe(v.empresaId).length&&!v.unidade){nao('Escolha a unidade.');return}
+      if(rascunho&&!v.empresaId){nao('Escolha a empresa para guardar o rascunho.');return}
+      if(!rascunho&&(!v.empresaId||(ehInspTipo&&(!v.unidade||!v.setor)))){nao(ehInspTipo?'Escolha empresa, unidade e setor.':'Escolha a empresa.');return}
       var exN=String(v.execNome||'').trim(),exC=String(v.execCnpj||'').trim();
-      if(exN&&!exC){nao('Informe o CNPJ da empresa executante.');return}
-      if(exC){if(!cnpjOk(exC)){nao('CNPJ da empresa executante inválido. Confira os números.');return}v.execCnpj=cnpjFmt(exC)}
-      if(!old&&contVigente(v.empresaId)===false){nao('O contrato desta empresa não está vigente. Cadastre ou renove o contrato antes de registrar inspeções.');return}
-      data={tipo:(old&&old.tipo)||r.draft.tipo||'fotografico',numero:(old&&old.numero)||proxNumero(),data:v.data,empresaId:v.empresaId,empresaNome:emp?emp.nome:'',empresaCnpj:emp?(emp.cnpj||''):'',unidade:v.unidade,setor:v.setor,responsavel:v.responsavel,realizadoPorId:(old&&old.realizadoPorId)||S.me.id,observacoes:v.observacoes||(old&&old.observacoes)||'',fotos:r.draft.fotos||[]};
+      if(!rascunho&&exN&&!exC){nao('Informe o CNPJ da empresa executante.');return}
+      if(!rascunho&&exC){if(!cnpjOk(exC)){nao('CNPJ da empresa executante inválido. Confira os números.');return}v.execCnpj=cnpjFmt(exC)}
+      if(!old&&contVigente(v.empresaId)===false&&!rascunho){nao('O contrato desta empresa não está vigente. Cadastre ou renove o contrato antes de registrar inspeções.');return}
+      data={tipo:(old&&old.tipo)||r.draft.tipo||'fotografico',numero:(old&&old.numero)||(rascunho?0:proxNumero()),data:v.data,empresaId:v.empresaId,empresaNome:emp?emp.nome:'',empresaCnpj:emp?(emp.cnpj||''):'',unidade:v.unidade,setor:v.setor,responsavel:v.responsavel,realizadoPorId:(old&&old.realizadoPorId)||S.me.id,observacoes:v.observacoes||(old&&old.observacoes)||'',fotos:r.draft.fotos||[]};
       CAMPOS.forEach(function(c){data[c[0]]=(c[0] in v)?v[c[0]]:((old&&old[c[0]])||'')});
       syncGrupos();syncItens();
-      if(r.draft.tipo==='inspecao'&&!r.id){
+      data.rascunho=!!rascunho;
+      if(rascunho){data.itensRascunho=(r.draft.tipo==='inspecao')?(r.draft.itens||[]):[]}else{data.itensRascunho=[]}
+      if(!rascunho&&r.draft.tipo==='inspecao'&&(!r.id||(old&&old.rascunho))){
         var IT=(r.draft.itens||[]).filter(function(x){return String(x.descricao||'').trim()||(x.fotos||[]).length||String(x.planoAcao||'').trim()});
         IT.forEach(function(x){if(!x.setor)x.setor=v.setor});
         for(var q=0;q<IT.length;q++){
@@ -1627,7 +1634,7 @@ async function salvar(form){
       }
     }
     await sync();
-    toast('Salvo.');S.saving=false;
+    toast(rascunho?'Rascunho salvo. Só você o vê, até finalizar.':'Salvo.');S.saving=false;
     if(kind==='usuario'&&!old){S.route={name:'usuario-ok',draft:{nome:data.nome,usuario:data.usuario,senha:apiSenha||senhaProv()}};S.hist=[];renderMain();window.scrollTo(0,0);return}
     if(kind==='empresa'||kind==='contrato'||kind==='usuario'){limpaRota();renderMain();window.scrollTo(0,0);return}
     go(kind==='insp'?{name:'insp',id:ref.id}:{name:'nc',id:kind==='nc'?ref.id:r.ncId},{replace:true});
@@ -1794,7 +1801,7 @@ async function gerarPDF(id){
   need(34);y+=14;doc.setDrawColor.apply(doc,TX);doc.setLineWidth(0.3);doc.line(PW/2-38,y,PW/2+38,y);y+=5;
   doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor.apply(doc,TX);doc.text(rt.nome||'-',PW/2,y,{align:'center'});y+=4.8;
   doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor.apply(doc,TX);doc.text(rt.funcao||'-',PW/2,y,{align:'center'});y+=4.5;
-  doc.text('Registro (REG / MTE): '+(rt.reg||'-'),PW/2,y,{align:'center'});y+=7;
+  doc.text('Registro MTE: '+(rt.reg||'-'),PW/2,y,{align:'center'});y+=7;
   var np=doc.internal.getNumberOfPages(),gen=new Date().toLocaleDateString('pt-BR');
   for(var p=1;p<=np;p++){doc.setPage(p);doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor.apply(doc,MU);
     doc.setDrawColor(201,201,201);doc.setLineWidth(0.2);doc.line(M,287,PW-M,287);doc.text('SevIA SST 4.0  |  '+(tipoIns?'Inspeção':'Relatório')+' nº '+num(insp)+'  |  Gerado em '+gen,M,291);doc.text('Página '+p+' de '+np,PW-M,291,{align:'right'})}
@@ -1871,7 +1878,7 @@ async function gerarWord(id){
     new D.Paragraph({alignment:D.AlignmentType.CENTER,spacing:{before:520},children:[new D.TextRun({text:'______________________________________',size:20})]}),
     new D.Paragraph({alignment:D.AlignmentType.CENTER,spacing:{before:60},children:[new D.TextRun({text:rt.nome||'-',bold:true,size:21})]}),
     new D.Paragraph({alignment:D.AlignmentType.CENTER,children:[new D.TextRun({text:rt.funcao||'-',size:20})]}),
-    new D.Paragraph({alignment:D.AlignmentType.CENTER,spacing:{after:120},children:[new D.TextRun({text:'Registro (REG / MTE): '+(rt.reg||'-'),size:20})]})
+    new D.Paragraph({alignment:D.AlignmentType.CENTER,spacing:{after:120},children:[new D.TextRun({text:'Registro MTE: '+(rt.reg||'-'),size:20})]})
   ]);
   var kids=[new D.Table({width:{size:TW,type:D.WidthType.DXA},layout:D.TableLayoutType.FIXED,columnWidths:[Math.round(TW/2),TW-Math.round(TW/2)],rows:TR})].concat(!ncs.length?[]:[
     P('Itens registrados: '+ncs.length+' (crítico '+cont['Crítico']+', alto '+cont['Alto']+', médio '+cont['Médio']+', baixo '+cont['Baixo']+')  |  Ações no plano: '+acs.length+' (vencidas: '+acs.filter(vencida).length+')',{before:160,after:60,size:18,color:'444444'})]);
@@ -2114,7 +2121,7 @@ document.addEventListener('click',function(e){
     case 'new-insp':var ni=novaInsp();if(el.dataset.tipo==='inspecao'){ni.draft.tipo='inspecao';ni.draft.itens=[itemVazio(ni.draft)]}go(ni);break;
     case 'open-insp':go({name:'insp',id:id});break;
     case 'edit-insp':var i=inspDe(id);go({name:'insp-form',id:id,draft:draftInsp(i)});break;
-    case 'del-insp':var n1=ncsDe(id).length;confirmar('Excluir inspeção','Isso também exclui os '+n1+' itens e as ações ligadas a ela. Não dá para desfazer.','Excluir',async function(){try{await delInsp(id);limpaRota();toast('Inspeção excluída.')}catch(er){console.error(er);toast('Não foi possível excluir.')}renderMain()});break;
+    case 'del-insp':var n1=ncsDe(id).length,i1=inspDe(id),ehI=isIns(i1),ehR=!!(i1&&i1.rascunho);confirmar(ehR?'Excluir rascunho':(ehI?'Excluir inspeção':'Excluir relatório'),(ehI?'Isso também exclui os '+n1+' itens e as ações ligadas a ela. ':'Isso exclui o relatório e os grupos de fotos dele. ')+'Não dá para desfazer.','Excluir',async function(){try{await delInsp(id);limpaRota();toast(ehR?'Rascunho excluído.':(ehI?'Inspeção excluída.':'Relatório excluído.'))}catch(er){console.error(er);toast('Não foi possível excluir.')}renderMain()});break;
     case 'new-nc':var dn=draftNc();dn.inspId=id||(S.route&&S.route.name==='insp'?S.route.id:(S.insp.slice().sort(byData)[0]||{}).id);dn.setor=(inspDe(dn.inspId)||{}).setor||'';go({name:'nc-form',draft:dn});break;
     case 'open-nc':go({name:'nc',id:id});break;
     case 'edit-nc':var n=ncDe(id),de=draftNc();Object.assign(de,{inspId:n.inspId,titulo:n.titulo,setor:n.setor||'',gravidade:grau(n),prioridade:prioDe(n),classificacao:n.classificacao||'Não conformidade',prazo:n.prazo||'',descricao:n.descricao||'',recomendacao:n.recomendacao||'',requisitoLegal:n.requisitoLegal||'',norma:n.norma||'',refValidada:!!n.refValidada,revisado:false,fotos:(n.fotos||[]).slice(),origemIA:!!n.origemIA});go({name:'nc-form',id:id,draft:de});break;
@@ -2150,6 +2157,7 @@ document.addEventListener('click',function(e){
     case 'ac-rm':confirmar('Remover acesso','Esta pessoa deixa de ter acesso a esta empresa. Deseja remover?','Remover',function(){acessoRm(id)});break;
     case 'copiar-ultima':copiarUltima();break;
     case 'ia-campo':preencherIA();break;
+    case 'save-draft':var fd0=$('form[data-form="insp"]');if(fd0)salvar(fd0,true);break;
     case 'ia-campo-stop':if(auCtl)auCtl.abort();break;
     case 'tt-up':ttUp();break;
     case 'tt-ia':ttIA();break;
