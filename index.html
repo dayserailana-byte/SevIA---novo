@@ -1,4 +1,5 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!doctype html><html lang="pt-BR"><head>
+<!-- versao-sevia 2026-11-19-2130 responsavel-tecnico --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -315,6 +316,8 @@ var CAMPOS=[
  ['respNome','Nome do responsável técnico','in'],['respFuncao','Função (ex.: Técnico em Segurança do Trabalho)','in'],['regProf','Registro profissional (REG / MTE)','in']
 ];
 var CD={};CAMPOS.forEach(function(c){CD[c[0]]=c});
+/* responsável técnico: o que está no relatório e, se vazio, o cadastro do usuário */
+function respTec(i){var eu=window.SEVIA_EU||{};return {nome:i.respNome||eu.nome||i.responsavel||'',funcao:i.respFuncao||eu.funcao||'',reg:i.regProf||eu.registro||''}}
 var GRP=[['Empresa executante',['execNome','execCnpj','representante','equipe','codigoLocal','endereco']],['Serviços e local de trabalho',['servicos','atividades','localTrabalho']],['Segurança no trabalho',['apr','condFerramentas','isolamento','atividadeEspecial','epi','ordemServico','exames']],['Riscos ocupacionais',['rFis','rQuim','rBio','rErgo','rAcid','rNota']],['Responsável técnico',['respNome','respFuncao','regProf']]];
 var S={marca:null,db:null,assets:null,downloads:null,sample:null,dbFail:false,insp:[],ncs:[],acoes:[],empresas:[],contratos:[],cad:null,user:null,me:{id:'',name:''},perfil:'Administradora',canWrite:true,acessos:null,mig:false,skipHash:false,
   R:{insp:[],ncs:[],acoes:[],empresas:[],contratos:[],usuarios:[]},
@@ -648,9 +651,7 @@ function viewPainel(){
   var nf=0;fi.forEach(function(i){nf+=(i.fotos||[]).length;(i.grupos||[]).forEach(function(g){nf+=(g.fotos||[]).length})});
   var emps={};fi.forEach(function(i){emps[i.empresaId||empNome(i)]=1});
   var recentes=fi.slice().sort(function(a,b){return String(b.data||'').localeCompare(String(a.data||''))||((b.numero||0)-(a.numero||0))}).slice(0,6);
-  return head('Painel',sub)+acoesRapidas('Criar novo')+filtrosPainel()+
-  '<div class="tiles">'+tile(fi.length,'Relatórios realizados','#inspecoes')+tile(noMes,'Relatórios neste mês','#inspecoes')+tile(nf,'Fotos registradas','#inspecoes')+tile(Object.keys(emps).length,'Empresas atendidas','#empresas')+'</div>'+
-  '<section class="card"><div class="card-h"><h2>Evolução dos relatórios</h2><span class="muted small">Últimos 12 meses</span></div>'+evolucao()+'</section>'+
+  return head('Painel',sub)+acoesRapidas('Criar novo')+
   '<section class="card"><div class="card-h"><h2>Últimos relatórios</h2></div><div class="list">'+recentes.map(function(i){return '<button type="button" class="row" data-act="open-insp" data-id="'+esc(i.id)+'"><span class="row-main" style="cursor:inherit"><span class="insp-num">'+tr(i)+' Nº '+num(i)+'</span><b>'+esc(i.setor)+' · '+esc(i.unidade)+'</b><span class="muted small">'+fmt(i.data)+' · '+esc(empNome(i))+'</span></span></button>'}).join('')+'</div></section>';
 }
 
@@ -791,6 +792,8 @@ function formUsuario(r){
     field('Nome completo','u-nome','<input id="u-nome" name="nome" required value="'+esc(d.nome)+'">','full')+
     field('E-mail (opcional, só para contato)','u-mail','<input id="u-mail" name="email" type="email" inputmode="email" autocapitalize="none" value="'+esc(d.email)+'">','full')+(r.id?'<div class="field full"><span class="lbl">Usuário (login)</span><p class="cred" style="font-size:18px">'+esc(d.usuario||usuarioDe(d.nome,r.id))+'</p></div>':'<p class="muted small" style="grid-column:1/-1">O usuário de acesso é gerado com o primeiro e o último nome. Ex.: Maria da Silva vira maria.silva.</p>')+
     field('Telefone (opcional)','u-tel','<input id="u-tel" name="telefone" type="tel" inputmode="tel" value="'+esc(d.telefone)+'">')+
+    field('Função (aparece nos relatórios)','u-func','<input id="u-func" name="funcao" placeholder="Ex.: Técnico em Segurança do Trabalho" value="'+esc(d.funcao)+'">')+
+    field('Registro profissional (REG / MTE)','u-reg','<input id="u-reg" name="registroProf" value="'+esc(d.registroProf)+'">')+
     field('Perfil de acesso','u-perf','<select id="u-perf" name="perfil" required>'+opts(PERFIS.map(function(x){return [x[0],x[1]]}),d.perfil)+'</select>')+
     field('Empresa (obrigatória para Cliente)','u-emp','<select id="u-emp" name="empresaId">'+opts([['','Todas / não se aplica']].concat(S.empresas.map(function(e){return [e.id,e.nome]})),d.empresaId)+'</select>','full')+
     (r.id?field('Situação','u-at','<select id="u-at" name="ativo">'+opts([['sim','Ativo'],['nao','Inativo']],d.ativo===false?'nao':'sim')+'</select>'):'')+
@@ -1073,12 +1076,13 @@ function draftInsp(i){
   return d;
 }
 function camposView(i){
-  var h=GRP.map(function(g){
+  var secs=GRP.map(function(g){
     var l=g[1].filter(function(k){return i[k]});if(!l.length)return '';
-    return '<section class="card"><div class="card-h"><h2>'+esc(g[0])+'</h2></div>'+l.map(function(k){return '<h3 style="margin-top:10px">'+esc(CD[k][1])+'</h3><p class="text-block">'+esc(i[k])+'</p>'}).join('')+'</section>'}).join('');
+    return '<section class="card"><div class="card-h"><h2>'+esc(g[0])+'</h2></div>'+l.map(function(k){return '<h3 style="margin-top:10px">'+esc(CD[k][1])+'</h3><p class="text-block">'+esc(i[k])+'</p>'}).join('')+'</section>'});
   var gr=(i.grupos||[]).filter(function(g){return g.fotos&&g.fotos.length});
-  if(gr.length)h+='<section class="card"><div class="card-h"><h2>Registros fotográficos</h2></div>'+gr.map(function(g){return '<h3 style="margin:12px 0 8px">'+esc(g.titulo||'Registros')+'</h3>'+thumbs(g.fotos)}).join('')+'</section>';
-  return h;
+  var fh=gr.length?'<section class="card"><div class="card-h"><h2>Registros fotográficos</h2></div>'+gr.map(function(g){return '<h3 style="margin:12px 0 8px">'+esc(g.titulo||'Registros')+'</h3>'+thumbs(g.fotos)}).join('')+'</section>':'';
+  /* mesma ordem dos arquivos: empresa executante, fotos e, abaixo, os campos preenchidos */
+  return secs[0]+fh+secs.slice(1).join('');
 }
 function cardLogo(){
   var tem=S.marca&&S.marca.logo;if(!S.assets&&!tem)return '';
@@ -1380,7 +1384,7 @@ async function salvar(form){
       if(slugU(v.nome).length<2){nao('Informe o nome completo.');return}
       var usr=(old&&old.usuario)||usuarioDe(v.nome,old&&old.id);
       if(v.perfil==='Cliente'&&!v.empresaId){nao('Escolha a empresa do cliente.');return}
-      data={nome:v.nome,usuario:usr,email:em2,telefone:v.telefone||'',perfil:v.perfil,empresaId:v.perfil==='Cliente'?v.empresaId:'',ativo:r.id?v.ativo!=='nao':true,status:(old&&old.status&&old.status!=='Convite pendente')?old.status:'Aguardando primeiro acesso',trocarSenha:old?old.trocarSenha!==false:true};
+      data={nome:v.nome,usuario:usr,email:em2,telefone:v.telefone||'',funcao:(v.funcao||'').trim(),registroProf:(v.registroProf||'').trim(),perfil:v.perfil,empresaId:v.perfil==='Cliente'?v.empresaId:'',ativo:r.id?v.ativo!=='nao':true,status:(old&&old.status&&old.status!=='Convite pendente')?old.status:'Aguardando primeiro acesso',trocarSenha:old?old.trocarSenha!==false:true};
     }else if(kind==='contrato'){
       col='contratos';old=r.id?S.contratos.filter(function(c){return c.id===r.id})[0]:null;
       if(v.fim<v.inicio){nao('O término da vigência não pode ser antes do início.');return}
@@ -1393,7 +1397,7 @@ async function salvar(form){
     }
     var apiSenha=null,ref;
     if(kind==='usuario'&&window.SEVIA_API){
-      var pl={nome:data.nome,email:data.email,telefone:data.telefone,perfil:data.perfil,empresaId:data.empresaId};
+      var pl={nome:data.nome,email:data.email,telefone:data.telefone,funcao:data.funcao,registroProf:data.registroProf,perfil:data.perfil,empresaId:data.empresaId};
       if(old){await window.SEVIA_API.atualizarUsuario(old.id,Object.assign({ativo:data.ativo},pl));ref={id:old.id,set:async function(){}}}
       else{var rs=await window.SEVIA_API.criarUsuario(pl);data.usuario=rs.usuario;apiSenha=rs.senha;ref={id:rs.id,set:async function(){}}}
     }else ref=r.id?S.db.doc(col+'/'+r.id):S.db.collection(col).doc();
@@ -1584,11 +1588,11 @@ async function gerarPDF(id){
       y+=5;
     }
   });
-  need(60);gn++;section(gn+'. Responsável técnico');
-  kv([['Nome',insp.respNome||insp.responsavel||'-'],['Função',insp.respFuncao||'-'],['Registro (REG / MTE)',insp.regProf||'-']]);
-  y+=12;need(30);doc.setDrawColor.apply(doc,TX);doc.setLineWidth(0.3);doc.line(M+20,y,M+CW-20,y);y+=4;
-  doc.setFont('helvetica','bold');doc.setFontSize(9.5);doc.setTextColor.apply(doc,TX);doc.text(insp.respNome||insp.responsavel||'',PW/2,y,{align:'center'});y+=4.5;
-  doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor.apply(doc,MU);doc.text([insp.respFuncao,insp.regProf?'REG '+insp.regProf:''].filter(Boolean).join('  ·  '),PW/2,y,{align:'center'});y+=7;
+  var rt=respTec(insp);
+  need(34);y+=14;doc.setDrawColor.apply(doc,TX);doc.setLineWidth(0.3);doc.line(PW/2-38,y,PW/2+38,y);y+=5;
+  doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor.apply(doc,TX);doc.text(rt.nome||'-',PW/2,y,{align:'center'});y+=4.8;
+  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor.apply(doc,TX);doc.text(rt.funcao||'-',PW/2,y,{align:'center'});y+=4.5;
+  doc.text('Registro (REG / MTE): '+(rt.reg||'-'),PW/2,y,{align:'center'});y+=7;
   var np=doc.internal.getNumberOfPages(),gen=new Date().toLocaleDateString('pt-BR');
   for(var p=1;p<=np;p++){doc.setPage(p);doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor.apply(doc,MU);
     doc.setDrawColor(201,201,201);doc.setLineWidth(0.2);doc.line(M,287,PW-M,287);doc.text('SevIA SST 4.0  |  '+(tipoIns?'Inspeção':'Relatório')+' nº '+num(insp)+'  |  Gerado em '+gen,M,291);doc.text('Página '+p+' de '+np,PW-M,291,{align:'right'})}
@@ -1659,7 +1663,13 @@ async function gerarWord(id){
   var rk=['rFis','rQuim','rBio','rErgo','rAcid'].filter(function(k){return insp[k]});
   if(rk.length||insp.rNota){var rr=[lbl('Riscos ocupacionais')];rk.forEach(function(k){rr.push(new D.Paragraph({spacing:{after:40},children:[new D.TextRun({text:CD[k][1].replace('Riscos ','').replace(/^./,function(c){return c.toUpperCase()})+': ',bold:true,size:20}),new D.TextRun({text:insp[k],size:20})]}))});if(insp.rNota)rr.push(new D.Paragraph({spacing:{before:80,after:40},children:[new D.TextRun({text:'Nota: ',bold:true,size:20}),new D.TextRun({text:insp.rNota,size:20})]}));row1(rr)}
   if(insp.observacoes)row1([lbl('Observações')].concat(lin(insp.observacoes)));
-  row1([new D.Paragraph({children:[new D.TextRun({text:'RESPONSÁVEL TÉCNICO: ',bold:true,size:20}),new D.TextRun({text:(insp.respNome||insp.responsavel||'-'),bold:true,size:20}),new D.TextRun({text:insp.respFuncao?'   FUNÇÃO: '+insp.respFuncao:'',bold:true,size:20}),new D.TextRun({text:insp.regProf?'   REG / MTE: '+insp.regProf:'',bold:true,size:20})]})]);
+  var rt=respTec(insp);
+  row1([
+    new D.Paragraph({alignment:D.AlignmentType.CENTER,spacing:{before:520},children:[new D.TextRun({text:'______________________________________',size:20})]}),
+    new D.Paragraph({alignment:D.AlignmentType.CENTER,spacing:{before:60},children:[new D.TextRun({text:rt.nome||'-',bold:true,size:21})]}),
+    new D.Paragraph({alignment:D.AlignmentType.CENTER,children:[new D.TextRun({text:rt.funcao||'-',size:20})]}),
+    new D.Paragraph({alignment:D.AlignmentType.CENTER,spacing:{after:120},children:[new D.TextRun({text:'Registro (REG / MTE): '+(rt.reg||'-'),size:20})]})
+  ]);
   var kids=[new D.Table({width:{size:TW,type:D.WidthType.DXA},layout:D.TableLayoutType.FIXED,columnWidths:[Math.round(TW/2),TW-Math.round(TW/2)],rows:TR})].concat(!ncs.length?[]:[
     P('Itens registrados: '+ncs.length+' (crítico '+cont['Crítico']+', alto '+cont['Alto']+', médio '+cont['Médio']+', baixo '+cont['Baixo']+')  |  Ações no plano: '+acs.length+' (vencidas: '+acs.filter(vencida).length+')',{before:160,after:60,size:18,color:'444444'})]);
   if(ncs.length)kids.push(P('Itens e não conformidades identificados',{b:true,size:26,h:D.HeadingLevel.HEADING_2,pb:true}));
@@ -1863,7 +1873,7 @@ function usarAchado(p,a){
 /* ---------- eventos ---------- */
 function novaInsp(){
   var ult=S.insp.slice().sort(byData)[0];
-  return {name:'insp-form',draft:{data:hoje(),empresaId:(ult&&ult.empresaId)||(S.empresas.length===1?S.empresas[0].id:''),unidade:(ult&&ult.unidade)||'',setor:'',responsavel:S.me.name||lsGet('sevia.resp'),observacoes:'',fotos:[],regProf:lsGet('sevia.reg'),respNome:S.me.name||lsGet('sevia.resp'),respFuncao:lsGet('sevia.func'),grupos:gruposNovos()}};
+  return {name:'insp-form',draft:{data:hoje(),empresaId:(ult&&ult.empresaId)||(S.empresas.length===1?S.empresas[0].id:''),unidade:(ult&&ult.unidade)||'',setor:'',responsavel:S.me.name||lsGet('sevia.resp'),observacoes:'',fotos:[],regProf:((window.SEVIA_EU||{}).registro)||lsGet('sevia.reg'),respNome:((window.SEVIA_EU||{}).nome)||S.me.name||lsGet('sevia.resp'),respFuncao:((window.SEVIA_EU||{}).funcao)||lsGet('sevia.func'),grupos:gruposNovos()}};
 }
 function draftNc(o){
   o=o||{};
@@ -1899,8 +1909,8 @@ document.addEventListener('click',function(e){
     case 'usuarios-fim':limpaRota();renderMain();window.scrollTo(0,0);break;
     case 'copiar-cred':var tx='Usuário: '+($('#cr-mail').textContent)+'\nSenha provisória: '+($('#cr-pass').textContent)+'\nNo primeiro acesso você deverá criar uma senha nova.';(function(){function man(){var rg=document.createRange();rg.selectNodeContents($('#cr-pass'));var sl=getSelection();sl.removeAllRanges();sl.addRange(rg);toast('Selecionei a senha. Copie manualmente.')}try{navigator.clipboard.writeText(tx).then(function(){toast('Copiado.')},man)}catch(er){man()}})();break;
     case 'reset-usuario':var ur=S.R.usuarios.filter(function(u){return u.id===id})[0];if(ur&&window.SEVIA_API){window.SEVIA_API.resetarUsuario(id).then(function(rs){S.route={name:'usuario-ok',draft:{nome:ur.nome,usuario:ur.usuario,senha:rs.senha}};S.hist=[];renderMain();window.scrollTo(0,0)}).catch(function(er){console.error(er);toast('Não foi possível gerar a senha: '+(er&&er.message||'erro'))})}else if(ur){S.db.doc('usuarios/'+id).update({usuario:ur.usuario||usuarioDe(ur.nome,ur.id),status:'Aguardando primeiro acesso',trocarSenha:true,atualizadoEm:Date.now()}).then(function(){S.route={name:'usuario-ok',draft:{nome:ur.nome,usuario:ur.usuario||usuarioDe(ur.nome,ur.id),senha:senhaProv()}};S.hist=[];renderMain();window.scrollTo(0,0)}).catch(function(er){console.error(er);toast('Não foi possível gerar a senha.')})}break;
-    case 'new-usuario':abre('usuarios',{name:'usuario-form',draft:{nome:'',email:'',telefone:'',perfil:'Técnico SST',empresaId:'',ativo:true}});break;
-    case 'edit-usuario':var us1=S.R.usuarios.filter(function(u){return u.id===id})[0];if(us1)go({name:'usuario-form',id:id,draft:{nome:us1.nome,usuario:us1.usuario||'',email:us1.email||'',telefone:us1.telefone||'',perfil:us1.perfil,empresaId:us1.empresaId||'',ativo:us1.ativo!==false}});break;
+    case 'new-usuario':abre('usuarios',{name:'usuario-form',draft:{nome:'',email:'',telefone:'',funcao:'',registroProf:'',perfil:'Técnico SST',empresaId:'',ativo:true}});break;
+    case 'edit-usuario':var us1=S.R.usuarios.filter(function(u){return u.id===id})[0];if(us1)go({name:'usuario-form',id:id,draft:{nome:us1.nome,usuario:us1.usuario||'',email:us1.email||'',telefone:us1.telefone||'',funcao:us1.funcao||'',registroProf:us1.registroProf||'',perfil:us1.perfil,empresaId:us1.empresaId||'',ativo:us1.ativo!==false}});break;
     case 'bloq-usuario':var ub=S.R.usuarios.filter(function(u){return u.id===id})[0];if(!ub)break;if(S.me&&S.me.id&&id===S.me.id){toast('Você não pode bloquear o seu próprio acesso.');break}var desb=ub.ativo===false;confirmar(desb?'Desbloquear acesso':'Bloquear acesso',desb?'O usuário volta a conseguir entrar no sistema.':'O usuário não consegue mais entrar e perde o acesso aos dados na hora. Os registros dele são mantidos e você pode desbloquear quando quiser.',desb?'Desbloquear':'Bloquear',async function(){try{if(window.SEVIA_API)await window.SEVIA_API.atualizarUsuario(id,{nome:ub.nome,email:ub.email||'',telefone:ub.telefone||'',perfil:ub.perfil,empresaId:ub.empresaId||'',ativo:desb});else await S.db.doc('usuarios/'+id).update({ativo:desb,atualizadoEm:Date.now()});upsert('usuarios',id,Object.assign({},ub,{ativo:desb,atualizadoEm:Date.now()}));limpaRota();renderMain();toast(desb?'Acesso desbloqueado.':'Acesso bloqueado.')}catch(er){console.error(er);toast('Não foi possível alterar o acesso: '+(er&&er.message||'erro'))}});break;
     case 'del-usuario':confirmar('Excluir usuário','O usuário deixa de constar na lista de acessos.','Excluir',async function(){try{if(window.SEVIA_API)await window.SEVIA_API.excluirUsuario(id);else await S.db.doc('usuarios/'+id).delete();S.R.usuarios=S.R.usuarios.filter(function(u){return u.id!==id});limpaRota();renderMain();toast('Usuário excluído.')}catch(er){console.error(er);toast('Não foi possível excluir.')}});break;
     case 'new-empresa':abre('empresas',{name:'empresa-form',draft:{nome:'',cnpj:'',contato:'',unidades:[{nome:'',setores:[]}]}});break;
