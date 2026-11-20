@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-20-1930 manual-inicio --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-20-1400 sem-unidade-setor-realizado --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -394,6 +394,7 @@ function ncDe(id){return S.ncs.filter(function(x){return x.id===id})[0]}
 function empDe(id){return S.empresas.filter(function(x){return x.id===id})[0]}
 function empCnpjDe(id){var e=id&&empDe(id);return e?(e.cnpj||''):''}
 function empCnpj(i){return empCnpjDe(i.empresaId)||i.empresaCnpj||''}
+function locDe(i){return [i.setor,i.unidade].filter(Boolean).join(' · ')}
 function empNome(i){var e=i.empresaId&&empDe(i.empresaId);return e?e.nome:(i.empresaNome||'')}
 function ncsDe(id){return S.ncs.filter(function(x){return x.inspId===id})}
 function acoesDe(id){return S.acoes.filter(function(x){return x.ncId===id})}
@@ -747,7 +748,7 @@ function viewConcluidas(){
   '<div class="cols"><section class="card"><div class="card-h"><h2>Situação das inspeções</h2></div>'+donut([{l:'Concluídas',v:C.length,c:'var(--ok)'},{l:'Em andamento',v:abertas-venc,c:'var(--info)'},{l:'Vencidas',v:venc,c:'var(--danger)'}],fi.length,'Inspeções',fi.length+' inspeções por situação')+'</section>'+
   '<section class="card"><div class="card-h"><h2>Concluídas por mês</h2><span class="muted small">Últimos 12 meses</span></div>'+barrasMes(serieMes(C.map(function(c){return c.dc})),'Relatórios concluídos por mês, total '+C.length)+'</section></div>'+
   '<section class="card"><div class="card-h"><h2>Lista de concluídas</h2></div><div class="list">'+(C.length?C.slice(0,30).map(function(c){var i=c.i;
-    return '<button type="button" class="row" data-act="open-insp" data-id="'+esc(i.id)+'"><span class="row-main" style="cursor:inherit"><span class="insp-num">'+tr(i)+' Nº '+num(i)+'</span><b>'+esc(i.setor)+' · '+esc(i.unidade)+'</b><span class="muted small">'+esc(empNome(i))+' · realizada em '+fmt(i.data)+' · concluída em '+fmt(c.dc)+' · '+ncsDe(i.id).length+' itens</span></span><span class="row-side">'+chip('Concluída','st-ok')+'</span></button>'}).join(''):'<p class="muted pad">Nenhuma inspeção concluída neste filtro.</p>')+'</div></section>';
+    return '<button type="button" class="row" data-act="open-insp" data-id="'+esc(i.id)+'"><span class="row-main" style="cursor:inherit"><span class="insp-num">'+tr(i)+' Nº '+num(i)+'</span><b>'+esc(locDe(i)||empNome(i)||'Relatório')+'</b><span class="muted small">'+esc(empNome(i))+' · realizada em '+fmt(i.data)+' · concluída em '+fmt(c.dc)+' · '+ncsDe(i.id).length+' itens</span></span><span class="row-side">'+chip('Concluída','st-ok')+'</span></button>'}).join(''):'<p class="muted pad">Nenhuma inspeção concluída neste filtro.</p>')+'</div></section>';
 }
 function ixDonut(parts,center,sub,label){
   var C=263.9,tot=parts.reduce(function(a,x){return a+x.v},0),cum=0,c='';
@@ -976,7 +977,7 @@ function viewManual(){
     ol(['Abra <b>Relatórios e inspeções</b> e toque no relatório que quer ver.','Para baixar, vá em <b>Baixar relatórios</b> e toque em <b>PDF</b> ou <b>Word</b>.','Em <b>Indicadores</b>, use os filtros de unidade, período e tipo de relatório para acompanhar os números da sua empresa.'])+'<p>Você só consulta. Para corrigir ou incluir algo, fale com o responsável técnico da sua empresa.</p>'],
   ['Novo relatório fotográfico',tec,
     '<p>Na tela <b>Início</b> ou em <b>Relatórios e inspeções</b>, toque em <b>Novo relatório fotográfico</b>. O formulário tem etapas que abrem e fecham ao tocar no título. Para salvar é preciso que a empresa tenha um <b>contrato vigente</b>.</p>'+
-    ol(['<b>Identificação:</b> data, empresa, unidade e setor. O <b>CNPJ da empresa</b> aparece sozinho ao escolher a empresa. O campo &ldquo;Realizado por&rdquo; vem com o seu nome.','<b>Empresa executante:</b> quem executou o serviço. Se você informar o nome, o <b>CNPJ</b> é obrigatório e precisa ser um CNPJ válido.','<b>Fotos:</b> as fotos ficam em grupos. Use <b>Tirar foto</b> ou <b>Galeria</b>. Para remover uma foto, toque no <b>X</b> vermelho dela. Os grupos podem ser renomeados, adicionados ou removidos.','<b>Detalhes do serviço:</b> serviços, segurança, riscos e observações.','<b>Responsável técnico:</b> nome, função e registro profissional. Já vêm do seu cadastro.'])+
+    ol(['<b>Identificação:</b> data e empresa. O <b>CNPJ da empresa</b> aparece sozinho ao escolher a empresa. O seu nome sai no relatório como quem realizou o trabalho.','<b>Empresa executante:</b> quem executou o serviço. Se você informar o nome, o <b>CNPJ</b> é obrigatório e precisa ser um CNPJ válido.','<b>Fotos:</b> as fotos ficam em grupos. Use <b>Tirar foto</b> ou <b>Galeria</b>. Para remover uma foto, toque no <b>X</b> vermelho dela. Os grupos podem ser renomeados, adicionados ou removidos.','<b>Detalhes do serviço:</b> serviços, segurança, riscos e observações.','<b>Responsável técnico:</b> nome, função e registro profissional. Já vêm do seu cadastro.'])+
     '<p>No final, toque em <b>Salvar relatório</b>. O número do relatório é gerado ao salvar.</p>'],
   ['Preenchimento com a IA',tec,
     '<p>No grupo <b>Registros das atividades</b>, a IA analisa as fotos e sugere o preenchimento dos campos do relatório. Para usar:</p>'+
@@ -1028,7 +1029,7 @@ function listaInsp(){
     return (S.f.insp==='todas'||stInsp(i)===S.f.insp)&&(!q||(num(i)+' '+empNome(i)+' '+i.unidade+' '+i.setor+' '+i.responsavel).toLowerCase().indexOf(q)>-1)});
   if(!L.length)return '<p class="muted pad">'+(S.insp.length?'Nenhum relatório com esse filtro.':'Nenhum relatório registrado ainda.')+'</p>';
   return L.map(function(i){var n=ncsDe(i.id).length,en=empNome(i),s=stInsp(i);
-    return '<button type="button" class="row" data-act="open-insp" data-id="'+esc(i.id)+'"><span class="row-main" style="cursor:inherit"><span class="insp-num">'+tr(i)+' Nº '+num(i)+'</span><b>'+esc(i.setor)+' · '+esc(i.unidade)+'</b><span class="muted small">'+fmt(i.data)+(en?' · '+esc(en):'')+' · '+esc(i.responsavel||'sem responsável')+' · '+n+(n===1?' item':' itens')+(i.fotos&&i.fotos.length?' · '+i.fotos.length+' foto(s)':'')+'</span></span><span class="row-side">'+chip(s,sk(s))+'</span></button>'}).join('');
+    return '<button type="button" class="row" data-act="open-insp" data-id="'+esc(i.id)+'"><span class="row-main" style="cursor:inherit"><span class="insp-num">'+tr(i)+' Nº '+num(i)+'</span><b>'+esc(locDe(i)||empNome(i)||'Relatório')+'</b><span class="muted small">'+fmt(i.data)+(en?' · '+esc(en):'')+' · '+esc(i.responsavel||'sem responsável')+' · '+n+(n===1?' item':' itens')+(i.fotos&&i.fotos.length?' · '+i.fotos.length+' foto(s)':'')+'</span></span><span class="row-side">'+chip(s,sk(s))+'</span></button>'}).join('');
 }
 function stp(n,t,h,inner,open){return '<details class="stp"'+(open?' open':'')+'><summary><span class="stp-n">'+n+'</span><span class="stp-t"><b>'+esc(t)+'</b><small>'+esc(h)+'</small></span></summary><div class="stp-b">'+inner+'</div></details>'}
 function formInsp(r){
@@ -1040,15 +1041,17 @@ function formInsp(r){
   return backBtn()+head(r.id?'Editar '+tr(inspDe(r.id)).toLowerCase()+' Nº '+num(inspDe(r.id)):(d.tipo==='inspecao'?'Nova inspeção de segurança':'Novo relatório fotográfico'))+
   (S.empresas.length?'':'<div class="banner"><span>Cadastre uma empresa com unidades e setores antes de criar o relatório.</span><button type="button" class="btn" data-act="new-empresa">Cadastrar empresa</button></div>')+
   '<form class="form stepform" data-form="insp" autocomplete="off">'+
-  stp(1,'Identificação','Data, empresa, unidade e setor',
+  stp(1,'Identificação',(d.tipo==='inspecao'?'Data, empresa, unidade e setor':'Data e empresa'),
     '<div class="fields">'+
     field('Nº do relatório','f-num','<input id="f-num" value="'+(r.id?num(inspDe(r.id)):'Gerado ao salvar ('+String(proxNumero()).padStart(5,'0')+')')+'" readonly>')+
     field('Data','f-data','<input id="f-data" name="data" type="date" required value="'+esc(d.data)+'">')+
     field('Empresa','f-emp','<select id="f-emp" name="empresaId" required data-chg="insp-emp">'+opts(empOpts,d.empresaId||'')+'</select>')+
     field('CNPJ da empresa','f-cnpj','<input id="f-cnpj" value="'+esc(empCnpjDe(d.empresaId))+'" readonly placeholder="Aparece ao escolher a empresa">'+(d.empresaId&&!empCnpjDe(d.empresaId)?'<span class="muted small">Esta empresa ainda não tem CNPJ. Cadastre em Empresa &gt; Editar para ele sair nos documentos.</span>':''))+
+    (d.tipo==='inspecao'?
     field('Unidade','f-unidade','<select id="f-unidade" name="unidade" required data-chg="insp-un">'+opts([['','Selecione a unidade']].concat(uns),d.unidade||'')+'</select>')+
     field('Setor','f-setor','<select id="f-setor" name="setor" required>'+opts([['','Selecione o setor']].concat(sets),d.setor||'')+'</select>')+
-    field('Realizado por','f-resp','<input id="f-resp" name="responsavel" '+(respFixo?'readonly':'required')+' value="'+esc(respFixo?S.me.name:d.responsavel)+'">')+
+    field('Realizado por','f-resp','<input id="f-resp" name="responsavel" '+(respFixo?'readonly':'required')+' value="'+esc(respFixo?S.me.name:d.responsavel)+'">')
+    :'<input type="hidden" name="unidade" value="'+esc(d.unidade||'')+'"><input type="hidden" name="setor" value="'+esc(d.setor||'')+'"><input type="hidden" name="responsavel" value="'+esc(respFixo?S.me.name:(d.responsavel||lsGet('sevia.resp')))+'">')+
     '</div>',true)+
   (d.tipo==='inspecao'?
     (r.id?'<p class="muted small">As fotos e os dados de cada item são editados na tela da inspeção, em "Itens e não conformidades".</p>':stp(2,'Itens da inspeção','Foto, risco, classificação, requisito legal, criticidade e plano de ação',itensField(d),true))
@@ -1271,9 +1274,9 @@ function fotoField(d){
 function viewInsp(id){
   var i=inspDe(id);if(!i){limpaRota();return viewTab()}
   var L=ncsDe(id).sort(byGrau),en=empNome(i),si=stInsp(i);
-  return backBtn()+head(tr(i)+' Nº '+num(i),i.setor+' · '+i.unidade+' · '+fmt(i.data)+(en?' · '+en:''),
+  return backBtn()+head(tr(i)+' Nº '+num(i),(locDe(i)?locDe(i)+' · ':'')+fmt(i.data)+(en?' · '+en:''),
     (S.downloads?btn('Relatório em PDF','pdf',id,'btn-primary')+btn('Relatório em Word','word',id,'btn-primary')+(isIns(i)?btn('Excel','excel',id,'btn-primary'):''):'')+btn('Editar','edit-insp',id)+btn('Excluir','del-insp',id,'btn-danger'))+
-  '<section class="card"><dl class="kv"><div><dt>'+(isIns(i)?'Nº da inspeção':'Nº do relatório')+'</dt><dd>'+num(i)+'</dd></div><div><dt>Data</dt><dd>'+fmt(i.data)+'</dd></div><div><dt>Empresa</dt><dd>'+esc(en||'-')+'</dd></div><div><dt>Unidade</dt><dd>'+esc(i.unidade)+'</dd></div><div><dt>Setor</dt><dd>'+esc(i.setor)+'</dd></div><div><dt>Realizado por</dt><dd>'+esc(i.responsavel||'-')+'</dd></div><div'+(isIns(i)?'':' hidden')+'><dt>Situação</dt><dd>'+chip(si,sk(si))+'</dd></div></dl>'+
+  '<section class="card"><dl class="kv"><div><dt>'+(isIns(i)?'Nº da inspeção':'Nº do relatório')+'</dt><dd>'+num(i)+'</dd></div><div><dt>Data</dt><dd>'+fmt(i.data)+'</dd></div><div><dt>Empresa</dt><dd>'+esc(en||'-')+'</dd></div>'+(i.unidade?'<div><dt>Unidade</dt><dd>'+esc(i.unidade)+'</dd></div>':'')+(i.setor?'<div><dt>Setor</dt><dd>'+esc(i.setor)+'</dd></div>':'')+'<div><dt>Realizado por</dt><dd>'+esc(i.responsavel||'-')+'</dd></div><div'+(isIns(i)?'':' hidden')+'><dt>Situação</dt><dd>'+chip(si,sk(si))+'</dd></div></dl>'+
   (i.observacoes?'<h3 style="margin-top:16px">Observações</h3><p class="text-block">'+esc(i.observacoes)+'</p>':'')+
   (i.fotos&&i.fotos.length?'<h3 style="margin:16px 0 8px">Evidências fotográficas</h3>'+thumbs(i.fotos):'')+'</section>'+camposView(i)+(isIns(i)?'<section class="card"><div class="card-h"><h2>Itens e não conformidades</h2>'+btn('Registrar item','new-nc',id,'btn-primary')+'</div>'+(L.length?'<div class="list">'+L.map(rowNc).join('')+'</div>':'<p class="muted">Nenhum item registrado nesta inspeção. Toque em "Registrar item": no item, a IA sugere a não conformidade e a ação a partir da foto.</p>')+'</section>':'');
 }
@@ -1301,7 +1304,7 @@ function listaNc(){
 }
 function formNc(r){
   var d=r.draft;
-  var inspOpts=S.insp.slice().sort(byData).map(function(i){return [i.id,'Nº '+num(i)+' · '+fmt(i.data)+' · '+i.setor+' · '+i.unidade]});
+  var inspOpts=S.insp.slice().sort(byData).map(function(i){return [i.id,'Nº '+num(i)+' · '+fmt(i.data)+(locDe(i)?' · '+locDe(i):'')]});
   var temPlano=!!r.id&&acoesDe(r.id).length>0;
   return backBtn()+head(r.id?'Editar item':'Novo item da inspeção')+
   '<form class="card form" data-form="nc" autocomplete="off"><div class="fields">'+
@@ -1328,7 +1331,7 @@ function formNc(r){
 function viewNc(id){
   var n=ncDe(id);if(!n){limpaRota();return viewTab()}
   var insp=inspDe(n.inspId),L=acoesDe(id).sort(byPrazo),s=stNc(n);
-  return backBtn()+head(n.titulo,insp?tr(insp)+' Nº '+num(insp)+' · '+fmt(insp.data)+' · '+insp.setor+' · '+insp.unidade:'',btn('Editar','edit-nc',id)+btn('Excluir','del-nc',id,'btn-danger'))+
+  return backBtn()+head(n.titulo,insp?tr(insp)+' Nº '+num(insp)+' · '+fmt(insp.data)+(locDe(insp)?' · '+locDe(insp):''):'',btn('Editar','edit-nc',id)+btn('Excluir','del-nc',id,'btn-danger'))+
   '<section class="card"><dl class="kv"><div><dt>Status</dt><dd>'+chip(s,sk(s))+'</dd></div><div><dt>Prioridade</dt><dd>'+prio(prioDe(n))+'</dd></div><div><dt>Grau de risco</dt><dd>'+chip(grau(n),gk(grau(n)))+'</dd></div><div><dt>Classificação</dt><dd>'+esc(n.classificacao||'Não conformidade')+'</dd></div><div><dt>Prazo</dt><dd>'+fmt(n.prazo)+'</dd></div><div><dt>Local ou setor</dt><dd>'+esc(n.setor||'-')+'</dd></div><div><dt>Revisão</dt><dd>'+(n.revisadoEm?'Conferido por '+esc(n.revisadoPor||'-')+' em '+fmt(n.revisadoEm):'Sem revisão registrada')+'</dd></div></dl>'+
   (n.descricao?'<h3 style="margin-top:16px">Descrição</h3><p class="text-block">'+esc(n.descricao)+'</p>':'')+
   '<h3 style="margin-top:16px">Norma / item / subitem</h3><p class="text-block">'+esc(n.norma||'-')+'</p>'+
@@ -1378,7 +1381,7 @@ function viewRel(){
   return head('Relatórios','Baixe o relatório fotográfico em Word ou PDF, com os grupos de fotos e o responsável técnico.')+
   (S.downloads?'':'<div class="card"><p class="muted">O download de arquivos não está disponível nesta visualização.</p></div>')+
   '<div class="card"><div class="list">'+(L.length?L.map(function(i){var n=ncsDe(i.id).length,en=empNome(i),s=stInsp(i);
-    return '<div class="row"><div class="row-main" style="cursor:default"><span class="insp-num">'+tr(i)+' Nº '+num(i)+'</span><b>'+esc(i.setor)+' · '+esc(i.unidade)+'</b><span class="muted small">'+fmt(i.data)+(en?' · '+esc(en):'')+'</span></div><div class="row-side">'+chip(s,sk(s))+(S.downloads?btn('PDF','pdf',i.id,'btn-primary')+btn('Word','word',i.id,'btn-primary')+(n?btn('Excel','excel',i.id,'btn-primary'):''):'')+'</div></div>'}).join(''):'<p class="muted pad">Registre uma inspeção para emitir o relatório.</p>')+'</div></div>';
+    return '<div class="row"><div class="row-main" style="cursor:default"><span class="insp-num">'+tr(i)+' Nº '+num(i)+'</span><b>'+esc(locDe(i)||empNome(i)||'Relatório')+'</b><span class="muted small">'+fmt(i.data)+(en?' · '+esc(en):'')+'</span></div><div class="row-side">'+chip(s,sk(s))+(S.downloads?btn('PDF','pdf',i.id,'btn-primary')+btn('Word','word',i.id,'btn-primary')+(n?btn('Excel','excel',i.id,'btn-primary'):''):'')+'</div></div>'}).join(''):'<p class="muted pad">Registre uma inspeção para emitir o relatório.</p>')+'</div></div>';
 }
 
 
@@ -1515,7 +1518,8 @@ async function salvar(form){
     if(kind==='insp'){
       col='inspecoes';old=r.id?inspDe(r.id):null;
       var emp=v.empresaId&&empDe(v.empresaId);
-      if(!v.empresaId||!v.unidade||!v.setor){nao('Escolha empresa, unidade e setor.');return}
+      var ehInspTipo=((old&&old.tipo)||r.draft.tipo)==='inspecao';
+      if(!v.empresaId||(ehInspTipo&&(!v.unidade||!v.setor))){nao(ehInspTipo?'Escolha empresa, unidade e setor.':'Escolha a empresa.');return}
       var exN=String(v.execNome||'').trim(),exC=String(v.execCnpj||'').trim();
       if(exN&&!exC){nao('Informe o CNPJ da empresa executante.');return}
       if(exC){if(!cnpjOk(exC)){nao('CNPJ da empresa executante inválido. Confira os números.');return}v.execCnpj=cnpjFmt(exC)}
@@ -1717,7 +1721,7 @@ async function gerarPDF(id){
   var cont={'Crítico':0,'Alto':0,'Médio':0,'Baixo':0};ncs.forEach(function(n){if(cont[grau(n)]!=null)cont[grau(n)]++});
   var acs=[];ncs.forEach(function(n){acs=acs.concat(acoesDe(n.id))});
   section('1. Identificação');
-  var idr=[['Nº do relatório',num(insp)],['Data',fmt(insp.data)],['Empresa (contratante)',empNome(insp)],['CNPJ',empCnpj(insp)||'Não informado'],['Unidade',insp.unidade],['Setor / local',insp.setor],['Realizado por',insp.responsavel]];
+  var idr=[['Nº do relatório',num(insp)],['Data',fmt(insp.data)],['Empresa (contratante)',empNome(insp)],['CNPJ',empCnpj(insp)||'Não informado']].concat(insp.unidade?[['Unidade',insp.unidade]]:[],insp.setor?[['Setor / local',insp.setor]]:[],[['Realizado por',insp.responsavel]]);
   if(ncs.length){idr.push(['Situação',stInsp(insp)]);idr.push(['Itens registrados',ncs.length+' (crítico '+cont['Crítico']+', alto '+cont['Alto']+', médio '+cont['Médio']+', baixo '+cont['Baixo']+')']);idr.push(['Ações no plano',acs.length+' (vencidas: '+acs.filter(vencida).length+')'])}
   kv(idr);
   var gn=1;
@@ -1778,7 +1782,7 @@ async function gerarPDF(id){
   for(var p=1;p<=np;p++){doc.setPage(p);doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor.apply(doc,MU);
     doc.setDrawColor(201,201,201);doc.setLineWidth(0.2);doc.line(M,287,PW-M,287);doc.text('SevIA SST 4.0  |  '+(tipoIns?'Inspeção':'Relatório')+' nº '+num(insp)+'  |  Gerado em '+gen,M,291);doc.text('Página '+p+' de '+np,PW-M,291,{align:'right'})}
   try{
-    await S.downloads.save({filename:(isIns(insp)?'inspecao-':'relatorio-fotografico-')+num(insp)+'-'+slug(insp.setor)+'.pdf',data:doc.output('arraybuffer')});
+    await S.downloads.save({filename:(isIns(insp)?'inspecao-':'relatorio-fotografico-')+num(insp)+'-'+slug(insp.setor||empNome(insp))+'.pdf',data:doc.output('arraybuffer')});
     toast('Relatório pronto.');
   }catch(e){if(!e||e.code!=='declined'){console.error(e);toast('Não foi possível salvar o PDF.')}}
 }
@@ -1832,7 +1836,7 @@ async function gerarWord(id){
   function inlineRow(k){if(insp[k])row1([inl(CD[k][1],insp[k])])}
   row2([inl('Data',fmt(insp.data))],[inl(tr(insp)+' Nº',num(insp))]);
   row2([inl('Empresa',empNome(insp)||'-')],[inl('CNPJ',empCnpj(insp)||'Não informado')]);
-  row1([inl('Unidade / setor',(insp.unidade||'-')+' / '+(insp.setor||'-'))]);
+  if(insp.unidade||insp.setor)row1([inl('Unidade / setor',(insp.unidade||'-')+' / '+(insp.setor||'-'))]);
   if(insp.execNome||insp.execCnpj)row2([inl('Empresa executante',insp.execNome||'-')],[inl('CNPJ executante',insp.execCnpj||'-')]);
   if(insp.representante)row1([inl('Representante da empresa',insp.representante)]);
   campo('equipe','n');
@@ -1882,7 +1886,7 @@ async function gerarWord(id){
   });
   try{
     var blob=await D.Packer.toBlob(doc);
-    await S.downloads.save({filename:(isIns(insp)?'inspecao-':'relatorio-fotografico-')+num(insp)+'-'+slug(insp.setor)+'.docx',data:blob});
+    await S.downloads.save({filename:(isIns(insp)?'inspecao-':'relatorio-fotografico-')+num(insp)+'-'+slug(insp.setor||empNome(insp))+'.docx',data:blob});
     toast('Relatório pronto.');
   }catch(e){if(!e||e.code!=='declined'){console.error(e);toast('Não foi possível salvar o arquivo Word.')}}
 }
