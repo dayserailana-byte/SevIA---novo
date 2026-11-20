@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-20-1800 unidade-fotografico --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-20-1900 rascunho-automatico --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -500,10 +500,11 @@ function abre(view,route){
 
 /* ---------- navegação ---------- */
 function go(route,opt){
+  autoGuarda();
   if(!(opt&&opt.replace))S.hist.push(S.route);
   S.route=route;renderMain();window.scrollTo(0,0);
 }
-function back(){S.route=S.hist.length?S.hist.pop():null;renderMain();window.scrollTo(0,0)}
+function back(){autoGuarda();S.route=S.hist.length?S.hist.pop():null;renderMain();window.scrollTo(0,0)}
 var COLR={usuarios:'usuarios',inspecoes:'insp',ncs:'ncs',acoes:'acoes',empresas:'empresas',contratos:'contratos'};
 function upsert(col,id,data){var k=COLR[col];if(!k)return;var o=Object.assign({},data,{id:id}),l=S.R[k],i=-1;l.forEach(function(x,j){if(x.id===id)i=j});if(i>-1)l[i]=o;else l.push(o);escopo()}
 async function sync(){
@@ -963,14 +964,14 @@ function viewManual(){
     '<h3>Entrar no sistema</h3>'+ol(['Abra <b>seviasst.com.br</b> no navegador do celular, do tablet (Chrome ou Safari) ou do computador.','Digite o <b>usuário</b> (no formato nome.sobrenome) e a <b>senha</b> que a administradora passou para você.','No primeiro acesso o sistema pede para você criar uma senha só sua, com no mínimo 8 caracteres.'])+
     '<h3>Instalar no celular ou no tablet</h3><p>A instalação é feita <b>pelo navegador do telefone ou do tablet</b>, e não por uma loja de aplicativos.</p>'+ol(['No celular ou no tablet, abra o navegador (<b>Chrome</b> no Android ou <b>Safari</b> no iPhone e no iPad) e entre em <b>seviasst.com.br</b>.','Faça o login normalmente.','No <b>Android (Chrome)</b>: toque nos três pontinhos no canto da tela e escolha <b>Instalar app</b> (ou <b>Adicionar à tela inicial</b>). Se preferir, toque em <b>Instalar app no telefone</b> no menu do SevIA.','No <b>iPhone ou iPad (Safari)</b>: toque no botão <b>Compartilhar</b> e escolha <b>Adicionar à Tela de Início</b>.','Confirme o nome <b>SevIA</b>. O ícone passa a ficar na tela do aparelho, como um aplicativo.'])+
     '<h3>Sair e bloqueio automático</h3><p>Por segurança, depois de <b>5 minutos sem uso</b> o sistema sai da conta sozinho. No último minuto aparece o aviso &ldquo;Você ainda está aí?&rdquo; com o botão <b>Continuar conectada</b>. Para sair por conta própria, use o botão <b>Sair</b> no final do menu.</p>'+
-    (tec?'<p>Se você estiver preenchendo um relatório ou inspeção quando o sistema bloquear, o rascunho fica guardado neste aparelho por <b>7 dias</b>. Ao entrar de novo, escolha <b>Continuar rascunho</b> para voltar de onde parou.</p>':'')],
+    (tec?'<p>Se você estiver preenchendo um relatório ou inspeção quando o sistema bloquear, o rascunho fica guardado neste aparelho por <b>7 dias</b>. Ao entrar de novo, escolha <b>Continuar rascunho</b> para voltar de onde parou. Para guardar um rascunho a qualquer momento, veja <b>Salvar como rascunho</b>.</p>':'')],
   ['Perfis de acesso',adm,
     li(['<b>Administradora:</b> acessa tudo, cadastra empresas, contratos e usuários e libera as empresas de cada técnico.','<b>Técnico ADM:</b> registra relatórios e inspeções, cadastra e edita empresas e contratos. Vê só as empresas liberadas pela administradora e as que ele mesmo cadastrar.','<b>Técnico SST:</b> registra e edita relatórios e inspeções das empresas liberadas para ele. Não cadastra empresas.','<b>Cliente:</b> consulta e baixa os relatórios e os indicadores da própria empresa. Não altera nada.'])+
     '<p>O perfil de cada pessoa é definido pela administradora. Se algo que você precisa não aparece no seu menu, fale com ela.</p>'],
   ['Conhecendo o menu',true,
     li([].concat(
       ['<b>Início:</b> tela de boas-vindas'+(tec?', com os botões para criar um <b>novo relatório fotográfico</b> ou uma <b>nova inspeção de segurança</b>':'')+'.'],
-      tec?['<b>Relatórios e inspeções:</b> lista, cria e edita relatórios fotográficos e inspeções de segurança.','<b>Baixar relatórios:</b> baixa os documentos em PDF ou Word.','<b>Não conformidades e Plano de ação:</b> aparecem quando existem inspeções de segurança. Mostram os itens com problema e as ações para corrigir, com prazo.']:['<b>Relatórios e inspeções:</b> consulta os relatórios e as inspeções da sua empresa.','<b>Baixar relatórios:</b> baixa os documentos em PDF ou Word.'],
+      tec?['<b>Relatórios e inspeções:</b> lista, cria e edita relatórios fotográficos e inspeções de segurança.','<b>Baixar relatórios:</b> baixa os documentos em PDF ou Word e exclui relatórios que não servem mais.','<b>Não conformidades e Plano de ação:</b> aparecem quando existem inspeções de segurança. Mostram os itens com problema e as ações para corrigir, com prazo.']:['<b>Relatórios e inspeções:</b> consulta os relatórios e as inspeções da sua empresa.','<b>Baixar relatórios:</b> baixa os documentos em PDF ou Word.'],
       ['<b>Relatórios concluídos:</b> o que já foi finalizado.','<b>Indicadores:</b> gráficos por empresa, unidade, período e tipo de relatório.'],
       emp?['<b>Empresa e Contratos:</b> cadastro e acompanhamento das empresas e dos contratos.']:['<b>Empresa e Contratos:</b> consulta '+(tecS?'das empresas liberadas para você e dos contratos delas.':'da sua empresa e do contrato.')],
       adm?['<b>Usuários e acessos:</b> cadastro dos usuários e liberação das empresas de cada técnico.']:[]))],
@@ -978,18 +979,20 @@ function viewManual(){
     ol(['Abra <b>Relatórios e inspeções</b> e toque no relatório que quer ver.','Para baixar, vá em <b>Baixar relatórios</b> e toque em <b>PDF</b> ou <b>Word</b>.','Em <b>Indicadores</b>, use os filtros de unidade, período e tipo de relatório para acompanhar os números da sua empresa.'])+'<p>Você só consulta. Para corrigir ou incluir algo, fale com o responsável técnico da sua empresa.</p>'],
   ['Novo relatório fotográfico',tec,
     '<p>Na tela <b>Início</b> ou em <b>Relatórios e inspeções</b>, toque em <b>Novo relatório fotográfico</b>. O formulário tem etapas que abrem e fecham ao tocar no título. Para salvar é preciso que a empresa tenha um <b>contrato vigente</b>.</p>'+
-    ol(['<b>Identificação:</b> data e empresa. O <b>CNPJ da empresa</b> aparece sozinho ao escolher a empresa. O seu nome sai no relatório como quem realizou o trabalho.','<b>Empresa executante:</b> quem executou o serviço. Se você informar o nome, o <b>CNPJ</b> é obrigatório e precisa ser um CNPJ válido.','<b>Fotos:</b> as fotos ficam em grupos. Use <b>Tirar foto</b> ou <b>Galeria</b>. Para remover uma foto, toque no <b>X</b> vermelho dela. Os grupos podem ser renomeados, adicionados ou removidos.','<b>Detalhes do serviço:</b> serviços, segurança, riscos e observações.','<b>Responsável técnico:</b> nome, função e registro profissional. Já vêm do seu cadastro.'])+
-    '<p>No final, toque em <b>Salvar relatório</b>. O número do relatório é gerado ao salvar.</p>'],
+    ol(['<b>Identificação:</b> data, empresa e <b>unidade</b>. O <b>CNPJ da empresa</b> aparece sozinho ao escolher a empresa. A unidade é obrigatória e é ela que faz o relatório entrar nos <b>Indicadores</b> por unidade. O seu nome sai no relatório como quem realizou o trabalho.','<b>Empresa executante:</b> quem executou o serviço. Se você informar o nome, o <b>CNPJ</b> é obrigatório e precisa ser um CNPJ válido.','<b>Fotos:</b> as fotos ficam em grupos. Use <b>Tirar foto</b> ou <b>Galeria</b>. Para remover uma foto, toque no <b>X</b> vermelho dela. Os grupos podem ser renomeados, adicionados ou removidos.','<b>Detalhes do serviço:</b> serviços, segurança, riscos e observações.','<b>Responsável técnico:</b> nome, função e registro profissional. Já vêm do seu cadastro.'])+
+    '<p>No final, toque em <b>Salvar relatório</b>. O número do relatório é gerado ao salvar. Se não der para terminar agora, toque em <b>Salvar rascunho</b>.</p>'],
+  ['Salvar como rascunho',tec,
+    '<p>Quando não der para finalizar na hora, guarde o trabalho como rascunho:</p>'+ol(['No relatório fotográfico ou na inspeção de segurança, toque em <b>Salvar rascunho</b>. É preciso apenas escolher a empresa.','O documento aparece em <b>Relatórios e inspeções</b> com o selo <b>Rascunho</b>.','Para continuar, abra o rascunho e toque em <b>Continuar rascunho</b>. Quando terminar, toque em <b>Finalizar e salvar</b>.'])+li(['O rascunho <b>só aparece para você</b>, mesmo que outras pessoas tenham acesso à empresa. Ele passa a ser visto pelos demais somente depois de finalizado.','Enquanto for rascunho, o PDF, o Word e o Excel não ficam disponíveis, e o número do relatório ainda não é gerado.','Para apagar um rascunho, abra-o e toque em <b>Excluir</b>.','Se você sair da tela <b>sem salvar nada</b>, o que já preencheu fica guardado <b>neste aparelho</b> por até 7 dias. Ao tocar em <b>Novo relatório fotográfico</b> (ou <b>Nova inspeção de segurança</b>) de novo, o sistema recupera o formulário e avisa. Para começar em branco, toque em <b>Começar do zero</b>. Esse guardado automático não aparece em outro aparelho: para isso, use <b>Salvar rascunho</b>.'])],
   ['Preenchimento com a IA',tec,
     '<p>No grupo <b>Registros das atividades</b>, a IA analisa as fotos e sugere o preenchimento dos campos do relatório. Para usar:</p>'+
-    ol(['Adicione as fotos no grupo <b>Registros das atividades</b>.','Toque em <b>Preencher a partir das fotos</b> e aguarde.','Revise cada campo sugerido e corrija o que for preciso.'])+
-    li(['A IA <b>só preenche o que as fotos mostram</b>. O que não dá para saber fica em branco.','Ela <b>não altera</b> campos que você já preencheu.','Ela <b>não preenche</b> ordem de serviço, exames ocupacionais e observações. Isso só se confirma no local.','Depois da análise ela lista o que você precisa <b>confirmar no local</b>.','Nada é salvo automaticamente. Você revisa tudo antes de salvar.'])],
+    ol(['Adicione as fotos no grupo <b>Registros das atividades</b>.','Toque em <b>Preencher a partir das fotos</b> e aguarde. A IA analisa <b>uma foto por vez</b> e mostra o andamento (por exemplo, &ldquo;Analisando a foto 3 de 8&rdquo;). Com várias fotos pode levar alguns minutos.','Revise cada campo sugerido e corrija o que for preciso.'])+
+    li(['A IA <b>só preenche o que as fotos mostram</b>. O que não dá para saber fica em branco.','Nos <b>riscos físicos, químicos, biológicos, ergonômicos e de acidentes</b>, ela lista todos os riscos identificados, do maior ao menor. Se não houver evidência, escreve &ldquo;Não identificado nas fotos analisadas&rdquo;.','Se aparecer ferramenta elétrica ou motorizada, ela registra o risco de <b>ruído</b>. A medição (dosimetria ou decibelímetro) é que confirma o valor.','Em <b>EPI</b> e <b>Isolamento e sinalização</b>, descreve o que as fotos mostram.','<b>APR, ordem de serviço e exames ocupacionais</b> são documentos e não aparecem em foto. Nesses campos a IA escreve &ldquo;Não verificável pelas fotos; conferir no local&rdquo;. Troque pelo que for o caso.','Ela <b>não altera</b> campos que você já preencheu.','Depois da análise ela lista o que você precisa <b>confirmar no local</b>.','Se uma foto falhar, as outras continuam e o sistema avisa quantas não foram analisadas.','Nada é salvo automaticamente. Você revisa tudo antes de salvar.'])],
   ['Nova inspeção de segurança',tec,
     '<p>Toque em <b>Nova inspeção de segurança</b>. Depois dos dados de identificação, registre os <b>itens da inspeção</b>:</p>'+
     ol(['Tire a foto do item e descreva o risco.','Escolha a classificação (não conformidade, condição insegura, ato inseguro ou observação) e a criticidade.','Informe a <b>norma e o requisito legal</b>. A IA pode sugerir o achado a partir da foto, mas <b>você valida a norma</b> antes de salvar.','Preencha o <b>plano de ação</b>: o que fazer, quem responde e o prazo.'])+
     '<p>Os itens com problema aparecem em <b>Não conformidades</b>, e as ações em <b>Plano de ação</b>, onde você acompanha o prazo e marca como concluída.</p>'],
   ['Baixar relatórios (PDF, Word e Excel)',true,
-    '<p>Em <b>Baixar relatórios</b>, toque em <b>PDF</b> ou <b>Word</b> no relatório desejado. Dentro da tela de cada relatório também há os botões de download, e nas inspeções de segurança há ainda o <b>Excel</b>. O documento sai com a logomarca, o CNPJ da empresa, as fotos e o responsável técnico.</p>'],
+    '<p>Em <b>Baixar relatórios</b>, toque em <b>PDF</b> ou <b>Word</b> no relatório desejado. Dentro da tela de cada relatório também há os botões de download, e nas inspeções de segurança há ainda o <b>Excel</b>. O documento sai com a logomarca, o CNPJ da empresa, as fotos e o responsável técnico.</p>'+(tec?'<p>Para <b>excluir</b> um relatório, toque em <b>Excluir</b> na linha dele e confirme. A exclusão não pode ser desfeita.</p>':'')],
   ['Indicadores',true,
     '<p>Mostram o andamento dos relatórios e das inspeções. Use os filtros por <b>empresa, unidade, período e tipo de relatório</b> (fotográfico ou inspeção de segurança). Os gráficos e números mudam conforme o filtro.</p>'],
   ['Cadastro de empresas',emp,
@@ -1009,7 +1012,7 @@ function viewManual(){
       [adm?'<b>Alguém esqueceu a senha:</b> em <b>Usuários e acessos</b>, abra o usuário e use <b>Resetar senha</b>.':'<b>Esqueci a senha:</b> peça à administradora para resetar.'],
       tec?['<b>A câmera não abre:</b> use o botão <b>Galeria</b>.']:[],
       adm?['<b>Um técnico não vê uma empresa:</b> libere a empresa no cadastro dele, em <b>Usuários e acessos</b>.']:(tec?['<b>A empresa não aparece na lista:</b> ela pode não estar liberada para você. Fale com a administradora.']:[]),
-      tec?['<b>Não consigo salvar o relatório:</b> confira se a empresa tem contrato vigente e se o CNPJ informado é válido.']:[],
+      tec?['<b>Não consigo salvar o relatório:</b> confira se a empresa tem contrato vigente, se escolheu a unidade e se o CNPJ informado é válido. Se precisar parar, use <b>Salvar rascunho</b>.','<b>A IA diz que não foi possível analisar:</b> o serviço gratuito pode estar sobrecarregado ou ter chegado ao limite do dia. Tente de novo em alguns minutos ou preencha manualmente.']:[],
       ['<b>O sistema não mostra a versão nova:</b> feche e abra o app, ou atualize a página.','<b>O sistema saiu sozinho:</b> foi o bloqueio por falta de uso. Entre de novo'+(tec?' e continue o rascunho':'')+'.']))]
   ];
   var h=head('Manual do usuário','Passo a passo do SevIA para o seu perfil.')+'<div class="man-lista">';
@@ -1041,6 +1044,7 @@ function formInsp(r){
   var respFixo=!!S.me.name;if(!d.grupos)d.grupos=gruposNovos();var rasc=!!(r.id&&(inspDe(r.id)||{}).rascunho);
   return backBtn()+head(r.id?'Editar '+tr(inspDe(r.id)).toLowerCase()+' Nº '+num(inspDe(r.id)):(d.tipo==='inspecao'?'Nova inspeção de segurança':'Novo relatório fotográfico'))+
   (S.empresas.length?'':'<div class="banner"><span>Cadastre uma empresa com unidades e setores antes de criar o relatório.</span><button type="button" class="btn" data-act="new-empresa">Cadastrar empresa</button></div>')+
+  (r._recuperado?'<div class="banner"><span>Recuperamos o que você estava preenchendo e não salvou. Revise e salve, ou comece de novo.</span><button type="button" class="btn" data-act="auto-descartar">Começar do zero</button></div>':'')+
   '<form class="form stepform" data-form="insp" autocomplete="off">'+
   stp(1,'Identificação',(d.tipo==='inspecao'?'Data, empresa, unidade e setor':'Data, empresa e unidade'),
     '<div class="fields">'+
@@ -1634,6 +1638,7 @@ async function salvar(form,rascunho){
       }
     }
     await sync();
+    if(kind==='insp')autoLimpa();
     toast(rascunho?'Rascunho salvo. Só você o vê, até finalizar.':'Salvo.');S.saving=false;
     if(kind==='usuario'&&!old){S.route={name:'usuario-ok',draft:{nome:data.nome,usuario:data.usuario,senha:apiSenha||senhaProv()}};S.hist=[];renderMain();window.scrollTo(0,0);return}
     if(kind==='empresa'||kind==='contrato'||kind==='usuario'){limpaRota();renderMain();window.scrollTo(0,0);return}
@@ -2093,6 +2098,25 @@ function syncDraft(){
   var f=$('form[data-form="insp"]');if(!f||!S.route||!S.route.draft)return;syncGrupos();syncItens();
   Array.prototype.forEach.call(f.elements,function(el){if(el.name&&el.type!=='file')S.route.draft[el.name]=el.value});
 }
+/* rascunho automático: guarda neste aparelho o que está sendo preenchido, para o caso de sair da tela sem salvar */
+var AUTO='sevia.rascunhoAuto';
+function autoLimpa(){try{localStorage.removeItem(AUTO)}catch(e){}}
+function autoGuarda(){
+  try{var r=S.route;if(!r||r.name!=='insp-form'||r.id||!r._sujo||!r.draft||!S.me.id)return;syncDraft();
+    localStorage.setItem(AUTO,JSON.stringify({uid:S.me.id,quando:Date.now(),draft:r.draft}))}catch(e){}
+}
+function autoLer(inspecao){
+  try{var o=JSON.parse(localStorage.getItem(AUTO)||'null');
+    if(!o||!o.draft||o.uid!==S.me.id||Date.now()-o.quando>7*864e5)return null;
+    if((o.draft.tipo==='inspecao')!==!!inspecao)return null;
+    return o}catch(e){return null}
+}
+function marcaSujo(e){var t=e.target,f=t&&t.form;if(f&&f.dataset&&f.dataset.form==='insp'&&S.route&&S.route.name==='insp-form')S.route._sujo=true}
+document.addEventListener('input',marcaSujo,true);document.addEventListener('change',marcaSujo,true);
+document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('[data-act]');if(a&&['gphoto-rm','g-rm','g-add','iphoto-rm','i-add','i-rm','i-photo-rm'].indexOf(a.dataset.act)>-1&&S.route&&S.route.name==='insp-form')S.route._sujo=true},true);
+setInterval(autoGuarda,3000);
+window.addEventListener('pagehide',autoGuarda);
+document.addEventListener('visibilitychange',function(){if(document.hidden)autoGuarda()});
 function salvaRascunho(){
   try{var r=S.route;if(!r||r.name!=='insp-form'||!r.draft)return;syncDraft();
     localStorage.setItem('sevia.rascunho',JSON.stringify({uid:S.me.id,quando:Date.now(),id:r.id||'',draft:r.draft}))}catch(e){}
@@ -2118,7 +2142,8 @@ document.addEventListener('click',function(e){
   var a=el.dataset.act,id=el.dataset.id;
   if(el.closest('.search')){bs.hidden=true;$('#busca').value=''}
   switch(a){
-    case 'new-insp':var ni=novaInsp();if(el.dataset.tipo==='inspecao'){ni.draft.tipo='inspecao';ni.draft.itens=[itemVazio(ni.draft)]}go(ni);break;
+    case 'new-insp':var ni=novaInsp();if(el.dataset.tipo==='inspecao'){ni.draft.tipo='inspecao';ni.draft.itens=[itemVazio(ni.draft)]}var au=autoLer(el.dataset.tipo==='inspecao');if(au){ni.draft=au.draft;ni._recuperado=true;ni._sujo=true}go(ni);break;
+    case 'auto-descartar':autoLimpa();var nz=novaInsp();if(S.route&&S.route.draft&&S.route.draft.tipo==='inspecao'){nz.draft.tipo='inspecao';nz.draft.itens=[itemVazio(nz.draft)]}go(nz,{replace:true});toast('Formulário em branco.');break;
     case 'open-insp':go({name:'insp',id:id});break;
     case 'edit-insp':var i=inspDe(id);go({name:'insp-form',id:id,draft:draftInsp(i)});break;
     case 'del-insp':var n1=ncsDe(id).length,i1=inspDe(id),ehI=isIns(i1),ehR=!!(i1&&i1.rascunho);confirmar(ehR?'Excluir rascunho':(ehI?'Excluir inspeção':'Excluir relatório'),(ehI?'Isso também exclui os '+n1+' itens e as ações ligadas a ela. ':'Isso exclui o relatório e os grupos de fotos dele. ')+'Não dá para desfazer.','Excluir',async function(){try{await delInsp(id);limpaRota();toast(ehR?'Rascunho excluído.':(ehI?'Inspeção excluída.':'Relatório excluído.'))}catch(er){console.error(er);toast('Não foi possível excluir.')}renderMain()});break;
@@ -2252,7 +2277,7 @@ document.addEventListener('keydown',function(e){
   $('#busca-res').hidden=true;
 });
 $('#lightbox').addEventListener('click',function(e){if(e.target.id==='lightbox')this.hidden=true});
-window.addEventListener('hashchange',function(){if(S.skipHash){S.skipHash=false;return}S.f.q='';onHash()});
+window.addEventListener('hashchange',function(){autoGuarda();if(S.skipHash){S.skipHash=false;return}S.f.q='';onHash()});
 
 /* ---------- acessos ---------- */
 function acessoBusca(q){
