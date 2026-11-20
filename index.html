@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-20-1015 sem-listas-padrao --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-20-1120 cnpj-obrigatorio --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -817,7 +817,7 @@ function formEmpresa(r){
   return backBtn()+head(r.id?'Editar empresa':'Nova empresa')+
   '<form class="card form" data-form="empresa" autocomplete="off"><div class="fields">'+
     field('Nome da empresa','e-nome','<input id="e-nome" name="nome" required value="'+esc(d.nome)+'">','full')+
-    field('CNPJ (opcional)','e-cnpj','<input id="e-cnpj" name="cnpj" inputmode="numeric" value="'+esc(d.cnpj)+'">')+
+    field('CNPJ (obrigatório)','e-cnpj','<input id="e-cnpj" name="cnpj" inputmode="numeric" maxlength="18" placeholder="00.000.000/0000-00" required value="'+esc(d.cnpj)+'">')+
     '<div class="field full"><span class="lbl">Logomarca da empresa (opcional)</span><p class="muted small">Sai automaticamente no cabeçalho dos relatórios e inspeções desta empresa.</p><div id="emp-logo">'+empLogoHtml(d.logo)+'</div>'+(S.assets?'<div class="actions"><label class="btn btn-ghost file-btn"><input class="sr-only" type="file" accept="image/*" data-chg="emp-logo">&#128444; Escolher logomarca</label></div>':'<p class="muted small">O envio exige permissão de edição.</p>')+'</div>'+
     field('Contato (opcional)','e-contato','<input id="e-contato" name="contato" value="'+esc(d.contato)+'">')+
     (r.id?'':'<div class="field full"><span class="lbl">Contrato (opcional — pode cadastrar depois)</span></div>'+
@@ -1469,6 +1469,8 @@ async function salvar(form){
         var nome=b.querySelector('[data-un=nome]').value.trim();if(!nome)return;
         uns.push({nome:nome,setores:uniq(b.querySelector('[data-un=setores]').value.split(/[,;\n]+/).map(function(x){return x.trim()}))});
       });
+      if(!cnpjOk(v.cnpj)){nao(String(v.cnpj||'').trim()?'CNPJ inválido. Confira os números.':'Informe o CNPJ da empresa.');return}
+      v.cnpj=cnpjFmt(v.cnpj);
       if(!old&&v.cFim&&v.cInicio&&v.cFim<v.cInicio){nao('O término da vigência não pode ser antes do início.');return}
       data={nome:v.nome,cnpj:v.cnpj,contato:v.contato,logo:r.draft.logo||'',unidades:uns};
     }else if(kind==='usuario'){
@@ -2095,7 +2097,18 @@ document.addEventListener('change',function(e){
       break;
   }
 });
+function cnpjNum(x){return String(x||'').replace(/\D/g,'')}
+function cnpjFmt(x){var n=cnpjNum(x);return n.length===14?n.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,'$1.$2.$3/$4-$5'):String(x||'').trim()}
+function cnpjOk(x){var n=cnpjNum(x);if(n.length!==14||/^(\d)\1+$/.test(n))return false;
+  function dv(t){var p=t-7,sm=0;for(var i=0;i<t;i++){sm+=+n[i]*p--;if(p<2)p=9}var r=sm%11;return r<2?0:11-r}
+  return dv(12)===+n[12]&&dv(13)===+n[13]}
 document.addEventListener('input',function(e){
+  if(e.target&&e.target.id==='e-cnpj'){var d=cnpjNum(e.target.value).slice(0,14),o=d;
+    if(d.length>12)o=d.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{0,2})$/,'$1.$2.$3/$4-$5');
+    else if(d.length>8)o=d.replace(/^(\d{2})(\d{3})(\d{3})(\d{0,4})$/,'$1.$2.$3/$4');
+    else if(d.length>5)o=d.replace(/^(\d{2})(\d{3})(\d{0,3})$/,'$1.$2.$3');
+    else if(d.length>2)o=d.replace(/^(\d{2})(\d{0,3})$/,'$1.$2');
+    e.target.value=o;return}
   var el=e.target.closest('[data-inp]');if(!el)return;
   var k=el.dataset.inp;
   if(k==='busca'){buscar(el.value);return}
