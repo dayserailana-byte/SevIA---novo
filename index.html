@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-20-1120 cnpj-obrigatorio --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-20-1230 bloqueio-inatividade --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -2009,10 +2009,10 @@ document.addEventListener('click',function(e){
     case 'new-usuario':abre('usuarios',{name:'usuario-form',draft:{nome:'',email:'',telefone:'',funcao:'',registroProf:'',perfil:'Técnico SST',empresaId:'',empresasAcesso:[],ativo:true}});break;
     case 'edit-usuario':var us1=S.R.usuarios.filter(function(u){return u.id===id})[0];if(us1)go({name:'usuario-form',id:id,draft:{nome:us1.nome,usuario:us1.usuario||'',email:us1.email||'',telefone:us1.telefone||'',funcao:us1.funcao||'',registroProf:us1.registroProf||'',perfil:us1.perfil,empresaId:us1.empresaId||'',empresasAcesso:(us1.empresasAcesso||[]).slice(),ativo:us1.ativo!==false}});break;
     case 'bloq-usuario':var ub=S.R.usuarios.filter(function(u){return u.id===id})[0];if(!ub)break;if(S.me&&S.me.id&&id===S.me.id){toast('Você não pode bloquear o seu próprio acesso.');break}var desb=ub.ativo===false;confirmar(desb?'Desbloquear acesso':'Bloquear acesso',desb?'O usuário volta a conseguir entrar no sistema.':'O usuário não consegue mais entrar e perde o acesso aos dados na hora. Os registros dele são mantidos e você pode desbloquear quando quiser.',desb?'Desbloquear':'Bloquear',async function(){try{if(window.SEVIA_API)await window.SEVIA_API.atualizarUsuario(id,{nome:ub.nome,email:ub.email||'',telefone:ub.telefone||'',perfil:ub.perfil,empresaId:ub.empresaId||'',ativo:desb});else await S.db.doc('usuarios/'+id).update({ativo:desb,atualizadoEm:Date.now()});upsert('usuarios',id,Object.assign({},ub,{ativo:desb,atualizadoEm:Date.now()}));limpaRota();renderMain();toast(desb?'Acesso desbloqueado.':'Acesso bloqueado.')}catch(er){console.error(er);toast('Não foi possível alterar o acesso: '+(er&&er.message||'erro'))}});break;
-    case 'del-usuario':confirmar('Excluir usuário','O usuário deixa de constar na lista de acessos.','Excluir',async function(){try{if(window.SEVIA_API)await window.SEVIA_API.excluirUsuario(id);else await S.db.doc('usuarios/'+id).delete();S.R.usuarios=S.R.usuarios.filter(function(u){return u.id!==id});limpaRota();renderMain();toast('Usuário excluído.')}catch(er){console.error(er);toast('Não foi possível excluir.')}});break;
+    case 'del-usuario':var uX=S.R.usuarios.filter(function(u){return u.id===id})[0];confirmar('Excluir usuário '+(uX?uX.nome:''),'Atenção: o login e o acesso desta pessoa serão apagados de vez e não dá para desfazer. Para só bloquear o acesso por um tempo, use "Editar" e desative o usuário. Deseja mesmo excluir?','Excluir',async function(){try{if(window.SEVIA_API)await window.SEVIA_API.excluirUsuario(id);else await S.db.doc('usuarios/'+id).delete();S.R.usuarios=S.R.usuarios.filter(function(u){return u.id!==id});limpaRota();renderMain();toast('Usuário excluído.')}catch(er){console.error(er);toast('Não foi possível excluir.')}});break;
     case 'new-empresa':if(!podeEmpresa()){toast('Somente a Administradora e o Técnico ADM cadastram e editam empresas.');break}abre('empresas',{name:'empresa-form',draft:{nome:'',cnpj:'',contato:'',unidades:[{nome:'',setores:[]}]}});break;
     case 'edit-empresa':if(!podeEmpresa()){toast('Somente a Administradora e o Técnico ADM cadastram e editam empresas.');break}var em=empDe(id);go({name:'empresa-form',id:id,draft:{nome:em.nome,cnpj:em.cnpj||'',contato:em.contato||'',logo:em.logo||'',unidades:unObjs(em)}});break;
-    case 'del-empresa':if(!podeEmpresa()){toast('Somente a Administradora e o Técnico ADM cadastram e editam empresas.');break}confirmar('Excluir empresa','As inspeções já registradas continuam, mas deixam de estar ligadas a esta empresa.','Excluir',async function(){try{await S.db.doc('empresas/'+id).delete();limpaRota();toast('Empresa excluída.')}catch(er){console.error(er);toast('Não foi possível excluir.')}renderMain()});break;
+    case 'del-empresa':if(!podeEmpresa()){toast('Somente a Administradora e o Técnico ADM cadastram e editam empresas.');break}var eX=empDe(id);confirmar('Excluir empresa '+(eX?eX.nome:''),'Atenção: a empresa será apagada e não dá para desfazer. Os relatórios e inspeções já registrados continuam, mas deixam de estar ligados a ela. Deseja mesmo excluir?','Excluir',async function(){try{await S.db.doc('empresas/'+id).delete();limpaRota();toast('Empresa excluída.')}catch(er){console.error(er);toast('Não foi possível excluir.')}renderMain()});break;
     case 'emp-logo-rm':if(S.route&&S.route.draft){S.route.draft.logo='';var bx2=$('#emp-logo');if(bx2)bx2.innerHTML=empLogoHtml('')}break;
     case 'instalar':instalarApp();break;
     case 'pf-tipo':S.pf.tipo=id;renderMain();break;
@@ -2025,7 +2025,7 @@ document.addEventListener('click',function(e){
     case 'un-rm':el.closest('[data-un-blk]').remove();break;
     case 'new-contrato':abre('contratos',{name:'contrato-form',draft:{empresaId:S.empresas.length===1?S.empresas[0].id:'',inicio:hoje(),fim:'',servicos:'',observacoes:''}});break;
     case 'edit-contrato':var ct=S.contratos.filter(function(x){return x.id===id})[0];go({name:'contrato-form',id:id,draft:{empresaId:ct.empresaId||'',inicio:ct.inicio||'',fim:ct.fim||'',servicos:ct.servicos||'',observacoes:ct.observacoes||''}});break;
-    case 'del-contrato':confirmar('Excluir contrato','O contrato será removido. Os registros de inspeção não são afetados.','Excluir',async function(){try{await S.db.doc('contratos/'+id).delete();limpaRota();toast('Contrato excluído.')}catch(er){console.error(er);toast('Não foi possível excluir.')}renderMain()});break;
+    case 'del-contrato':confirmar('Excluir contrato','Atenção: o contrato será apagado e não dá para desfazer. Os relatórios e inspeções não são afetados. Deseja mesmo excluir?','Excluir',async function(){try{await S.db.doc('contratos/'+id).delete();limpaRota();toast('Contrato excluído.')}catch(er){console.error(er);toast('Não foi possível excluir.')}renderMain()});break;
     case 'ref-pend':var ff=$('form[data-form="nc"]').elements;if(!ff.norma.value.trim())ff.norma.value=PENDENTE;if(!ff.requisitoLegal.value.trim())ff.requisitoLegal.value=PENDENTE;ff.refValidada.checked=false;toast('Referência marcada como pendente de validação.');break;
     case 'ac-add':acessoSet(id,{nome:el.dataset.nome,empresaId:''});break;
     case 'ac-rm':acessoRm(id);break;
@@ -2059,7 +2059,7 @@ document.addEventListener('click',function(e){
     case 'pdf':gerarPDF(id);break;
     case 'word':gerarWord(id);break;
     case 'excel':gerarExcel(id||null);break;
-    case 'rm-exemplos':rmExemplos();break;
+    case 'rm-exemplos':confirmar('Remover exemplos','Todos os dados de exemplo serão apagados e não dá para desfazer. Seus dados reais não são afetados.','Remover',function(){rmExemplos()});break;
     case 'modal-ok':var f=S.modalOk;fechaModal();if(f)f();break;
     case 'modal-cancel':fechaModal();break;
   }
@@ -2201,6 +2201,32 @@ var espera=setInterval(function(){
     S.loaded.p=true;escopo();refresh();
   });
 })();
+})();
+</script>
+<script>
+/* Bloqueio por inatividade: sai do sistema depois de alguns minutos sem uso. */
+(function(){
+  var LIMITE=10*60*1000, AVISO=60*1000, ultimo=Date.now(), aviso=null, saindo=false;
+  function sair(){if(saindo)return;saindo=true;try{sessionStorage.setItem('sevia.inativo','1')}catch(e){}
+    if(window.SEVIA_SAIR)window.SEVIA_SAIR();else location.replace('login.html')}
+  function fechaAviso(){if(aviso){aviso.remove();aviso=null}}
+  function atividade(){if(saindo)return;ultimo=Date.now();fechaAviso()}
+  ['pointerdown','keydown','touchstart','scroll','input','click'].forEach(function(ev){window.addEventListener(ev,atividade,{passive:true,capture:true})});
+  function mostraAviso(seg){
+    if(!aviso){aviso=document.createElement('div');aviso.setAttribute('role','alertdialog');
+      aviso.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px';
+      aviso.innerHTML='<div style="background:#fff;color:#111;border-radius:14px;max-width:340px;width:100%;padding:20px;font:16px/1.4 system-ui,sans-serif"><h2 style="margin:0 0 8px;font-size:18px">Você ainda está aí?</h2><p style="margin:0 0 16px">Por segurança, o SevIA vai sair em <b id="ina-s"></b> segundos por falta de uso.</p><button type="button" id="ina-ok" style="width:100%;padding:12px;border:0;border-radius:10px;background:#0a5;color:#fff;font:600 16px system-ui">Continuar conectada</button></div>';
+      document.body.appendChild(aviso);
+      aviso.querySelector('#ina-ok').addEventListener('click',function(e){e.stopPropagation();atividade()})}
+    var el=aviso.querySelector('#ina-s');if(el)el.textContent=seg}
+  function confere(){
+    if(saindo)return;
+    var parado=Date.now()-ultimo;
+    if(parado>=LIMITE){sair();return}
+    if(parado>=LIMITE-AVISO)mostraAviso(Math.max(1,Math.ceil((LIMITE-parado)/1000)));
+  }
+  setInterval(confere,1000);
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)confere()});
 })();
 </script>
 </body></html>
