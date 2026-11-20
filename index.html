@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-20-1440 aviso-ia-grupo --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-20-1520 cnpj-na-identificacao --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -382,6 +382,8 @@ function gk(g){return {'Crítico':'crit','Alto':'high','Médio':'warn','Baixo':'
 function inspDe(id){return S.insp.filter(function(x){return x.id===id})[0]}
 function ncDe(id){return S.ncs.filter(function(x){return x.id===id})[0]}
 function empDe(id){return S.empresas.filter(function(x){return x.id===id})[0]}
+function empCnpjDe(id){var e=id&&empDe(id);return e?(e.cnpj||''):''}
+function empCnpj(i){return empCnpjDe(i.empresaId)||i.empresaCnpj||''}
 function empNome(i){var e=i.empresaId&&empDe(i.empresaId);return e?e.nome:(i.empresaNome||'')}
 function ncsDe(id){return S.ncs.filter(function(x){return x.inspId===id})}
 function acoesDe(id){return S.acoes.filter(function(x){return x.ncId===id})}
@@ -965,6 +967,7 @@ function formInsp(r){
     field('Nº do relatório','f-num','<input id="f-num" value="'+(r.id?num(inspDe(r.id)):'Gerado ao salvar ('+String(proxNumero()).padStart(5,'0')+')')+'" readonly>')+
     field('Data','f-data','<input id="f-data" name="data" type="date" required value="'+esc(d.data)+'">')+
     field('Empresa','f-emp','<select id="f-emp" name="empresaId" required data-chg="insp-emp">'+opts(empOpts,d.empresaId||'')+'</select>')+
+    field('CNPJ da empresa','f-cnpj','<input id="f-cnpj" value="'+esc(empCnpjDe(d.empresaId))+'" readonly placeholder="Aparece ao escolher a empresa">'+(d.empresaId&&!empCnpjDe(d.empresaId)?'<span class="muted small">Esta empresa ainda não tem CNPJ. Cadastre em Empresa &gt; Editar para ele sair nos documentos.</span>':''))+
     field('Unidade','f-unidade','<select id="f-unidade" name="unidade" required data-chg="insp-un">'+opts([['','Selecione a unidade']].concat(uns),d.unidade||'')+'</select>')+
     field('Setor','f-setor','<select id="f-setor" name="setor" required>'+opts([['','Selecione o setor']].concat(sets),d.setor||'')+'</select>')+
     field('Realizado por','f-resp','<input id="f-resp" name="responsavel" '+(respFixo?'readonly':'required')+' value="'+esc(respFixo?S.me.name:d.responsavel)+'">')+
@@ -1436,7 +1439,7 @@ async function salvar(form){
       var emp=v.empresaId&&empDe(v.empresaId);
       if(!v.empresaId||!v.unidade||!v.setor){nao('Escolha empresa, unidade e setor.');return}
       if(!old&&contVigente(v.empresaId)===false){nao('O contrato desta empresa não está vigente. Cadastre ou renove o contrato antes de registrar inspeções.');return}
-      data={tipo:(old&&old.tipo)||r.draft.tipo||'fotografico',numero:(old&&old.numero)||proxNumero(),data:v.data,empresaId:v.empresaId,empresaNome:emp?emp.nome:'',unidade:v.unidade,setor:v.setor,responsavel:v.responsavel,realizadoPorId:(old&&old.realizadoPorId)||S.me.id,observacoes:v.observacoes||(old&&old.observacoes)||'',fotos:r.draft.fotos||[]};
+      data={tipo:(old&&old.tipo)||r.draft.tipo||'fotografico',numero:(old&&old.numero)||proxNumero(),data:v.data,empresaId:v.empresaId,empresaNome:emp?emp.nome:'',empresaCnpj:emp?(emp.cnpj||''):'',unidade:v.unidade,setor:v.setor,responsavel:v.responsavel,realizadoPorId:(old&&old.realizadoPorId)||S.me.id,observacoes:v.observacoes||(old&&old.observacoes)||'',fotos:r.draft.fotos||[]};
       CAMPOS.forEach(function(c){data[c[0]]=(c[0] in v)?v[c[0]]:((old&&old[c[0]])||'')});
       syncGrupos();syncItens();
       if(r.draft.tipo==='inspecao'&&!r.id){
@@ -1633,7 +1636,7 @@ async function gerarPDF(id){
   var cont={'Crítico':0,'Alto':0,'Médio':0,'Baixo':0};ncs.forEach(function(n){if(cont[grau(n)]!=null)cont[grau(n)]++});
   var acs=[];ncs.forEach(function(n){acs=acs.concat(acoesDe(n.id))});
   section('1. Identificação');
-  var idr=[['Nº do relatório',num(insp)],['Data',fmt(insp.data)],['Empresa (contratante)',empNome(insp)],['Unidade',insp.unidade],['Setor / local',insp.setor],['Realizado por',insp.responsavel]];
+  var idr=[['Nº do relatório',num(insp)],['Data',fmt(insp.data)],['Empresa (contratante)',empNome(insp)],['CNPJ',empCnpj(insp)||'Não informado'],['Unidade',insp.unidade],['Setor / local',insp.setor],['Realizado por',insp.responsavel]];
   if(ncs.length){idr.push(['Situação',stInsp(insp)]);idr.push(['Itens registrados',ncs.length+' (crítico '+cont['Crítico']+', alto '+cont['Alto']+', médio '+cont['Médio']+', baixo '+cont['Baixo']+')']);idr.push(['Ações no plano',acs.length+' (vencidas: '+acs.filter(vencida).length+')'])}
   kv(idr);
   var gn=1;
@@ -1747,7 +1750,8 @@ async function gerarWord(id){
   function campo(k,mode){if(!insp[k])return;row1([lbl(CD[k][1])].concat(lin(insp[k],mode)))}
   function inlineRow(k){if(insp[k])row1([inl(CD[k][1],insp[k])])}
   row2([inl('Data',fmt(insp.data))],[inl(tr(insp)+' Nº',num(insp))]);
-  row2([inl('Empresa',empNome(insp)||'-')],[inl('Unidade / setor',(insp.unidade||'-')+' / '+(insp.setor||'-'))]);
+  row2([inl('Empresa',empNome(insp)||'-')],[inl('CNPJ',empCnpj(insp)||'Não informado')]);
+  row1([inl('Unidade / setor',(insp.unidade||'-')+' / '+(insp.setor||'-'))]);
   if(insp.execNome||insp.execCnpj)row2([inl('Empresa executante',insp.execNome||'-')],[inl('CNPJ executante',insp.execCnpj||'-')]);
   if(insp.representante)row1([inl('Representante da empresa',insp.representante)]);
   campo('equipe','n');
