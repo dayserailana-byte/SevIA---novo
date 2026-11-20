@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-20-0010 indicadores --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-20-0100 indicadores-filtro-tipo --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -84,6 +84,38 @@ p{margin:0}
 
 .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;min-width:0}
 .card-h{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 16px;margin-bottom:12px}
+.ix{display:flex;flex-direction:column;gap:14px}
+.ix-card{background:#fff;border-radius:18px;padding:16px;border:1px solid #E3E3DF;display:flex;flex-direction:column;gap:12px}
+.ix-card h2{margin:0;font-size:17px;font-weight:600}
+.ix-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.ix-sub{font-size:13px;color:#595959}
+.ix-seg{display:flex;gap:4px;background:#E9E9E5;border-radius:12px;padding:4px}
+.ix-seg button{flex:1;min-height:44px;border:0;border-radius:10px;background:transparent;font:inherit;font-size:13px;color:#333;cursor:pointer}
+.ix-seg button[aria-pressed="true"]{background:#000;color:#fff;font-weight:600}
+.ix-hero{background:#000;color:#fff;border-radius:18px;padding:18px;display:flex;align-items:center;gap:16px}
+.ix-hero b{font-size:16px;font-weight:600}
+.ix-hero span{display:block;font-size:13px;color:#C9C9C9;line-height:1.4;margin-top:4px}
+.ix-hero .up{color:#7FD99A;font-weight:600}.ix-hero .dn{color:#FF9A91;font-weight:600}
+.ix-kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.ix-k{background:#fff;border-radius:16px;padding:14px;border:1px solid #E3E3DF;display:block;color:inherit;text-decoration:none}
+.ix-k .n{display:block;font-size:34px;font-weight:800;line-height:1}
+.ix-k .l{display:block;font-size:13px;color:#595959;margin-top:6px}
+.ix-k.bad{background:#FFF1E6;border-color:#F7C9A3}.ix-k.bad .n{color:#9A3F00}.ix-k.bad .l{color:#7A3200;font-weight:600}
+.ix-dn{display:flex;align-items:center;gap:14px}
+.ix-lg{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0}
+.ix-lg div{display:flex;align-items:center;gap:8px;font-size:13px}
+.ix-lg i{width:12px;height:12px;border-radius:3px;flex:none}
+.ix-lg span{flex:1}
+.ix-bar{display:flex;flex-direction:column;gap:5px}
+.ix-bar>div:first-child{display:flex;justify-content:space-between;gap:8px;font-size:13px}
+.ix-bar .t{height:10px;background:#EEEEEA;border-radius:5px}.ix-bar .t i{display:block;height:10px;background:#FA6905;border-radius:5px}
+.ix-mes{display:flex;align-items:flex-end;gap:6px;height:130px;border-bottom:1px solid #D4D4D0}
+.ix-mes>div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;min-width:0}
+.ix-ax{display:flex;justify-content:space-between;font-size:12px;color:#595959}
+.ix-un{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid #ECECE8}
+.ix-un>div{flex:1;display:flex;flex-direction:column;min-width:0}.ix-un b{font-size:14px}.ix-un small{font-size:12px;color:#595959}
+.ix-pill{font-size:13px;font-weight:600;padding:5px 10px;border-radius:999px;white-space:nowrap}
+.ix-pill.ok{background:#E6F4EA;color:#1B7F3A}.ix-pill.wn{background:#FFF3D1;color:#7A5200}.ix-pill.bd{background:#FBE4E2;color:#8F1D17}.ix-pill.na{background:#EEEEEA;color:#595959}
 .tiles{display:flex;flex-wrap:wrap;gap:12px}
 .tile{flex:1 1 190px;min-width:0;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 18px;text-decoration:none;color:var(--fg);display:flex;flex-direction:column;gap:4px}
 .tile:hover{border-color:var(--brand)}
@@ -699,35 +731,69 @@ function viewConcluidas(){
   '<section class="card"><div class="card-h"><h2>Lista de concluídas</h2></div><div class="list">'+(C.length?C.slice(0,30).map(function(c){var i=c.i;
     return '<button type="button" class="row" data-act="open-insp" data-id="'+esc(i.id)+'"><span class="row-main" style="cursor:inherit"><span class="insp-num">'+tr(i)+' Nº '+num(i)+'</span><b>'+esc(i.setor)+' · '+esc(i.unidade)+'</b><span class="muted small">'+esc(empNome(i))+' · realizada em '+fmt(i.data)+' · concluída em '+fmt(c.dc)+' · '+ncsDe(i.id).length+' itens</span></span><span class="row-side">'+chip('Concluída','st-ok')+'</span></button>'}).join(''):'<p class="muted pad">Nenhuma inspeção concluída neste filtro.</p>')+'</div></section>';
 }
+function ixDonut(parts,center,sub,label){
+  var C=263.9,tot=parts.reduce(function(a,x){return a+x.v},0),cum=0,c='';
+  if(tot)parts.forEach(function(x){if(!x.v)return;var d=C*x.v/tot,g=parts.filter(function(y){return y.v}).length>1?1.5:0;c+='<circle cx="55" cy="55" r="42" fill="none" stroke="'+x.c+'" stroke-width="16" stroke-dasharray="'+(d-g).toFixed(1)+' '+(C-d+g).toFixed(1)+'" stroke-dashoffset="'+(-cum).toFixed(1)+'" transform="rotate(-90 55 55)"/>';cum+=d});
+  return '<svg width="116" height="116" viewBox="0 0 110 110" role="img" aria-label="'+esc(label)+'"><circle cx="55" cy="55" r="42" fill="none" stroke="#EEEEEA" stroke-width="16"/>'+c+'<text x="55" y="57" text-anchor="middle" font-size="'+(String(center).length>2?20:24)+'" font-weight="800" fill="#111">'+esc(center)+'</text><text x="55" y="73" text-anchor="middle" font-size="11" fill="#595959">'+esc(sub)+'</text></svg>';
+}
+function ixCard(t,sub,parts,center,csub,label){
+  return '<section class="ix-card"><div class="ix-h"><h2>'+t+'</h2><span class="ix-sub">'+esc(sub)+'</span></div><div class="ix-dn">'+ixDonut(parts,center,csub,label)+'<div class="ix-lg">'+parts.map(function(x){return '<div><i style="background:'+x.c+'"></i><span>'+esc(x.l)+'</span><b>'+x.v+'</b></div>'}).join('')+'</div></div></section>';
+}
 function viewIndicadores(){
   var base=filtrados(),tp=S.pf.tipo||'todos';
-  var fi=base.fi.filter(function(i){return tp==='todos'||(tp==='insp')===isIns(i)});
+  function noTipo(i){return tp==='todos'||(tp==='insp')===isIns(i)}
+  var fi=base.fi.filter(noTipo);
   var is={};fi.forEach(function(i){is[i.id]=1});
   var fn=base.fn.filter(function(n){return is[n.inspId]}),ns={};fn.forEach(function(n){ns[n.id]=1});
   var fa=base.fa.filter(function(a){return ns[a.ncId]});
   var nIns=fi.filter(isIns).length,nFot=fi.length-nIns;
   var nc=fn.filter(function(n){return n.classificacao!=='Conformidade'}),conf=fn.length-nc.length;
   var cp=fn.length?pct(conf,fn.length):null;
+  /* período anterior (mesmo tamanho) para comparar a conformidade */
+  var ant=null,dd={'30d':30,'90d':90,'12m':365}[S.pf.periodo];
+  if(dd&&cp!=null){var d1=new Date(),d2=new Date(),d3=new Date();d1.setDate(d1.getDate()-dd);d2.setDate(d2.getDate()-2*dd);var mn=isoDate(d2),mx=isoDate(d1);
+    var ids2={};S.insp.forEach(function(i){if((S.pf.empresa==='todas'||i.empresaId===S.pf.empresa)&&(S.pf.unidade==='todas'||i.unidade===S.pf.unidade)&&noTipo(i)&&(i.data||'')>=mn&&(i.data||'')<mx)ids2[i.id]=1});
+    var n2=S.ncs.filter(function(n){return ids2[n.inspId]}),c2=n2.filter(function(n){return n.classificacao==='Conformidade'}).length;
+    if(n2.length)ant=cp-pct(c2,n2.length)}
   var atras=fa.filter(vencida).length,conc=fa.filter(function(a){return a.status==='Concluída'}).length,andam=fa.length-conc-atras;
   var gr={};GRAUS.forEach(function(g){gr[g]=0});nc.forEach(function(n){var g=grau(n);if(gr[g]!=null)gr[g]++});
   var CG={'Crítico':'#7F1D1D','Alto':'#E5483D','Médio':'#F5B342','Baixo':'#7BB77F'};
-  var tema={};nc.forEach(function(n){var k=(!n.norma||n.norma===PENDENTE)?'Norma a definir':String(n.norma).split(/[—\-\(,;]/)[0].trim().slice(0,38);tema[k]=(tema[k]||0)+1});
+  var tema={};nc.forEach(function(n){var k=(!n.norma||n.norma===PENDENTE)?'Norma a definir':(String(n.norma).match(/\b(NR|IT|NBR|NFPA)[\s-]?\d+(\.\d+)?/i)||[String(n.norma).trim().slice(0,38)])[0].toUpperCase().replace(/\s+/g,' ').replace(/^(NR|IT|NBR|NFPA) ?-?(\d)/,function(m,a,b){return a+(a==='IT'?' ':'-')+b});tema[k]=(tema[k]||0)+1});
   var temas=Object.keys(tema).map(function(k){return {l:k,v:tema[k]}}).sort(function(a,b){return b.v-a.v}).slice(0,6);
+  var mx2=Math.max.apply(null,temas.map(function(t){return t.v}).concat([1]));
   var un={};fi.forEach(function(i){var k=(S.pf.empresa==='todas'?empNome(i)+' · ':'')+(i.unidade||'Sem unidade');var o=un[k]||(un[k]={f:0,s:0,n:0,c:0});if(isIns(i))o.s++;else o.f++;ncsDe(i.id).forEach(function(x){if(x.classificacao==='Conformidade')o.c++;else o.n++})});
   var uL=Object.keys(un).sort(function(a,b){return (un[b].f+un[b].s)-(un[a].f+un[a].s)}).slice(0,12);
-  function seg(id,l){return '<button type="button" class="btn '+(tp===id?'btn-primary':'btn-ghost')+'" data-act="pf-tipo" data-id="'+id+'" aria-pressed="'+(tp===id)+'">'+l+'</button>'}
-  function cor(p){return p>=85?'var(--ok)':(p>=70?'var(--warn,#8A6100)':'var(--danger)')}
+  /* por mês, empilhado por tipo */
+  var mF=serieMes(fi.filter(function(i){return !isIns(i)}).map(function(i){return i.data})),mS=serieMes(fi.filter(isIns).map(function(i){return i.data}));
+  var mxm=Math.max.apply(null,mF.map(function(m,k){return m.v+mS[k].v}).concat([1]));
+  function seg(id,l){return '<button type="button" data-act="pf-tipo" data-id="'+id+'" aria-pressed="'+(tp===id)+'">'+l+'</button>'}
+  function pill(p){return p==null?'<span class="ix-pill na">-</span>':'<span class="ix-pill '+(p>=85?'ok':(p>=70?'wn':'bd'))+'">'+p+'%</span>'}
+  function kpi(n,l,href,bad){return '<a class="ix-k'+(bad?' bad':'')+'" href="'+href+'"><span class="n">'+n+'</span><span class="l">'+l+'</span></a>'}
+  var ring=cp==null?0:Math.round(196*cp/100);
+  var isF=tp==='foto',isI=tp==='insp',isT=tp==='todos';
+  var nf=0,ng=0;fi.filter(function(i){return !isIns(i)}).forEach(function(i){nf+=(i.fotos||[]).length;(i.grupos||[]).forEach(function(g){ng++;nf+=(g.fotos||[]).length})});
+  var nFR=fi.filter(function(i){return !isIns(i)}).length;
+  var kp=isF?kpi(nFot,'Relatórios fotográficos','#inspecoes')+kpi(ng,'Grupos de fotos','#inspecoes')+kpi(nf,'Fotos registradas','#inspecoes')+kpi(nFR?Math.round(nf/nFR):'-','Fotos por relatório','#inspecoes')
+    :(isI?kpi(nIns,'Inspeções de segurança','#inspecoes')+kpi(fn.length,'Itens avaliados','#ncs')+kpi(nc.length,'Não conformidades','#ncs')+kpi(atras,'Ações atrasadas','#acoes',atras>0)
+    :kpi(nFot,'Relatórios fotográficos','#inspecoes')+kpi(nIns,'Inspeções de segurança','#inspecoes')+kpi(nc.length,'Não conformidades','#ncs')+kpi(atras,'Ações atrasadas','#acoes',atras>0));
+  var hero='<section class="ix-hero"><svg width="92" height="92" viewBox="0 0 92 92" role="img" aria-label="Conformidade geral '+(cp==null?'sem dados':cp+' por cento')+'" style="flex:none"><circle cx="46" cy="46" r="38" fill="none" stroke="#3A3A3A" stroke-width="10"/>'+(cp?'<circle cx="46" cy="46" r="38" fill="none" stroke="#FA6905" stroke-width="10" stroke-linecap="round" stroke-dasharray="'+ring+' 239" transform="rotate(-90 46 46)"/>':'')+'<text x="46" y="53" text-anchor="middle" font-size="22" font-weight="800" fill="#fff">'+(cp==null?'-':cp+'%')+'</text></svg><div><b>Conformidade geral</b><span>Itens conformes nas inspeções do período.</span>'+(ant==null?'':'<span class="'+(ant>=0?'up':'dn')+'">'+(ant>=0?'▲ ':'▼ ')+Math.abs(ant)+' pontos sobre o período anterior</span>')+'</div></section>';
+  var blocoIns=hero+ixCard('Risco das não conformidades',nc.length+' itens',GRAUS.map(function(g){return {l:g,v:gr[g],c:CG[g]}}),String(nc.length),'itens','Não conformidades por grau de risco')+
+  ixCard('Planos de ação',fa.length+' no total',[{l:'Concluídas',v:conc,c:'#1B7F3A'},{l:'Em andamento',v:andam,c:'#F5B342'},{l:'Atrasadas',v:atras,c:'#B3261E'}],fa.length?pct(conc,fa.length)+'%':'-','concluídas','Planos de ação por situação')+
+  '<section class="ix-card"><div class="ix-h"><h2>Não conformidades por norma</h2></div>'+(temas.length?temas.map(function(t){return '<div class="ix-bar"><div><span>'+esc(t.l)+'</span><b>'+t.v+'</b></div><div class="t"><i style="width:'+Math.round(t.v/mx2*100)+'%"></i></div></div>'}).join(''):'<p class="muted small">Sem não conformidades neste filtro.</p>')+'</section>';
+  var legM=(isI?'':'<div><i style="background:#FA6905"></i><span>Fotográficos</span></div>')+(isF?'':'<div><i style="background:#000"></i><span>Inspeções</span></div>');
+  var mes='<section class="ix-card"><div class="ix-h"><h2>Por mês</h2><span class="ix-sub">Últimos 12 meses</span></div><div class="ix-mes" role="img" aria-label="Documentos por mês, total '+fi.length+'">'+mF.map(function(m,k){var f=m.v,sI=mS[k].v;return '<div title="'+m.l+': '+f+' fotográficos, '+sI+' inspeções"><div style="height:'+Math.round(sI/mxm*120)+'px;background:#000;border-radius:3px 3px 0 0"></div><div style="height:'+Math.round(f/mxm*120)+'px;background:#FA6905"></div></div>'}).join('')+'</div><div class="ix-ax"><span>'+mF[0].l+'</span><span>'+mF[6].l+'</span><span>'+mF[11].l+'</span></div>'+
+  (isT?'<div class="ix-lg" style="flex-direction:row;gap:16px">'+legM+'</div>':'')+'</section>';
+  var fotosPorUn={};fi.forEach(function(i){if(isIns(i))return;var k=(S.pf.empresa==='todas'?empNome(i)+' · ':'')+(i.unidade||'Sem unidade');var c=(i.fotos||[]).length;(i.grupos||[]).forEach(function(g){c+=(g.fotos||[]).length});fotosPorUn[k]=(fotosPorUn[k]||0)+c});
+  var unL=uL.map(function(k){var o=un[k],t=o.c+o.n,sub=isF?o.f+(o.f===1?' relatório':' relatórios')+' · '+(fotosPorUn[k]||0)+' fotos':(isI?o.s+(o.s===1?' inspeção':' inspeções')+' · '+o.n+(o.n===1?' não conformidade':' não conformidades'):o.f+(o.f===1?' fotográfico':' fotográficos')+' · '+o.s+(o.s===1?' inspeção':' inspeções')+' · '+o.n+(o.n===1?' não conformidade':' não conformidades'));
+    return '<div class="ix-un"><div><b>'+esc(k)+'</b><small>'+sub+'</small></div>'+(isF?'':pill(t?pct(o.c,t):null))+'</div>'}).join('');
+  var porUn='<section class="ix-card"><div class="ix-h"><h2>Por empresa e unidade</h2></div>'+(uL.length?unL:'<p class="muted small">Sem dados ainda neste filtro.</p>')+'</section>';
   return head('Indicadores','Relatórios fotográficos e inspeções de segurança.')+filtrosPainel()+
-  '<div class="actions" role="group" aria-label="Tipo de documento">'+seg('todos','Tudo')+seg('foto','Fotográficos')+seg('insp','Inspeções')+'</div>'+
-  '<div class="tiles">'+tile(nFot,'Relatórios fotográficos','#inspecoes')+tile(nIns,'Inspeções de segurança','#inspecoes')+tile(nc.length,'Não conformidades','#ncs')+tile(atras,'Ações atrasadas','#acoes',atras>0)+'</div>'+
-  (nIns||fn.length?'<section class="card"><div class="card-h"><h2>Conformidade geral</h2><span class="muted small">Itens das inspeções</span></div>'+donut([{l:'Conformes',v:conf,c:'var(--ok)'},{l:'Não conformes',v:nc.length,c:'var(--danger)'}],fn.length,cp==null?'':cp+'% conf.','Conformidade: '+conf+' itens conformes e '+nc.length+' não conformes')+'</section>':'')+
-  '<div class="cols"><section class="card"><div class="card-h"><h2>Relatórios por tipo</h2></div>'+donut([{l:'Fotográficos',v:nFot,c:'var(--accent)'},{l:'Inspeções',v:nIns,c:'#000000'}],fi.length,'relatórios',fi.length+' documentos por tipo')+'</section>'+
-  '<section class="card"><div class="card-h"><h2>Risco das não conformidades</h2></div>'+donut(GRAUS.map(function(g){return {l:g,v:gr[g],c:CG[g]}}),nc.length,'itens','Não conformidades por grau de risco')+'</section></div>'+
-  '<div class="cols"><section class="card"><div class="card-h"><h2>Planos de ação</h2></div>'+donut([{l:'Concluídas',v:conc,c:'var(--ok)'},{l:'Em andamento',v:andam,c:'#F5B342'},{l:'Atrasadas',v:atras,c:'var(--danger)'}],fa.length,'ações',fa.length+' ações por situação')+'</section>'+
-  '<section class="card"><div class="card-h"><h2>Não conformidades por norma</h2></div>'+barList(temas)+'</section></div>'+
-  '<section class="card"><div class="card-h"><h2>Por mês</h2><span class="muted small">Últimos 12 meses</span></div>'+barrasMes(serieMes(fi.map(function(i){return i.data})),'Documentos por mês, total '+fi.length)+'</section>'+
-  '<section class="card"><div class="card-h"><h2>Por empresa e unidade</h2></div>'+(uL.length?'<div class="list">'+uL.map(function(k){var o=un[k],t=o.c+o.n,pc=t?pct(o.c,t):null;
-    return '<div class="row"><span class="row-main"><b>'+esc(k)+'</b><span class="muted small">'+o.f+(o.f===1?' fotográfico':' fotográficos')+' · '+o.s+(o.s===1?' inspeção':' inspeções')+' · '+o.n+(o.n===1?' não conformidade':' não conformidades')+'</span></span><span class="row-side"><b style="color:'+(pc==null?'inherit':cor(pc))+'">'+(pc==null?'-':pc+'%')+'</b></span></div>'}).join('')+'</div>':'<p class="muted pad">Sem dados ainda neste filtro.</p>')+'</section>';
+  '<div class="ix"><div class="ix-seg" role="group" aria-label="Tipo de documento">'+seg('todos','Tudo')+seg('foto','Fotográficos')+seg('insp','Inspeções')+'</div>'+
+  (isT||isI?'':'')+
+  (isF?'':'')+
+  '<div class="ix-kpis">'+kp+'</div>'+
+  (isT?ixCard('Relatórios por tipo',fi.length+' no período',[{l:'Fotográficos',v:nFot,c:'#FA6905'},{l:'Inspeções',v:nIns,c:'#000000'}],String(fi.length),'relatórios','Relatórios por tipo'):'')+
+  (isF?'':blocoIns)+mes+porUn+'</div>';
 }
 
 /* ---------- empresa ---------- */
