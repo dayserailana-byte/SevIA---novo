@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-21-1800 matriz-nitida --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-21-1830 logo-nitida --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -1648,6 +1648,32 @@ async function prepararFoto(file){
     throw e;
   }finally{URL.revokeObjectURL(url)}
 }
+/* logomarca: nunca recomprimir como foto; PNG/JPEG/WebP até 3 MB sobem como estão, o resto vira PNG sem perda */
+async function prepararLogo(file){
+  if(/^image\/(png|jpeg|webp|svg\+xml)$/.test(file.type)&&file.size<=3*1024*1024)return file;
+  var url=URL.createObjectURL(file);
+  try{
+    var im=await loadImg(url),k=Math.min(1,2000/Math.max(im.naturalWidth,im.naturalHeight)),w=Math.round(im.naturalWidth*k),h=Math.round(im.naturalHeight*k);
+    var c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(im,0,0,w,h);
+    var b=await new Promise(function(r){c.toBlob(r,'image/png')});
+    if(!b)throw new Error('blob');return b;
+  }finally{URL.revokeObjectURL(url)}
+}
+/* logomarca nos documentos: PNG sem perda, fundo branco, até 1600 px (nítida em qualquer zoom) */
+function imgLogo(id,dataUrl){
+  return new Promise(function(res){
+    var im=(function(){var _i=new Image();_i.crossOrigin='anonymous';return _i})();
+    im.onload=function(){
+      var k=Math.min(1,1600/Math.max(im.naturalWidth,im.naturalHeight)),w=Math.max(1,Math.round(im.naturalWidth*k)),h=Math.max(1,Math.round(im.naturalHeight*k));
+      var c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d');x.imageSmoothingQuality='high';x.fillStyle='#fff';x.fillRect(0,0,w,h);x.drawImage(im,0,0,w,h);
+      if(dataUrl){try{res({d:c.toDataURL('image/png'),w:w,h:h})}catch(e){res(null)}return}
+      c.toBlob(function(b){if(!b){res(null);return}b.arrayBuffer().then(function(ab){res({d:new Uint8Array(ab),w:w,h:h})},function(){res(null)})},'image/png');
+    };
+    im.onerror=function(){res(null)};im.src=BLOB(id);
+  });
+}
+function imgLogoB(id){return imgLogo(id,false)}
+function imgLogoD(id){return imgLogo(id,true)}
 async function addFotos(files){
   var rt=S.route,d=rt.draft,st=$('#foto-st'),ok=0;
   for(var k=0;k<files.length;k++){
@@ -1830,7 +1856,7 @@ async function gerarPDFCampo(insp){
   B.gerais.concat(B.ativ).forEach(function(b){ids=ids.concat(b.fotos)});
   var cache={};await Promise.all(uniq(ids).map(async function(i){cache[i]=await imgData(i)}));
   var empO=empDe(insp.empresaId),logoId=(empO&&empO.logo)||(S.marca&&S.marca.logo)||'';
-  var logo=logoId?await imgData(logoId):null;
+  var logo=logoId?await imgLogoD(logoId):null;
   var doc=new J({unit:'mm',format:'a4'}),PW=210,PH=297,M=10,CW=PW-2*M,TOP=32,BOT=PH-14,y=TOP,LH=4.3,FS=9,GRY=[217,217,217];
   doc.setLineWidth(0.25);doc.setDrawColor(0,0,0);
   function font(b,s){doc.setFont('helvetica',b?'bold':'normal');doc.setFontSize(s||FS)}
@@ -1999,7 +2025,7 @@ async function gerarPDFCampo(insp){
     doc.setPage(p);doc.setDrawColor(0,0,0);doc.setLineWidth(0.25);
     var hy=8,hh=19,x1=M+CW*.24,x2=M+CW*.78;
     doc.rect(M,hy,CW,hh,'S');doc.line(x1,hy,x1,hy+hh);doc.line(x2,hy,x2,hy+hh);
-    if(logo){var f2=fit(logo,CW*.24-6,hh-5);doc.addImage(logo.d,'JPEG',M+(CW*.24-f2.w)/2,hy+(hh-f2.h)/2,f2.w,f2.h)}
+    if(logo){var f2=fit(logo,CW*.24-6,hh-5);doc.addImage(logo.d,'PNG',M+(CW*.24-f2.w)/2,hy+(hh-f2.h)/2,f2.w,f2.h)}
     font(1,15);doc.text('RELATÓRIO DE CAMPO',(x1+x2)/2,hy+hh/2+2,{align:'center'});
     font(1,10);doc.text('Nº '+num(insp),(x2+M+CW)/2,hy+hh/2+1.5,{align:'center'});
     font(0,8);doc.setTextColor(68,68,68);doc.text('Página '+p+' de '+n,PW/2,PH-8,{align:'center'});doc.setTextColor(0,0,0);
@@ -2020,7 +2046,7 @@ async function gerarPDF(id){
   var ids=(insp.fotos||[]).slice();(insp.grupos||[]).forEach(function(g){ids=ids.concat(g.fotos||[])});ncs.forEach(function(n){ids=ids.concat(n.fotos||[])});
   var cache={};await Promise.all(uniq(ids).map(async function(i){cache[i]=await imgData(i)}));
   var empO=empDe(insp.empresaId),logoId=(empO&&empO.logo)||(S.marca&&S.marca.logo)||'';
-  cache.__logo=logoId?await imgData(logoId):null;
+  cache.__logo=logoId?await imgLogoD(logoId):null;
   var doc=new J({unit:'mm',format:'a4'}),PW=210,M=15,CW=PW-2*M,y=M;
   var BR=[17,17,17],OR=[250,105,5],TX=[0,0,0],MU=[68,68,68];
   function need(h){if(y+h>282){doc.addPage();y=M}}
@@ -2048,7 +2074,7 @@ async function gerarPDF(id){
     }
   }
   var tipoIns=isIns(insp),TIT=tipoIns?'INSPEÇÃO DE SEGURANÇA':'RELATÓRIO DE CAMPO';
-  if(cache.__logo){var L0=cache.__logo,r0=Math.min(60/L0.w,18/L0.h);doc.addImage(L0.d,'JPEG',M,y-1,L0.w*r0,L0.h*r0)}
+  if(cache.__logo){var L0=cache.__logo,r0=Math.min(60/L0.w,18/L0.h);doc.addImage(L0.d,'PNG',M,y-1,L0.w*r0,L0.h*r0)}
   else{doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor.apply(doc,BR);doc.text(doc.splitTextToSize(empNome(insp)||'',80)[0]||'',M,y+8)}
   doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor.apply(doc,BR);doc.text(TIT,PW-M,y+7,{align:'right'});
   doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor.apply(doc,MU);doc.text((tipoIns?'Inspeção':'Relatório fotográfico')+' nº '+num(insp)+'  ·  '+fmt(insp.data),PW-M,y+12.5,{align:'right'});
@@ -2156,7 +2182,7 @@ function imgBytes(id){
 /* ---------- Relatório de campo (modelo do cliente) — Word ---------- */
 function linhasDe(t){return String(t==null?'':t).split(/\r?\n/).map(function(s){return s.replace(/^\s*(?:[-•*–]|\d+[.)])\s*/,'').trim()}).filter(Boolean)}
 var MZ_F=[['REMOTA',2],['POUCO PROVÁVEL',3],['OCASIONAL',5],['PROVÁVEL',8],['FREQÜENTE',13]],MZ_S=[['CATASTRÓFICA',32],['CRÍTICA',16],['GRAVE',8],['MODERADA',4],['LEVE',2]];
-var MZ_LEG=[['MUITO ALTO (≥ 160)',160],['ALTO (80 a 128)',80],['MÉDIO (26 a 64)',26],['BAIXO (10 a 24)',10],['MUITO BAIXO (4 a 8)',0]];
+var MZ_LEG=[['MUITO ALTO (160 ou mais)',160],['ALTO (80 a 128)',80],['MÉDIO (26 a 64)',26],['BAIXO (10 a 24)',10],['MUITO BAIXO (4 a 8)',0]];
 function mzCor(v){return v>=160?['E5231B','FFFFFF']:v>=80?['F59A23','000000']:v>=26?['FFE600','000000']:v>=10?['8CC63F','000000']:['2E9E6E','FFFFFF']}
 async function matrizBytes(){
   try{var r=await fetch('/matriz-riscos.png');if(!r.ok)return null;var u=new Uint8Array(await r.arrayBuffer());
@@ -2189,7 +2215,7 @@ async function gerarWordCampo(insp){
   B.gerais.concat(B.ativ).forEach(function(b){ids=ids.concat(b.fotos)});
   var cache={};await Promise.all(uniq(ids).map(async function(i){cache[i]=await imgBytes(i)}));
   var empW=empDe(insp.empresaId),logoW=(empW&&empW.logo)||(S.marca&&S.marca.logo)||'';
-  var logo=logoW?await imgBytes(logoW):null;
+  var logo=logoW?await imgLogoB(logoW):null;
   var AL=D.AlignmentType,TW=10300,GR='D9D9D9';
   var bd={style:D.BorderStyle.SINGLE,size:6,color:'000000'},borders={top:bd,bottom:bd,left:bd,right:bd};
   var nob={style:D.BorderStyle.NONE,size:0,color:'FFFFFF'};
@@ -2280,7 +2306,7 @@ async function gerarWordCampo(insp){
     new D.TableRow({cantSplit:true,height:{value:900,rule:D.HeightRule.ATLEAST},children:[cel([P('Assinatura',{b:true,after:0})],22,{va:D.VerticalAlign.BOTTOM}),cel([P('',{after:0})],78)]})
   ],[22,78]));
   /* cabeçalho com moldura e rodapé */
-  var lg=logo?[new D.ImageRun({type:'jpg',data:logo.d,transformation:{width:Math.round(logo.w*Math.min(110/logo.w,44/logo.h)),height:Math.round(logo.h*Math.min(110/logo.w,44/logo.h))}})]:[R('')];
+  var lg=logo?[new D.ImageRun({type:'png',data:logo.d,transformation:{width:Math.round(logo.w*Math.min(110/logo.w,44/logo.h)),height:Math.round(logo.h*Math.min(110/logo.w,44/logo.h))}})]:[R('')];
   var head=tbl([new D.TableRow({children:[cel([new D.Paragraph({alignment:AL.CENTER,children:lg})],24,{va:D.VerticalAlign.CENTER}),cel([P('RELATÓRIO DE CAMPO',{b:true,size:30,al:AL.CENTER,after:0})],54,{va:D.VerticalAlign.CENTER}),cel([P('Nº '+num(insp),{b:true,al:AL.CENTER,after:0})],22,{va:D.VerticalAlign.CENTER})]})],[24,54,22]);
   var doc=new D.Document({
     creator:'SevIA SST 4.0',title:'Relatório de campo '+num(insp),
@@ -2308,7 +2334,7 @@ async function gerarWord(id){
   var ncs=ncsDe(id).sort(byGrau);
   var ids=(insp.fotos||[]).slice();(insp.grupos||[]).forEach(function(g){ids=ids.concat(g.fotos||[])});ncs.forEach(function(n){ids=ids.concat(n.fotos||[])});
   var cache={};await Promise.all(uniq(ids).map(async function(i){cache[i]=await imgBytes(i)}));
-  var empW=empDe(insp.empresaId),logoW=(empW&&empW.logo)||(S.marca&&S.marca.logo)||'';var logo=logoW?await imgBytes(logoW):null;
+  var empW=empDe(insp.empresaId),logoW=(empW&&empW.logo)||(S.marca&&S.marca.logo)||'';var logo=logoW?await imgLogoB(logoW):null;
   function P(t,o){o=o||{};return new D.Paragraph({pageBreakBefore:!!o.pb,spacing:{after:o.after==null?100:o.after,before:o.before||0},heading:o.h,alignment:o.al,children:[new D.TextRun({text:String(t==null?'':t),bold:!!o.b,size:o.size||22,color:o.color||'000000'})]})}
   function fotos(list,per,mw,mh,ctr){
     per=per||3;mw=mw||190;mh=mh||140;
@@ -2380,7 +2406,7 @@ async function gerarWord(id){
     styles:{default:{document:{run:{font:'Arial',size:22}}}},
     sections:[{
       properties:{page:{size:{width:11906,height:16838},margin:{top:1134,bottom:1134,left:1134,right:1134}}},
-      headers:{default:new D.Header({children:[new D.Paragraph({children:[new D.TextRun({text:isIns(insp)?'INSPEÇÃO DE SEGURANÇA':'RELATÓRIO DE CAMPO',bold:true,size:28}),new D.TextRun({text:'     '})].concat(logo?[new D.ImageRun({type:'jpg',data:logo.d,transformation:{width:Math.round(logo.w*Math.min(120/logo.w,40/logo.h)),height:Math.round(logo.h*Math.min(120/logo.w,40/logo.h))}})]:[])})]})},
+      headers:{default:new D.Header({children:[new D.Paragraph({children:[new D.TextRun({text:isIns(insp)?'INSPEÇÃO DE SEGURANÇA':'RELATÓRIO DE CAMPO',bold:true,size:28}),new D.TextRun({text:'     '})].concat(logo?[new D.ImageRun({type:'png',data:logo.d,transformation:{width:Math.round(logo.w*Math.min(120/logo.w,40/logo.h)),height:Math.round(logo.h*Math.min(120/logo.w,40/logo.h))}})]:[])})]})},
       footers:{default:new D.Footer({children:[new D.Paragraph({alignment:D.AlignmentType.CENTER,children:[new D.TextRun({text:'SevIA SST 4.0  |  Gerado em '+new Date().toLocaleDateString('pt-BR')+'  |  Página ',size:16,color:'444444'}),new D.TextRun({children:[D.PageNumber.CURRENT],size:16,color:'444444'}),new D.TextRun({text:' de ',size:16,color:'444444'}),new D.TextRun({children:[D.PageNumber.TOTAL_PAGES],size:16,color:'444444'})]})]})},
       children:kids
     }]
@@ -2716,8 +2742,8 @@ document.addEventListener('change',function(e){
     case 'tt-foto':if(el.files&&el.files[0])ttFoto(el.files[0]);break;
     case 'foto-i':if(el.files&&el.files.length)addFotosI(Array.prototype.slice.call(el.files),+el.dataset.g,el);break;
     case 'foto-g':if(el.files&&el.files.length)addFotosG(Array.prototype.slice.call(el.files),+el.dataset.g,el);break;
-    case 'emp-logo':if(el.files&&el.files[0]&&S.route&&S.route.draft){(async function(f,inp){var rt=S.route;try{var b=await prepararFoto(f);var r=await S.assets.upload(b,{type:b.type||'image/jpeg'});rt.draft.logo=r.id;var bx=$('#emp-logo');if(bx&&S.route===rt)bx.innerHTML=empLogoHtml(r.id);toast('Logomarca anexada. Toque em Salvar empresa.')}catch(er){console.error(er);toast('Não foi possível enviar a logomarca.')}inp.value=''})(el.files[0],el)}break;
-    case 'logo-in':if(el.files&&el.files[0]){(async function(f,inp){try{var b=await prepararFoto(f);var r=await S.assets.upload(b,{type:b.type||'image/jpeg'});await S.db.doc('config/marca').set({logo:r.id});toast('Logomarca salva.')}catch(er){console.error(er);toast('Não foi possível enviar a logomarca.')}inp.value=''})(el.files[0],el)}break;
+    case 'emp-logo':if(el.files&&el.files[0]&&S.route&&S.route.draft){(async function(f,inp){var rt=S.route;try{var b=await prepararLogo(f);var r=await S.assets.upload(b,{type:b.type||'image/png'});rt.draft.logo=r.id;var bx=$('#emp-logo');if(bx&&S.route===rt)bx.innerHTML=empLogoHtml(r.id);toast('Logomarca anexada. Toque em Salvar empresa.')}catch(er){console.error(er);toast('Não foi possível enviar a logomarca.')}inp.value=''})(el.files[0],el)}break;
+    case 'logo-in':if(el.files&&el.files[0]){(async function(f,inp){try{var b=await prepararLogo(f);var r=await S.assets.upload(b,{type:b.type||'image/png'});await S.db.doc('config/marca').set({logo:r.id});toast('Logomarca salva.')}catch(er){console.error(er);toast('Não foi possível enviar a logomarca.')}inp.value=''})(el.files[0],el)}break;
     case 'foto-in':if(el.files&&el.files.length)addFotos(Array.prototype.slice.call(el.files));break;
     case 'acao-status':
       var a=S.acoes.filter(function(x){return x.id===el.dataset.id})[0];if(!a)break;
