@@ -259,7 +259,10 @@
         var antigo = lista.filter(function (x) { return x.id === id; })[0];
         var numAntigo = antigo && antigo.d && antigo.d.numero;
         if (numAntigo > 0) d.numero = numAntigo;                   // já tem número: mantém
-        else if (!d.rascunho) { d.numero = 0; d._semNumero = true; } // novo: o número sai ao enviar
+        else {
+          d.criadoOffline = true;                                    // veio do campo sem internet
+          if (!d.rascunho) { d.numero = 0; d._semNumero = true; if (!d.revisao) d.revisao = "pendente"; } // número sai ao enviar
+        }
       }
       try { await IDB.put("o:" + path, { path: path, col: col, dados: d, ts: Date.now() }); }
       catch (e) { throw { code: "quota", message: "Sem espaço no aparelho para guardar o relatório." }; }
