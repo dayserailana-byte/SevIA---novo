@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-21-1830 logo-nitida --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-21-1915 titulo-registros-junto --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -1953,17 +1953,26 @@ async function gerarPDFCampo(insp){
   MZ_LEG.forEach(function(l,k){var c=mzCor(l[1]);cm(l[0],M+k*CW/5,CW/5,6,c[0],c[1],7)});
   y+=6;font(0,7.5);doc.setTextColor(68,68,68);doc.text('Fonte: INS-0037 - Análise e Gerenciamento de Risco',M,y+4);doc.setTextColor(0,0,0);y+=8;
   /* registros fotográficos */
-  need(90);titulo('REGISTROS FOTOGRÁFICOS E APONTAMENTOS');
+  function tituloReg(){doc.rect(M,y,CW,7,'S');font(1,10);doc.text('REGISTROS FOTOGRÁFICOS E APONTAMENTOS:',M+2,y+4.9);y+=7}
   var cw=CW/2,iw=(cw-6)/2;
+  function escCab(b,x,yy,w){
+    var c=cabBloco(b);
+    wrap(c.l+c.v,w,1).forEach(function(t,j){
+      var lb=c.l.replace(/\s+$/,'');
+      if(j===0&&t.indexOf(lb)===0){font(1);doc.text(lb,x,yy+LH-1);var lw=doc.getTextWidth(lb+' ');font(0);var rs=t.slice(lb.length).replace(/^\s+/,'');if(rs)doc.text(rs,x+lw+0.8,yy+LH-1)}
+      else{font(0);doc.text(t,x,yy+LH-1)}
+      yy+=LH});
+    return yy;
+  }
   function medir(b){
-    var h=2+cabBloco(b).reduce(function(a,t,j){return a+wrap(t,cw-4,!j).length*LH},0)+LH+2;
+    var cbx=cabBloco(b),h=2+wrap(cbx.l+cbx.v,cw-4,1).length*LH+LH+2;
     var nf=(b.fotos||[]).filter(function(i){return cache[i]}).length,pc0=nf===1?1:2,ph0=(cw-6)/pc0*0.75;h+=(nf?Math.ceil(nf/pc0)*(ph0+2):LH)+2;
     if(b.n){h+=LH+wrap(b.ap||'NA',cw-4).length*LH+LH+linhasLista(b.or,cw-4,false).length*LH+2}
     return h;
   }
   function pinta(b,x,y0,h){
     doc.rect(x,y0,cw,h,'S');var yy=y0+2;
-    cabBloco(b).forEach(function(t0,j){wrap(t0,cw-4,!j).forEach(function(t){font(!j);doc.text(t,x+2,yy+LH-1);yy+=LH})});
+    yy=escCab(b,x+2,yy,cw-4);
     font(1,8);doc.text('FOTO / EVIDÊNCIA',x+2,yy+LH-1);yy+=LH+2;
     var fs=(b.fotos||[]).filter(function(i){return cache[i]});
     if(!fs.length){font(0);doc.text('Sem foto',x+2,yy+LH-1);yy+=LH}
@@ -1979,13 +1988,13 @@ async function gerarPDFCampo(insp){
     }
   }
   function pintaLargo(b){
-    var W=CW,cb=cabBloco(b),fs=(b.fotos||[]).filter(function(i){return cache[i]});
+    var W=CW,fs=(b.fotos||[]).filter(function(i){return cache[i]});
     var pc=Math.min(4,Math.max(1,fs.length)),pw=(W-6)/pc;if(fs.length===1)pw=Math.min(W-6,130);var ph=pw*0.75;
-    var hh=2+cb.reduce(function(a,t,j){return a+wrap(t,W-4,!j).length*LH},0)+LH+2+(fs.length?Math.ceil(fs.length/pc)*(ph+2):LH)+2;
+    var cbx=cabBloco(b),hh=2+wrap(cbx.l+cbx.v,W-4,1).length*LH+LH+2+(fs.length?Math.ceil(fs.length/pc)*(ph+2):LH)+2;
     var tx=b.n?(3+wrap(b.ap||'NA',W-4).length+linhasLista(b.or,W-4,false).length)*LH+6:0;
     need(hh+tx<=BOT-TOP?hh+tx:Math.min(hh,BOT-TOP));
     var y0=y,yy=y+2;
-    cb.forEach(function(t0,j){wrap(t0,W-4,!j).forEach(function(t){font(!j);doc.text(t,M+2,yy+LH-1);yy+=LH})});
+    yy=escCab(b,M+2,yy,W-4);
     font(1,8);doc.text('FOTO / EVIDÊNCIA',M+2,yy+LH-1);yy+=LH+2;
     if(!fs.length){font(0);doc.text('Sem foto',M+2,yy+LH-1);yy+=LH}
     fs.forEach(function(i,k){var im=cache[i],f=fit(im,pw,ph),col=k%pc;
@@ -2000,9 +2009,10 @@ async function gerarPDFCampo(insp){
     y+=1.5;doc.rect(M,seg,W,y-seg,'S');y+=4;
   }
   var todos=B.gerais.concat(B.ativ);
-  if(!todos.length){font(0);doc.text('Sem registros fotográficos.',M,y+LH);y+=LH+3}
+  if(!todos.length){need(20);tituloReg();font(0);doc.text('Sem registros fotográficos.',M,y+LH);y+=LH+3}
   for(var q=0;q<todos.length;q+=2){
     var a=todos[q],c=todos[q+1],h=Math.max(medir(a),c?medir(c):0);
+    if(q===0){need(7+(h>BOT-TOP-9?90:h));tituloReg()}
     if(h>BOT-TOP-2){pintaLargo(a);if(c)pintaLargo(c);continue}
     if(y+h>BOT)page();
     pinta(a,M,y,h);if(c)pinta(c,M+cw,y,h);else doc.rect(M+cw,y,cw,h,'S');
@@ -2203,9 +2213,7 @@ function blocosCampo(insp){
 }
 /* cabeçalho do bloco: "DESCRIÇÃO DA ATIVIDADE [NN]: ..." e, abaixo, o nome do grupo */
 function cabBloco(b){
-  var d=b.at||(b.n?b.titulo:'')||'NA',l=['DESCRIÇÃO DA ATIVIDADE'+(b.n?' '+b.n:'')+': '+d];
-  if(b.titulo&&b.titulo!=='Fotos gerais'&&b.titulo!==d)l.push('Grupo: '+b.titulo);
-  return l;
+  return {l:'DESCRIÇÃO DA ATIVIDADE'+(b.n?' '+b.n:'')+': ',v:b.at||(b.n?b.titulo:'')||'NA'};
 }
 async function gerarWordCampo(insp){
   var D=window.docx;
@@ -2276,7 +2284,6 @@ async function gerarWordCampo(insp){
   var lg2=[new D.TableRow({cantSplit:true,children:MZ_LEG.map(function(l){var c=mzCor(l[1]);return cc(l[0],20,c[0],c[1],{size:15})})})];
   out.push(P('MATRIZ DE RISCOS (frequência × severidade)',{b:true,after:40,kn:true}),tbl(mr,[8,17,15,15,15,15,15]),gap(40),tbl(lg2,[20,20,20,20,20]),P('Fonte: INS-0037 - Análise e Gerenciamento de Risco',{size:16,color:'444444',before:40}),gap());
   /* registros fotográficos */
-  out.push(new D.Paragraph({keepNext:true,spacing:{before:120,after:80},children:[R('REGISTROS FOTOGRÁFICOS E APONTAMENTOS',{b:true,size:22})]}));
   function fotosCel(list){
     var it=list.map(function(i){return cache[i]}).filter(Boolean),ps=[];
     var un=it.length===1,mw=un?330:150,mh=un?250:110,pc=un?1:2;
@@ -2284,14 +2291,14 @@ async function gerarWordCampo(insp){
     return ps.length?ps:[P('Sem foto',{color:'666666'})];
   }
   function bloco(b){
-    var cb=cabBloco(b),k=cb.map(function(t,j){return P(t,{b:!j,after:j===cb.length-1?60:10,color:j?'444444':'000000'})}).concat([P('FOTO / EVIDÊNCIA',{b:true,color:'444444',after:40})]).concat(fotosCel(b.fotos));
+    var cb=cabBloco(b),k=[new D.Paragraph({spacing:{after:10},children:[R(cb.l,{b:true,size:22}),R(cb.v,{size:22})]}),P('FOTO / EVIDÊNCIA',{b:true,size:22,after:60})].concat(fotosCel(b.fotos));
     if(b.n){k.push(P('APONTAMENTO:',{b:true,before:60,after:20}));k=k.concat(texto(b.ap));k.push(P('ORIENTAÇÃO / RECOMENDAÇÃO:',{b:true,before:60,after:20}));k=k.concat(lista(b.or,false))}
     return k;
   }
-  var todos=B.gerais.concat(B.ativ),rows=[];
+  var todos=B.gerais.concat(B.ativ),rows=[new D.TableRow({cantSplit:true,children:[cel([P('REGISTROS FOTOGRÁFICOS E APONTAMENTOS:',{b:true,size:24,after:0,kn:true})],100,{span:2})]})];
   for(var q=0;q<todos.length;q+=2){var a=todos[q],c=todos[q+1];
     rows.push(new D.TableRow({cantSplit:true,children:[cel(bloco(a),50),cel(c?bloco(c):[P('')],50)]}))}
-  if(rows.length)out.push(tbl(rows,[50,50]),gap());else out.push(P('Sem registros fotográficos.'),gap());
+  if(rows.length>1)out.push(tbl(rows,[50,50]),gap());else out.push(P('REGISTROS FOTOGRÁFICOS E APONTAMENTOS:',{b:true,size:24}),P('Sem registros fotográficos.'),gap());
   /* consolidação */
   var cr=[new D.TableRow({tableHeader:true,cantSplit:true,children:[hd('Nº',8),hd('APONTAMENTO / CONDIÇÃO OBSERVADA',46),hd('ORIENTAÇÃO / RECOMENDAÇÃO',46)]})];
   (B.ativ.length?B.ativ:[{n:'--',ap:'NA',or:''}]).forEach(function(b){cr.push(new D.TableRow({cantSplit:true,children:[cel([P(b.n,{al:AL.CENTER,after:0})],8),cel(texto(b.ap),46),cel(lista(b.or,false),46)]}))});
