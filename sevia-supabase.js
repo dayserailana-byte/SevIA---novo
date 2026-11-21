@@ -302,7 +302,9 @@
           if (e2.del) r2 = await sb.from("sevia_documentos").delete().eq("path", e2.path);
           else {
             var dd = e2.dados;
-            if (dd._semNumero && !dd.rascunho) { dd.numero = await proxNumeroServidor(); delete dd._semNumero; }
+            if (dd._semNumero && !dd.rascunho) { dd.numero = await proxNumeroServidor(); }
+            if (e2.col === "inspecoes" && (dd.criadoOffline || dd._semNumero) && !dd.rascunho && !dd.revisao) dd.revisao = "pendente";
+            if (dd.numero > 0) delete dd._semNumero;
             r2 = await sb.from("sevia_documentos").upsert({ path: e2.path, colecao: e2.col, dados: dd, atualizado_em: new Date().toISOString() });
           }
         } catch (e) { r2 = { error: e }; }
@@ -369,7 +371,11 @@
         var filtro = col === "usuarios" ? undefined : "colecao=eq." + col;
         var cfg = { event: "*", schema: "public", table: tabela }; if (filtro) cfg.filter = filtro;
         var ch = sb.channel("c-" + col + "-" + uuid()).on("postgres_changes", cfg, rodar).subscribe();
-        return function () { vivo = false; listeners = listeners.filter(function (f) { return f !== rodar; }); sb.removeChannel(ch); };
+        /* reforço: se o tempo real falhar (sinal fraco, aba dormindo), reconsulta a cada 20 s e ao voltar à tela/rede */
+        function reforco() { if (vivo && navigator.onLine && !document.hidden) rodar(); }
+        var tm = setInterval(reforco, 20000);
+        window.addEventListener("online", reforco); document.addEventListener("visibilitychange", reforco);
+        return function () { vivo = false; clearInterval(tm); window.removeEventListener("online", reforco); document.removeEventListener("visibilitychange", reforco); listeners = listeners.filter(function (f) { return f !== rodar; }); sb.removeChannel(ch); };
       }
     };
   }
