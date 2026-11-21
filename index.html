@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-21-1700 pdf-diretoria --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-21-1740 layout-diretoria --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -1850,7 +1850,7 @@ async function gerarPDFCampo(insp){
     var seg=y;
     lines.forEach(function(l){
       if(y+LH+1.5>BOT){doc.rect(M,seg,CW,y-seg+1,'S');page();seg=y}
-      font(l.b);if(l.pre)doc.text(l.pre,M+2,y+LH-1);doc.text(l.t,M+2+l.x,y+LH-1);y+=LH;
+      if(l.pre){font(l.pb);doc.text(l.pre,M+2,y+LH-1)}font(l.b);doc.text(l.t,M+2+l.x,y+LH-1);y+=LH;
     });
     y+=1.5;doc.rect(M,seg,CW,y-seg,'S');y+=3;
   }
@@ -1860,7 +1860,7 @@ async function gerarPDFCampo(insp){
     [[L1,M],[L2,M+hw]].forEach(function(c){c[0].forEach(function(l,k){font(0);doc.text(l.t,c[1]+2,y+LH*(k+1)-1)})});
     var h=n*LH+1.5;doc.rect(M,y,hw,h,'S');doc.rect(M+hw,y,hw,h,'S');y+=h+3;
   }
-  function titulo(t){need(14);font(1,10);doc.text(t,M,y+3.5);y+=6}
+  function titulo(t,extra){need(14+(extra||0));font(1,10);doc.text(t,M,y+3.5);y+=6}
   /* tabela: ws em %, cabeçalho hd, linhas de células (array de linhas {t,x,pre} ou {chk}) */
   function tabela(hd,ws,rows){
     var W=ws.map(function(p){return CW*p/100});
@@ -1892,11 +1892,11 @@ async function gerarPDFCampo(insp){
   box('APR / PROCEDIMENTOS',linhasTxt(insp.apr,tw));
   box('CONDIÇÕES DE FERRAMENTAS E EQUIPAMENTOS',linhasTxt(insp.condFerramentas,tw));
   box('ISOLAMENTO E SINALIZAÇÃO',linhasTxt(insp.isolamento,tw));
-  titulo('ATIVIDADES ESPECIAIS');
+  titulo('ATIVIDADES ESPECIAIS',24);
   tabela(['ATIVIDADE / REQUISITO','APLICÁVEL','NÃO APLICÁVEL','OBSERVAÇÃO'],[34,13,15,38],ESP.map(function(e){var n=e[0],v=insp['esp'+n];
     return [wrap(e[1],CW*.34-4,1).map(function(t){return {t:t,x:0,b:1}}),{chk:v==='A'},{chk:v==='N'},linhasTxt(insp['espo'+n]||' ',CW*.38-4).map(function(l){return l.t==='NA'?{t:'',x:0}:l})]}));
   box('AVALIAÇÃO DAS ATIVIDADES ESPECIAIS APLICÁVEIS',linhasTxt(insp.atividadeEspecial,tw));
-  titulo('EQUIPAMENTOS DE PROTEÇÃO INDIVIDUAL – EPI');
+  titulo('EQUIPAMENTOS DE PROTEÇÃO INDIVIDUAL – EPI',24);
   if(insp.epi){linhasTxt(insp.epi,CW).forEach(function(l){need(LH+1);font(0);doc.text(l.t,M,y+LH-1);y+=LH});y+=2}
   var el=(insp.epiLista||[]).filter(function(r){return r&&(r.epi||r.ca||r.cond||r.obs)});
   tabela(['EPI','CA','CONDIÇÕES DE USO','OBSERVAÇÕES'],[32,14,24,30],(el.length?el:[{epi:'NA'}]).map(function(r){
@@ -1906,11 +1906,13 @@ async function gerarPDFCampo(insp){
   box('APTIDÃO / EXAMES OCUPACIONAIS',linhasLista(insp.exames,tw,true));
   box('CAPACITAÇÕES / TREINAMENTOS',linhasLista(insp.capacitacoes,tw,true));
   var rl=[];[['Físicos','rFis'],['Químicos','rQuim'],['Biológicos','rBio'],['Ergonômicos','rErgo'],['Acidentes','rAcid'],['Outros','rOutros']].forEach(function(r){
-    wrap(r[0]+': '+(insp[r[1]]||'NA'),tw).forEach(function(t,j){rl.push({t:t,x:0,b:0})})});
+    wrap(insp[r[1]]||'NA',tw-28).forEach(function(t,j){rl.push({t:t,x:28,pre:j?'':r[0]+':',pb:1})})});
   if(insp.rNota)linhasTxt(insp.rNota,tw).forEach(function(l){rl.push(l)});
   box('RISCOS OCUPACIONAIS / PERIGOS OBSERVADOS',rl);
-  box('OBSERVAÇÕES GERAIS',linhasTxt(insp.observacoes,tw));
-  if(mx){var f=fit(mx,CW,60);need(f.h+2);doc.addImage(mx.d,'PNG',M+(CW-f.w)/2,y,f.w,f.h);y+=f.h+4}
+  var obl=linhasTxt(insp.observacoes,tw),fmx=mx?fit(mx,CW,60):null;
+  need(12+obl.length*LH+(fmx?fmx.h+6:0));
+  box('OBSERVAÇÕES GERAIS',obl);
+  if(fmx){doc.addImage(mx.d,'PNG',M+(CW-fmx.w)/2,y,fmx.w,fmx.h);y+=fmx.h+4}
   /* registros fotográficos */
   need(90);titulo('REGISTROS FOTOGRÁFICOS E APONTAMENTOS');
   var cw=CW/2,iw=(cw-6)/2;
@@ -1941,7 +1943,8 @@ async function gerarPDFCampo(insp){
     var W=CW,cb=cabBloco(b),fs=(b.fotos||[]).filter(function(i){return cache[i]});
     var pc=Math.min(4,Math.max(1,fs.length)),pw=(W-6)/pc;if(fs.length===1)pw=Math.min(W-6,130);var ph=pw*0.75;
     var hh=2+cb.reduce(function(a,t,j){return a+wrap(t,W-4,!j).length*LH},0)+LH+2+(fs.length?Math.ceil(fs.length/pc)*(ph+2):LH)+2;
-    need(Math.min(hh,BOT-TOP));
+    var tx=b.n?(3+wrap(b.ap||'NA',W-4).length+linhasLista(b.or,W-4,false).length)*LH+6:0;
+    need(hh+tx<=BOT-TOP?hh+tx:Math.min(hh,BOT-TOP));
     var y0=y,yy=y+2;
     cb.forEach(function(t0,j){wrap(t0,W-4,!j).forEach(function(t){font(!j);doc.text(t,M+2,yy+LH-1);yy+=LH})});
     font(1,8);doc.text('FOTO / EVIDÊNCIA',M+2,yy+LH-1);yy+=LH+2;
@@ -1967,7 +1970,7 @@ async function gerarPDFCampo(insp){
     y+=h;
   }
   y+=4;
-  titulo('CONSOLIDAÇÃO DOS APONTAMENTOS');
+  titulo('CONSOLIDAÇÃO DOS APONTAMENTOS',30);
   tabela(['Nº','APONTAMENTO / CONDIÇÃO OBSERVADA','ORIENTAÇÃO / RECOMENDAÇÃO'],[8,46,46],(B.ativ.length?B.ativ:[{n:'--',ap:'NA',or:''}]).map(function(b){
     return [[{t:b.n,x:0}],linhasTxt(b.ap,CW*.46-4),linhasLista(b.or,CW*.46-4,false)]}));
   box('CONSIDERAÇÕES FINAIS',linhasTxt(insp.consideracoes,tw));
@@ -1986,7 +1989,7 @@ async function gerarPDFCampo(insp){
     if(logo){var f2=fit(logo,CW*.24-6,hh-5);doc.addImage(logo.d,'JPEG',M+(CW*.24-f2.w)/2,hy+(hh-f2.h)/2,f2.w,f2.h)}
     font(1,15);doc.text('RELATÓRIO DE CAMPO',(x1+x2)/2,hy+hh/2+2,{align:'center'});
     font(1,10);doc.text('Nº '+num(insp),(x2+M+CW)/2,hy+hh/2+1.5,{align:'center'});
-    font(0,8);doc.setTextColor(68,68,68);doc.text('Página '+p,PW/2,PH-8,{align:'center'});doc.setTextColor(0,0,0);
+    font(0,8);doc.setTextColor(68,68,68);doc.text('Página '+p+' de '+n,PW/2,PH-8,{align:'center'});doc.setTextColor(0,0,0);
   }
   try{
     await S.downloads.save({filename:'relatorio-de-campo-'+num(insp)+'-'+slug(insp.unidade||insp.setor||empNome(insp))+'.pdf',data:doc.output('arraybuffer')});
@@ -2221,13 +2224,13 @@ async function gerarWordCampo(insp){
   sec('APTIDÃO / EXAMES OCUPACIONAIS',lista(insp.exames,true));
   sec('CAPACITAÇÕES / TREINAMENTOS',lista(insp.capacitacoes,true));
   /* riscos */
-  var rk=[];[['Físicos','rFis'],['Químicos','rQuim'],['Biológicos','rBio'],['Ergonômicos','rErgo'],['Acidentes','rAcid'],['Outros','rOutros']].forEach(function(r){rk.push(new D.Paragraph({spacing:{after:50},children:[R(r[0]+': ',{b:true}),R(insp[r[1]]||'NA')]}))});
+  var rk=[];[['Físicos','rFis'],['Químicos','rQuim'],['Biológicos','rBio'],['Ergonômicos','rErgo'],['Acidentes','rAcid'],['Outros','rOutros']].forEach(function(r){rk.push(new D.Paragraph({spacing:{after:50},indent:{left:1700,hanging:1700},tabStops:[{type:D.TabStopType.LEFT,position:1700}],children:[R(r[0]+':',{b:true}),R('\t'+(insp[r[1]]||'NA'))]}))});
   sec('RISCOS OCUPACIONAIS / PERIGOS OBSERVADOS',rk.concat(insp.rNota?[P(insp.rNota,{before:40})]:[]));
   var ob=texto(insp.observacoes);
   if(mx){var k=Math.min(620/mx.w,200/mx.h);ob.push(new D.Paragraph({alignment:AL.CENTER,spacing:{before:80,after:40},children:[new D.ImageRun({type:'png',data:mx.d,transformation:{width:Math.round(mx.w*k),height:Math.round(mx.h*k)}})]}))}
   sec('OBSERVAÇÕES GERAIS',ob);
   /* registros fotográficos */
-  out.push(new D.Paragraph({pageBreakBefore:true,spacing:{after:80},children:[R('REGISTROS FOTOGRÁFICOS E APONTAMENTOS',{b:true,size:22})]}));
+  out.push(new D.Paragraph({keepNext:true,spacing:{before:120,after:80},children:[R('REGISTROS FOTOGRÁFICOS E APONTAMENTOS',{b:true,size:22})]}));
   function fotosCel(list){
     var it=list.map(function(i){return cache[i]}).filter(Boolean),ps=[];
     var un=it.length===1,mw=un?330:150,mh=un?250:110,pc=un?1:2;
@@ -2241,7 +2244,7 @@ async function gerarWordCampo(insp){
   }
   var todos=B.gerais.concat(B.ativ),rows=[];
   for(var q=0;q<todos.length;q+=2){var a=todos[q],c=todos[q+1];
-    rows.push(new D.TableRow({children:[cel(bloco(a),50),cel(c?bloco(c):[P('')],50)]}))}
+    rows.push(new D.TableRow({cantSplit:true,children:[cel(bloco(a),50),cel(c?bloco(c):[P('')],50)]}))}
   if(rows.length)out.push(tbl(rows,[50,50]),gap());else out.push(P('Sem registros fotográficos.'),gap());
   /* consolidação */
   var cr=[new D.TableRow({tableHeader:true,cantSplit:true,children:[hd('Nº',8),hd('APONTAMENTO / CONDIÇÃO OBSERVADA',46),hd('ORIENTAÇÃO / RECOMENDAÇÃO',46)]})];
@@ -2265,7 +2268,7 @@ async function gerarWordCampo(insp){
     sections:[{
       properties:{page:{size:{width:11906,height:16838},margin:{top:1700,bottom:1000,left:800,right:800,header:500,footer:400}}},
       headers:{default:new D.Header({children:[head]})},
-      footers:{default:new D.Footer({children:[new D.Paragraph({alignment:AL.CENTER,children:[R('Página ',{size:16,color:'444444'}),new D.TextRun({children:[D.PageNumber.CURRENT],size:16,color:'444444'})]})]})},
+      footers:{default:new D.Footer({children:[new D.Paragraph({alignment:AL.CENTER,children:[R('Página ',{size:16,color:'444444'}),new D.TextRun({children:[D.PageNumber.CURRENT],size:16,color:'444444'}),R(' de ',{size:16,color:'444444'}),new D.TextRun({children:[D.PageNumber.TOTAL_PAGES],size:16,color:'444444'})]})]})},
       children:out
     }]
   });
