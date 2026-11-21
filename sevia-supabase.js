@@ -55,23 +55,60 @@
         });
       });
     }
+    function faixaChaves(prefixo) { return IDBKeyRange.bound(prefixo, prefixo + "\uffff"); }
     return {
       get: function (k) { return tx("readonly", function (s) { return s.get(k); }).catch(function () { return undefined; }); },
-      set: function (k, v) { return tx("readwrite", function (s) { return s.put(v, k); }).catch(function () {}); }
+      set: function (k, v) { return tx("readwrite", function (s) { return s.put(v, k); }).catch(function () {}); },
+      put: function (k, v) { return tx("readwrite", function (s) { return s.put(v, k); }); },
+      del: function (k) { return tx("readwrite", function (s) { return s.delete(k); }).catch(function () {}); },
+      count: function (prefixo) { return tx("readonly", function (s) { return s.count(faixaChaves(prefixo)); }).then(function (n) { return n || 0; }).catch(function () { return 0; }); },
+      all: function (prefixo) {
+        return abre().then(function (db) {
+          return new Promise(function (res, rej) {
+            var t = db.transaction("kv", "readonly"), out = [], q = t.objectStore("kv").openCursor(faixaChaves(prefixo));
+            q.onsuccess = function () { var c = q.result; if (c) { out.push({ k: c.key, v: c.value }); c.continue(); } };
+            t.oncomplete = function () { res(out); };
+            t.onerror = t.onabort = function () { rej(t.error); };
+          });
+        }).catch(function () { return []; });
+      }
     };
   })();
-  function faixa() {
-    var el = document.getElementById("sevia-offline");
-    if (!navigator.onLine || semSinal) {
-      if (!el) {
-        el = document.createElement("div"); el.id = "sevia-offline"; el.setAttribute("role", "status");
-        el.style.cssText = "position:fixed;left:0;right:0;bottom:0;z-index:99998;background:#7a1f12;color:#fff;font:14px/1.35 system-ui,sans-serif;padding:8px 14px;text-align:center";
-        el.textContent = "Sem internet: você pode consultar o que já foi aberto. Salvar, enviar fotos e a IA precisam de sinal.";
-        (document.body || document.documentElement).appendChild(el);
-      }
-    } else if (el) { el.remove(); }
+  window.SEVIA_LOCAL = {};   // fotos ainda não enviadas: id -> endereço local
+  var pend = { fotos: 0, docs: 0 }, enviando = false;
+  function avisoTela(t, cor) {
+    var el = document.createElement("div");
+    el.style.cssText = "position:fixed;left:12px;right:12px;bottom:76px;z-index:99997;background:" + (cor || "#14532d") + ";color:#fff;font:14px/1.35 system-ui,sans-serif;padding:10px 14px;border-radius:10px;text-align:center";
+    el.textContent = t; (document.body || document.documentElement).appendChild(el);
+    setTimeout(function () { el.remove(); }, 5000);
   }
-  window.addEventListener("online", function () { semSinal = false; faixa(); listeners.slice().forEach(function (f) { f(); }); });
+  async function pendencias() {
+    pend.fotos = await IDB.count("p:"); pend.docs = await IDB.count("o:"); faixa();
+  }
+  function faixa() {
+    var el = document.getElementById("sevia-offline"), off = !navigator.onLine || semSinal, n = pend.docs + pend.fotos;
+    var html = document.documentElement;
+    if (!off && !n) { if (el) el.remove(); html.classList.remove("sevia-faixa"); return; }
+    if (!document.getElementById("sevia-faixa-css")) {
+      var st = document.createElement("style"); st.id = "sevia-faixa-css";
+      st.textContent = "html.sevia-faixa body{padding-bottom:64px}html.sevia-faixa .savebar{bottom:60px}";
+      (document.head || html).appendChild(st);
+    }
+    if (!el) {
+      el = document.createElement("div"); el.id = "sevia-offline"; el.setAttribute("role", "status");
+      el.style.cssText = "position:fixed;left:0;right:0;bottom:0;z-index:99998;color:#fff;font:14px/1.35 system-ui,sans-serif;padding:8px 14px;text-align:center";
+      (document.body || html).appendChild(el);
+    }
+    html.classList.add("sevia-faixa");
+    var fila = n ? "Aguardando envio: " + pend.docs + (pend.docs === 1 ? " relatório" : " relatórios") + " e " + pend.fotos + (pend.fotos === 1 ? " foto." : " fotos.") : "";
+    el.style.background = off ? "#7a1f12" : "#8a5a00";
+    if (off) { el.textContent = "Sem internet. " + (fila ? fila + " Serão enviados quando houver sinal." : "Você pode consultar o que já foi aberto; a IA precisa de sinal."); }
+    else {
+      el.textContent = (enviando ? "Enviando… " : "") + fila + " ";
+      if (!enviando) { var b = document.createElement("button"); b.type = "button"; b.textContent = "Enviar agora"; b.style.cssText = "margin-left:6px;padding:4px 10px;border-radius:8px;border:1px solid #fff;background:transparent;color:#fff;font:inherit"; b.onclick = function () { enviar(); }; el.appendChild(b); }
+    }
+  }
+  window.addEventListener("online", function () { semSinal = false; faixa(); listeners.slice().forEach(function (f) { f(); }); setTimeout(enviar, 1500); });
   window.addEventListener("offline", faixa);
   document.addEventListener("DOMContentLoaded", faixa);
   function usaGuardado(g) {
@@ -80,7 +117,7 @@
     window.SEVIA_EU = { nome: perfil.nome || "", funcao: perfil.funcao || "", registro: perfil.registro_prof || "" };
     return true;
   }
-  var ready = (async function () {
+  var ready0 = (async function () {
     var g = perfilGuardado();
     /* sem sinal: usa o perfil guardado na hora (o login do Supabase ficaria tentando renovar a sessão por vários segundos) */
     if (!navigator.onLine && g && temSessaoLocal()) return usaGuardado(g);
@@ -100,6 +137,17 @@
     window.SEVIA_EU = { nome: perfil.nome || "", funcao: perfil.funcao || "", registro: perfil.registro_prof || "" };
     return true;
   })();
+  async function carregaPendentes() {
+    var L = await IDB.all("p:");
+    L.forEach(function (x) { if (x.v && x.v.blob) window.SEVIA_LOCAL[x.v.id] = URL.createObjectURL(x.v.blob); });
+    await pendencias();
+  }
+  var ready = ready0.then(async function (v) {
+    try { await carregaPendentes(); } catch (e) {}
+    try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
+    setTimeout(enviar, 2000);
+    return v;
+  });
   var ehAdmin = function () { return perfil && (perfil.perfil === "Administradora" || perfil.perfil === "Técnico ADM"); };
   var ehEditor = function () { return perfil && (perfil.perfil === "Administradora" || perfil.perfil === "Técnico ADM" || perfil.perfil === "Técnico SST"); };
 
@@ -138,6 +186,18 @@
   /* ---------- banco de documentos ---------- */
   function notificar() { listeners.slice().forEach(function (f) { try { f(); } catch (e) { console.error(e); } }); }
 
+  async function sobrepoe(col, L) {
+    var O = await IDB.all("o:" + col + "/");
+    if (!O.length) return L;
+    var m = {}, ordem = [];
+    L.forEach(function (x) { m[x.id] = x; ordem.push(x.id); });
+    O.forEach(function (e) {
+      var id = e.v.path.slice(col.length + 1);
+      if (e.v.del) { delete m[id]; ordem = ordem.filter(function (k) { return k !== id; }); }
+      else { if (!m[id]) ordem.push(id); m[id] = { id: id, d: e.v.dados }; }
+    });
+    return ordem.map(function (k) { return m[k]; });
+  }
   async function lerColecao(col) {
     if (col === "usuarios") {
       if (!perfil || perfil.perfil !== "Administradora") return [];
@@ -156,12 +216,13 @@
     catch (e) { r = { error: e }; }
     if (r.error) {
       var c = semRede(r.error) ? await IDB.get("c:" + col) : undefined;
-      if (semRede(r.error)) { semSinal = true; faixa(); return c || []; }
+      if (semRede(r.error)) { semSinal = true; faixa(); return sobrepoe(col, c || []); }
       throw r.error;
     }
     var L = r.data.map(function (x) { return { id: x.path.slice(col.length + 1), d: x.dados }; });
     IDB.set("c:" + col, L);
-    return L;
+    if (semSinal && navigator.onLine) { semSinal = false; faixa(); }
+    return sobrepoe(col, L);
   }
   async function lerDoc(path) {
     if (path === "config/acessos") {
@@ -169,6 +230,8 @@
       if (perfil && perfil.perfil === "Cliente") us[perfil.id] = { nome: perfil.nome, empresaId: perfil.empresa_id || "" };
       return { usuarios: us };
     }
+    var pe = await IDB.get("o:" + path);
+    if (pe) return pe.del ? null : pe.dados;
     var r;
     try { r = await sb.from("sevia_documentos").select("dados").eq("path", path).maybeSingle(); }
     catch (e) { r = { error: e }; }
@@ -182,6 +245,72 @@
   }
   function podeEscrever(col) { if (col === "usuarios") return false; return ehEditor(); }
 
+  /* sem sinal: guarda no aparelho e envia depois */
+  async function guardaDoc(path, col, v, apagar) {
+    var id = path.slice(col.length + 1), d = apagar ? null : clone(v);
+    var lista = (await IDB.get("c:" + col)) || [];
+    if (apagar) {
+      var pe = await IDB.get("o:" + path), noServidor = lista.some(function (x) { return x.id === id; });
+      if (pe && !noServidor) await IDB.del("o:" + path);          // nunca chegou ao servidor: só descarta
+      else await IDB.put("o:" + path, { path: path, col: col, del: true, ts: Date.now() });
+      IDB.set("c:" + col, lista.filter(function (x) { return x.id !== id; }));
+    } else {
+      if (col === "inspecoes") {
+        var antigo = lista.filter(function (x) { return x.id === id; })[0];
+        var numAntigo = antigo && antigo.d && antigo.d.numero;
+        if (numAntigo > 0) d.numero = numAntigo;                   // já tem número: mantém
+        else if (!d.rascunho) { d.numero = 0; d._semNumero = true; } // novo: o número sai ao enviar
+      }
+      try { await IDB.put("o:" + path, { path: path, col: col, dados: d, ts: Date.now() }); }
+      catch (e) { throw { code: "quota", message: "Sem espaço no aparelho para guardar o relatório." }; }
+      var achou = false;
+      lista = lista.map(function (x) { if (x.id === id) { achou = true; return { id: id, d: d }; } return x; });
+      if (!achou) lista.push({ id: id, d: d });
+      IDB.set("c:" + col, lista);
+    }
+    semSinal = !navigator.onLine || semSinal;
+    await pendencias(); notificar();
+    avisoTela("Salvo no aparelho. Será enviado quando houver sinal.", "#8a5a00");
+  }
+  /* envio dos pendentes (fotos primeiro, depois os relatórios) */
+  async function proxNumeroServidor() {
+    var r = await sb.from("sevia_documentos").select("dados").eq("colecao", "inspecoes");
+    if (r.error) throw r.error;
+    var mx = 0; r.data.forEach(function (x) { var n = x.dados && x.dados.numero; if (n > mx) mx = n; });
+    return mx + 1;
+  }
+  async function enviar() {
+    if (enviando || !navigator.onLine || !perfil || !ehEditor()) return;
+    enviando = true; faixa();
+    var feito = 0;
+    try {
+      var F = await IDB.all("p:");
+      for (var i = 0; i < F.length; i++) {
+        var f = F[i].v, r;
+        try { r = await sb.storage.from(BUCKET).upload(f.id, f.blob, { contentType: f.tipo, upsert: false }); } catch (e) { r = { error: e }; }
+        if (r.error && !/exist|duplicate/i.test(String(r.error.message || ""))) { if (semRede(r.error)) return; console.warn("foto pendente:", r.error); continue; }
+        await IDB.del(F[i].k); feito++;
+      }
+      if (await IDB.count("p:")) return;                           // ficou foto sem enviar: segura os relatórios
+      var O = (await IDB.all("o:")).sort(function (a, b) { return (a.v.ts || 0) - (b.v.ts || 0); });
+      for (var j = 0; j < O.length; j++) {
+        var e2 = O[j].v, r2;
+        try {
+          if (e2.del) r2 = await sb.from("sevia_documentos").delete().eq("path", e2.path);
+          else {
+            var dd = e2.dados;
+            if (dd._semNumero && !dd.rascunho) { dd.numero = await proxNumeroServidor(); delete dd._semNumero; }
+            r2 = await sb.from("sevia_documentos").upsert({ path: e2.path, colecao: e2.col, dados: dd, atualizado_em: new Date().toISOString() });
+          }
+        } catch (e) { r2 = { error: e }; }
+        if (r2.error) { if (semRede(r2.error)) return; console.warn("relatório pendente:", r2.error); continue; }
+        await IDB.del(O[j].k); feito++;
+      }
+    } finally {
+      enviando = false; await pendencias();
+      if (feito) { notificar(); if (!pend.docs && !pend.fotos) avisoTela("Tudo enviado.", "#14532d"); }
+    }
+  }
   function docRef(path) {
     var col = path.split("/")[0], id = path.slice(col.length + 1);
     return {
@@ -189,9 +318,12 @@
       get: async function () { return wrapDoc(id, await lerDoc(path)); },
       set: async function (v) {
         if (!podeEscrever(col)) throw { code: "not_granted", message: "Sem permissão para gravar." };
-        if (!navigator.onLine) throw { code: "offline", message: "Sem internet. Para salvar é preciso ter sinal." };
-        var r = await sb.from("sevia_documentos").upsert({ path: path, colecao: col, dados: clone(v), atualizado_em: new Date().toISOString() });
-        if (r.error) throw semRede(r.error) ? { code: "offline", message: "Sem internet. Para salvar é preciso ter sinal." } : r.error; notificar();
+        if (!navigator.onLine) return guardaDoc(path, col, v, false);
+        var r;
+        try { r = await sb.from("sevia_documentos").upsert({ path: path, colecao: col, dados: clone(v), atualizado_em: new Date().toISOString() }); }
+        catch (e) { r = { error: e }; }
+        if (r.error) { if (semRede(r.error)) return guardaDoc(path, col, v, false); throw r.error; }
+        await IDB.del("o:" + path); notificar();
       },
       update: async function (v) {
         var atual = (await lerDoc(path)) || {};
@@ -199,8 +331,11 @@
       },
       delete: async function () {
         if (!podeEscrever(col)) throw { code: "not_granted", message: "Sem permissão para excluir." };
-        var r = await sb.from("sevia_documentos").delete().eq("path", path);
-        if (r.error) throw r.error; notificar();
+        if (!navigator.onLine) return guardaDoc(path, col, null, true);
+        var r;
+        try { r = await sb.from("sevia_documentos").delete().eq("path", path); } catch (e) { r = { error: e }; }
+        if (r.error) { if (semRede(r.error)) return guardaDoc(path, col, null, true); throw r.error; }
+        await IDB.del("o:" + path); notificar();
       },
       onSnapshot: function (cb, err) {
         var vivo = true, ultimo = null;
@@ -243,12 +378,26 @@
       var tipo = (o && o.type) || blob.type || "image/jpeg";
       var ext = ({ "image/png": "png", "image/webp": "webp" })[tipo] || "jpg";
       var id = uuid() + "." + ext;
-      if (!navigator.onLine) throw { code: "offline", message: "Sem internet. Para enviar fotos é preciso ter sinal." };
-      var r = await sb.storage.from(BUCKET).upload(id, blob, { contentType: tipo, upsert: false });
-      if (r.error) throw { code: "upload_failed", message: r.error.message };
+      async function local() {
+        try { await IDB.put("p:" + id, { id: id, blob: blob, tipo: tipo }); }
+        catch (e) { throw { code: "quota", message: "Sem espaço no aparelho para guardar a foto." }; }
+        window.SEVIA_LOCAL[id] = URL.createObjectURL(blob);
+        await pendencias();
+        return { id: id, url: window.SEVIA_LOCAL[id], sizeBytes: blob.size, contentType: tipo };
+      }
+      if (!navigator.onLine) return local();
+      var r;
+      try {
+        r = await Promise.race([sb.storage.from(BUCKET).upload(id, blob, { contentType: tipo, upsert: false }),
+          new Promise(function (res) { setTimeout(function () { res({ error: { message: "timeout" } }); }, 30000); })]);
+      } catch (e) { r = { error: e }; }
+      if (r.error) { if (semRede(r.error)) return local(); throw { code: "upload_failed", message: r.error.message }; }
       return { id: id, url: window.SEVIA_BLOB + id, sizeBytes: blob.size, contentType: tipo };
     },
-    delete: async function (id) { await sb.storage.from(BUCKET).remove([id]); }
+    delete: async function (id) {
+      if (window.SEVIA_LOCAL[id]) { try { URL.revokeObjectURL(window.SEVIA_LOCAL[id]); } catch (e) {} delete window.SEVIA_LOCAL[id]; await IDB.del("p:" + id); await pendencias(); return; }
+      try { await sb.storage.from(BUCKET).remove([id]); } catch (e) {}
+    }
   };
 
   /* ---------- downloads ---------- */
@@ -327,12 +476,7 @@
       "https://cdn.jsdelivr.net/npm/docx@9.8.1/dist/index.iife.js",
       "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"
     ];
-    function aviso(t) {
-      var el = document.createElement("div");
-      el.style.cssText = "position:fixed;left:12px;right:12px;bottom:14px;z-index:99997;background:#14532d;color:#fff;font:14px/1.35 system-ui,sans-serif;padding:10px 14px;border-radius:10px;text-align:center";
-      el.textContent = t; document.body.appendChild(el);
-      setTimeout(function () { el.remove(); }, 6000);
-    }
+    function aviso(t) { avisoTela(t, "#14532d"); }
     async function garante() {
       try {
         await navigator.serviceWorker.ready;
