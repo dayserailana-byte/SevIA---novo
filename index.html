@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-21-1430 aviso-etapa4 --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-21-1600 ia-descricao-atividade --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -995,7 +995,7 @@ function viewManual(){
   ['Preenchimento com a IA',tec,
     '<p>No grupo <b>Registros das atividades</b>, a IA analisa as fotos e sugere o preenchimento dos campos do relatório. Para usar:</p>'+
     ol(['Adicione as fotos no grupo <b>Registros das atividades</b>.','Toque em <b>Preencher a partir das fotos</b> e aguarde. A IA analisa <b>uma foto por vez</b> e mostra o andamento (por exemplo, &ldquo;Analisando a foto 3 de 8&rdquo;). Com várias fotos pode levar alguns minutos.','Revise cada campo sugerido e corrija o que for preciso.'])+
-    li(['Cada campo do relatório (como os de <b>Detalhes do serviço</b>) tem o botão <b>Analisar com IA</b>, que sugere só aquele campo usando <b>apenas as fotos do grupo Registros das atividades</b> (a IA olha até 6 fotos) e mostra uma mensagem logo abaixo. <b>Todos</b> os grupos de fotos têm o botão <b>Analisar este grupo com IA</b>, que sugere o apontamento e a orientação usando só as fotos daquele grupo. Se o campo já tiver texto, a sugestão é adicionada embaixo, sem apagar o que você escreveu.','A IA <b>respeita cada grupo de fotos</b>: o <b>apontamento</b> e a <b>orientação</b> de um grupo saem só das fotos daquele grupo. Ela também sugere as <b>atividades especiais</b> (Aplicável / Não aplicável) e os <b>EPI</b> visíveis.','A IA <b>só preenche o que as fotos mostram</b>. O que não dá para saber fica em branco.','Nos <b>riscos físicos, químicos, biológicos, ergonômicos e de acidentes</b>, ela lista todos os riscos identificados, do maior ao menor. Se não houver evidência, escreve &ldquo;Não identificado nas fotos analisadas&rdquo;.','Se aparecer ferramenta elétrica ou motorizada, ela registra o risco de <b>ruído</b>. A medição (dosimetria ou decibelímetro) é que confirma o valor.','Em <b>EPI</b> e <b>Isolamento e sinalização</b>, descreve o que as fotos mostram.','<b>APR, ordem de serviço e exames ocupacionais</b> são documentos e não aparecem em foto. Nesses campos a IA escreve &ldquo;Não verificável pelas fotos; conferir no local&rdquo;. Troque pelo que for o caso.','Ela <b>não altera</b> campos que você já preencheu.','Depois da análise ela lista o que você precisa <b>confirmar no local</b>.','Se uma foto falhar, as outras continuam e o sistema avisa quantas não foram analisadas.','Nada é salvo automaticamente. Você revisa tudo antes de salvar.'])],
+    li(['Cada campo do relatório (como os de <b>Detalhes do serviço</b>) tem o botão <b>Analisar com IA</b>, que sugere só aquele campo usando <b>apenas as fotos do grupo Registros das atividades</b> (uma foto por vez, até 8 fotos) e mostra uma mensagem logo abaixo. <b>Todos</b> os grupos de fotos têm o botão <b>Analisar este grupo com IA</b>, que sugere o apontamento e a orientação usando só as fotos daquele grupo. Se o campo já tiver texto, a sugestão é adicionada embaixo, sem apagar o que você escreveu.','A IA <b>respeita cada grupo de fotos</b>: o <b>apontamento</b> e a <b>orientação</b> de um grupo saem só das fotos daquele grupo. Ela também sugere as <b>atividades especiais</b> (Aplicável / Não aplicável) e os <b>EPI</b> visíveis.','A IA <b>só preenche o que as fotos mostram</b>. O que não dá para saber fica em branco.','Nos <b>riscos físicos, químicos, biológicos, ergonômicos e de acidentes</b>, ela lista todos os riscos identificados, do maior ao menor. Se não houver evidência, escreve &ldquo;Não identificado nas fotos analisadas&rdquo;.','Se aparecer ferramenta elétrica ou motorizada, ela registra o risco de <b>ruído</b>. A medição (dosimetria ou decibelímetro) é que confirma o valor.','Em <b>EPI</b> e <b>Isolamento e sinalização</b>, descreve o que as fotos mostram.','<b>APR, ordem de serviço e exames ocupacionais</b> são documentos e não aparecem em foto. Nesses campos a IA escreve &ldquo;Não verificável pelas fotos; conferir no local&rdquo;. Troque pelo que for o caso.','Ela <b>não altera</b> campos que você já preencheu.','Depois da análise ela lista o que você precisa <b>confirmar no local</b>.','Se uma foto falhar, as outras continuam e o sistema avisa quantas não foram analisadas.','Nada é salvo automaticamente. Você revisa tudo antes de salvar.'])],
   ['Nova inspeção de segurança',tec,
     '<p>Toque em <b>Nova inspeção de segurança</b>. Depois dos dados de identificação, registre os <b>itens da inspeção</b>:</p>'+
     ol(['Tire a foto do item e descreva o risco.','Escolha a classificação (não conformidade, condição insegura, ato inseguro ou observação) e a criticidade.','Informe a <b>norma e o requisito legal</b>. A IA pode sugerir o achado a partir da foto, mas <b>você valida a norma</b> antes de salvar.','Preencha o <b>plano de ação</b>: o que fazer, quem responde e o prazo.'])+
@@ -1128,7 +1128,7 @@ async function preencherIA(){
     if(!riscos.length&&!obs.length){out.innerHTML='<p><b>A IA não identificou riscos visíveis nas '+lidas+' fotos analisadas.</b> Preencha os campos manualmente se necessário.</p>';return}
     out.textContent='Reunindo os riscos de maior gravidade…';
     var chaves=CAMPOS.filter(function(c){return ['execNome','execCnpj','representante','equipe','codigoLocal','endereco','regProf','respNome','respFuncao'].indexOf(c[0])<0}).map(function(c){return '"'+c[0]+'": '+(c[2]==='ta'?'["item", "item"]':'"texto"')+'  // '+c[1]});
-    var prompt='Você é engenheiro de segurança do trabalho no Brasil e vai preencher o RELATÓRIO DE CAMPO de uma inspeção. Cada foto já foi analisada separadamente; os achados estão abaixo (JSON).\n\nAchados (riscos):\n'+JSON.stringify(riscos)+'\n\nObservações e perigos prováveis por foto:\n'+JSON.stringify(obs)+'\n\nContexto: empresa '+(empNomeDe(rt.draft.empresaId)||'não informada')+', setor '+(rt.draft.setor||'não informado')+'.\n\nRegras obrigatórias:\n- Campos de riscos (rFis, rQuim, rBio, rErgo, rAcid): preencha cada um com TODOS os riscos identificados na categoria, desde o menor até o maior, a partir dos achados e dos perigos prováveis por foto, sem omitir os de gravidade Baixa; ordene do mais grave para o menos grave e junte os repetidos. Se não houver evidência para a categoria, escreva "Não identificado nas fotos analisadas."\n- Ruído: se aparecer ferramenta elétrica ou motorizada (furadeira, esmerilhadeira, serra, roçadeira, compressor etc.), registre em rFis o risco de ruído (e vibração, quando couber) e que a medição quantitativa (dosimetria ou decibelímetro) deve confirmar.\n- EPI, isolamento e sinalização, condições de ferramentas, atividades, serviços e local de trabalho: descreva o que as observações mostram (EPI em uso ou ausentes; isolamento e sinalização presentes ou ausentes). Se nada aparecer, escreva o que não foi possível verificar.\n- APR / procedimentos, ordem de serviço, exames ocupacionais e capacitações / treinamentos são documentos e não aparecem em fotos: escreva "Não verificável pelas fotos; conferir no local."\n- Junte achados repetidos em um só e não invente nada além do que as fotos e os achados indicam.\n- Não identifique pessoas.\n- Riscos: categorias físicos, químicos, biológicos, ergonômicos e acidentes, só com evidência.\n- Português do Brasil, frases curtas.\n- Em "verificar", liste o que precisa ser confirmado presencialmente.\n\n- Grupos de fotos: respeite cada grupo. Para cada grupo da lista abaixo, escreva "apontamento" (a condição observada, usando SOMENTE os achados e observações cujo "gn" é o número desse grupo; 1 a 3 frases) e "orientacao" (lista de recomendações para corrigir o que foi apontado nesse mesmo grupo). Não misture achados de grupos diferentes. Se o grupo não mostra irregularidade, apontamento = "Sem irregularidades aparentes nas fotos." e orientacao = ["Manter as condições observadas."].\nGrupos: '+JSON.stringify(gl)+'\n- Atividades especiais (esp): para cada NR de 1 a 6 (1 NR-35 altura abaixo de 2 m; 2 NR-10 eletricidade; 3 NR-33 espaço confinado; 4 NR-11 içamento de cargas; 5 NR-18/NR-34 trabalho a quente; 6 outras NRs), use "s" = "A" somente se as fotos mostram a atividade; "N" somente se for claramente inaplicável ao que aparece; caso contrário "". Em "obs" escreva uma frase curta (se "s" for vazio, "Conferir no local.").\n- EPI (epi): uma linha por EPI visível nas fotos, com "epi" (nome), "ca" = "" (o CA não aparece em foto), "cond" (condições de uso observadas) e "obs" (curta).\n\nResponda somente com JSON neste formato:\n{"campos":{\n'+chaves.join(',\n')+'\n},"grupos":[{"n":1,"apontamento":"...","orientacao":["..."]}],"esp":{"1":{"s":"","obs":""},"2":{"s":"","obs":""},"3":{"s":"","obs":""},"4":{"s":"","obs":""},"5":{"s":"","obs":""},"6":{"s":"","obs":""}},"epi":[{"epi":"","ca":"","cond":"","obs":""}],"verificar":["..."]}';
+    var prompt='Você é engenheiro de segurança do trabalho no Brasil e vai preencher o RELATÓRIO DE CAMPO de uma inspeção. Cada foto já foi analisada separadamente; os achados estão abaixo (JSON).\n\nAchados (riscos):\n'+JSON.stringify(riscos)+'\n\nObservações e perigos prováveis por foto:\n'+JSON.stringify(obs)+'\n\nContexto: empresa '+(empNomeDe(rt.draft.empresaId)||'não informada')+', setor '+(rt.draft.setor||'não informado')+'.\n\nRegras obrigatórias:\n- Campos de riscos (rFis, rQuim, rBio, rErgo, rAcid): preencha cada um com TODOS os riscos identificados na categoria, desde o menor até o maior, a partir dos achados e dos perigos prováveis por foto, sem omitir os de gravidade Baixa; ordene do mais grave para o menos grave e junte os repetidos. Se não houver evidência para a categoria, escreva "Não identificado nas fotos analisadas."\n- Ruído: se aparecer ferramenta elétrica ou motorizada (furadeira, esmerilhadeira, serra, roçadeira, compressor etc.), registre em rFis o risco de ruído (e vibração, quando couber) e que a medição quantitativa (dosimetria ou decibelímetro) deve confirmar.\n- EPI, isolamento e sinalização, condições de ferramentas, atividades, serviços e local de trabalho: descreva o que as observações mostram (EPI em uso ou ausentes; isolamento e sinalização presentes ou ausentes). Se nada aparecer, escreva o que não foi possível verificar.\n- APR / procedimentos, ordem de serviço, exames ocupacionais e capacitações / treinamentos são documentos e não aparecem em fotos: escreva "Não verificável pelas fotos; conferir no local."\n- Junte achados repetidos em um só e não invente nada além do que as fotos e os achados indicam.\n- Não identifique pessoas.\n- Riscos: categorias físicos, químicos, biológicos, ergonômicos e acidentes, só com evidência.\n- Português do Brasil, frases curtas.\n- Em "verificar", liste o que precisa ser confirmado presencialmente.\n\n- Grupos de fotos: respeite cada grupo. Para cada grupo da lista abaixo, escreva "atividade" (o que alguém está executando nas fotos do grupo, em 1 frase; se ninguém está executando atividade, escreva exatamente "Não se aplica"), "apontamento" (a condição observada, usando SOMENTE os achados e observações cujo "gn" é o número desse grupo; 1 a 3 frases) e "orientacao" (lista de recomendações para corrigir o que foi apontado nesse mesmo grupo). Não misture achados de grupos diferentes. Se o grupo não mostra irregularidade, apontamento = "Sem irregularidades aparentes nas fotos." e orientacao = ["Manter as condições observadas."].\nGrupos: '+JSON.stringify(gl)+'\n- Atividades especiais (esp): para cada NR de 1 a 6 (1 NR-35 altura abaixo de 2 m; 2 NR-10 eletricidade; 3 NR-33 espaço confinado; 4 NR-11 içamento de cargas; 5 NR-18/NR-34 trabalho a quente; 6 outras NRs), use "s" = "A" somente se as fotos mostram a atividade; "N" somente se for claramente inaplicável ao que aparece; caso contrário "". Em "obs" escreva uma frase curta (se "s" for vazio, "Conferir no local.").\n- EPI (epi): uma linha por EPI visível nas fotos, com "epi" (nome), "ca" = "" (o CA não aparece em foto), "cond" (condições de uso observadas) e "obs" (curta).\n\nResponda somente com JSON neste formato:\n{"campos":{\n'+chaves.join(',\n')+'\n},"grupos":[{"n":1,"atividade":"...","apontamento":"...","orientacao":["..."]}],"esp":{"1":{"s":"","obs":""},"2":{"s":"","obs":""},"3":{"s":"","obs":""},"4":{"s":"","obs":""},"5":{"s":"","obs":""},"6":{"s":"","obs":""}},"epi":[{"epi":"","ca":"","cond":"","obs":""}],"verificar":["..."]}';
     var r=await S.sample.json(prompt,{signal:auCtl.signal});
     if(S.route!==rt)return;
     var c=(r&&r.campos&&typeof r.campos==='object')?r.campos:{},n2=0,el=f.elements;
@@ -1141,6 +1141,7 @@ async function preencherIA(){
     var blks=document.querySelectorAll('[data-g-blk]');
     (Array.isArray(r&&r.grupos)?r.grupos:[]).forEach(function(g){
       var b=g&&blks[(+g.n||0)-1];if(!b)return;
+      var gat=b.querySelector('[data-gativ]'),at=String(g.atividade||'').trim();if(gat&&at&&!gat.value.trim()){gat.value=at.slice(0,500);n2++}
       var ga=b.querySelector('[data-gapont]'),go=b.querySelector('[data-gorient]');
       var ap=String(g.apontamento||'').trim(),or=(Array.isArray(g.orientacao)?g.orientacao:[g.orientacao]).map(function(x){return String(x||'').trim()}).filter(Boolean).join('\n');
       if(ga&&ap&&!ga.value.trim()){ga.value=ap.slice(0,1500);n2++}
@@ -1164,29 +1165,47 @@ async function preencherIA(){
   }finally{if(S.route===rt){var rb=$('#au-run'),sb=$('#au-stop');if(rb)rb.disabled=false;if(sb)sb.hidden=true}}
 }
 function iaErro(e){return {cancelled:'Análise interrompida.',not_granted:'Você não permitiu o uso do Claude nesta página.',rate_limited:'Limite de uso atingido. Tente de novo mais tarde.',image_rejected:'Alguma foto não pôde ser lida pela IA.',invalid_json:'A resposta veio em formato inesperado. Tente de novo.',sampling_disabled:'O Claude não está disponível para esta conta.'}[e&&e.code]||'Não foi possível analisar agora. Preencha manualmente ou tente de novo.'}
-async function blobsDe(ids,max){var out=[];ids=ids.slice();if(ids.length>max){var pick=[];for(var q=0;q<max;q++)pick.push(ids[Math.floor(q*ids.length/max)]);ids=pick}
-  for(var i=0;i<ids.length;i++){var b=await fotoBlob(ids[i]);if(b)out.push(b)}return out}
+function fotosEsp(ids,max){ids=ids.slice();if(ids.length>max){var pick=[];for(var q=0;q<max;q++)pick.push(ids[Math.floor(q*ids.length/max)]);ids=pick}return ids}
 function juntaTxt(v){return (Array.isArray(v)?v:[v]).map(function(x){return String(x==null?'':x).trim()}).filter(Boolean).join('\n')}
+/* analisa uma foto por vez, mostrando "Analisando foto 1/4…"; devolve as respostas de cada foto */
+async function analisaUma(ids,msg,rt,promptFn){
+  var out=[],falhas=0,ult=null;
+  for(var i=0;i<ids.length;i++){
+    if(S.route!==rt)return null;
+    if(msg)msg.textContent='Analisando foto '+(i+1)+'/'+ids.length+'… (uma por vez, pode levar alguns minutos)';
+    var b=await fotoBlob(ids[i]);if(!b){falhas++;continue}
+    try{out.push(await S.sample.json(promptFn(i+1,ids.length),{images:[b]}))}catch(e){ult=e;falhas++;console.error(e)}
+  }
+  if(!out.length&&ult)throw ult;
+  return {res:out,falhas:falhas};
+}
 async function iaUmCampo(k){
   var rt=S.route;if(!rt||!S.sample||!CD[k])return;
   var f=$('form[data-form="insp"]'),msg=$('#iam-'+k),btn=document.querySelector('[data-act="ia-um"][data-k="'+k+'"]');if(!f||!f.elements[k])return;
   syncGrupos();
   var ids=[];(rt.draft.grupos||[]).forEach(function(g){if(g.ia!==false)ids=ids.concat(g.fotos||[])});
-  if(!ids.length){if(msg)msg.textContent='Adicione fotos em um grupo para a IA analisar.';return}
-  if(btn)btn.disabled=true;if(msg)msg.textContent='Analisando as fotos para este campo… (pode levar um minuto)';
+  if(!ids.length){if(msg)msg.textContent='Adicione fotos no grupo Registros das atividades para a IA analisar.';return}
+  var c=CD[k],ta=c[2]==='ta',doc=['apr','ordemServico','exames','capacitacoes'].indexOf(k)>-1,risco=['rFis','rQuim','rBio','rErgo','rAcid'].indexOf(k)>-1,el=f.elements[k];
+  function poe(v,n,tot){var tinha=el.value.trim();el.value=tinha?tinha+'\n'+v:v;if(msg)msg.textContent=(tinha?'Sugestão da IA adicionada abaixo do que você já tinha escrito. ':'Campo preenchido pela IA. ')+(n?'Analisadas '+n+(n===1?' foto':' fotos')+(tot>n?' de '+tot:'')+'. ':'')+'Revise antes de salvar.'}
+  if(doc){poe('Não verificável pelas fotos; conferir no local.',0,0);return}
+  if(btn)btn.disabled=true;
   try{
     var caps=await S.sample.limits().catch(function(){return null});
     if(!(caps&&caps.images)){if(msg)msg.textContent='As fotos não puderam ser enviadas à IA nesta visualização.';return}
-    var bl=await blobsDe(ids,6);if(!bl.length){if(msg)msg.textContent='Nenhuma foto pôde ser lida.';return}
-    var c=CD[k],ta=c[2]==='ta',doc=['apr','ordemServico','exames','capacitacoes'].indexOf(k)>-1,risco=['rFis','rQuim','rBio','rErgo','rAcid'].indexOf(k)>-1;
-    var regra=doc?'Este item é um documento e não aparece em fotos: responda exatamente "Não verificável pelas fotos; conferir no local."':risco?'Liste TODOS os riscos desta categoria que as fotos mostram ou fazem prever, do mais grave ao menos grave, sem omitir os de gravidade Baixa. Se não houver evidência, responda "Não identificado nas fotos analisadas." Se aparecer ferramenta elétrica ou motorizada e o campo for riscos físicos, registre o risco de ruído (a medição confirma o valor).':k==='consideracoes'?'Escreva as considerações finais em 2 a 4 frases, com base no que as fotos mostram.':k==='referencias'?'Liste as NRs e requisitos aplicáveis ao que as fotos mostram (ex.: NR-01, NR-06, NR-10, NR-18, NR-35), uma por item.':'Descreva somente o que as fotos mostram. Se nada aparecer, diga o que não foi possível verificar.';
-    var prompt='Você é engenheiro de segurança do trabalho no Brasil. Veja as '+bl.length+' fotos de uma inspeção (empresa '+(empNomeDe(rt.draft.empresaId)||'não informada')+', setor '+(rt.draft.setor||'não informado')+') e preencha APENAS o campo "'+c[1]+'" do relatório de campo.\n\nRegras:\n- '+regra+'\n- Não invente nada além do que as fotos indicam.\n- Não identifique pessoas.\n- Português do Brasil, frases curtas.\n\nResponda somente com JSON: {"texto":'+(ta?'["item","item"]':'"texto"')+'}';
-    var r=await S.sample.json(prompt,{images:bl});
+    var sel=fotosEsp(ids,8);
+    var regra=risco?'Liste TODOS os riscos desta categoria que a foto mostra ou faz prever, do mais grave ao menos grave, inclusive os de gravidade Baixa. Se não houver evidência, responda "".'+(k==='rFis'?' Se aparecer ferramenta elétrica ou motorizada, registre o risco de ruído (a medição confirma o valor).':''):k==='consideracoes'?'Escreva 1 a 2 frases de consideração final sobre o que a foto mostra.':k==='referencias'?'Liste as NRs e requisitos aplicáveis ao que a foto mostra (ex.: NR-06, NR-10, NR-18, NR-35). Se nenhuma, responda "".':'Descreva somente o que a foto mostra. Se nada aparecer sobre isso, responda "".';
+    var r=await analisaUma(sel,msg,rt,function(n,t){return 'Você é engenheiro de segurança do trabalho no Brasil. Esta é a foto '+n+' de '+t+' de uma inspeção (empresa '+(empNomeDe(rt.draft.empresaId)||'não informada')+'). Preencha APENAS o campo "'+c[1]+'" do relatório com base nesta foto.\n\nRegras:\n- '+regra+'\n- Não invente nada. Não identifique pessoas. Português do Brasil, frases curtas.\n\nResponda somente com JSON: {"texto":'+(ta?'["item"]':'"texto"')+'}'});
+    if(!r||S.route!==rt)return;
+    var partes=r.res.map(function(x){return juntaTxt(x&&x.texto)}).filter(Boolean);
+    if(!partes.length){if(msg)msg.textContent='A IA analisou '+r.res.length+' fotos e não encontrou o que sugerir para este campo.';return}
+    if(msg)msg.textContent='Reunindo o resultado das '+r.res.length+' fotos…';
+    var v=partes.join('\n');
+    try{
+      var r2=await S.sample.json('Você é engenheiro de segurança do trabalho no Brasil. Junte as anotações abaixo, de fotos diferentes, no texto final do campo "'+c[1]+'" do relatório. Una os itens repetidos, ordene do mais grave ao menos grave quando forem riscos, não invente nada e mantenha frases curtas.\n\nAnotações:\n'+JSON.stringify(partes)+'\n\nResponda somente com JSON: {"texto":'+(ta?'["item","item"]':'"texto"')+'}');
+      var v2=juntaTxt(r2&&r2.texto);if(v2)v=v2;
+    }catch(e2){if(e2&&e2.code==='cancelled')throw e2;console.error(e2)}
     if(S.route!==rt)return;
-    var v=juntaTxt(r&&r.texto).slice(0,2000),el=f.elements[k];
-    if(!v){if(msg)msg.textContent='A IA não encontrou o que sugerir para este campo.';return}
-    var tinha=el.value.trim();el.value=tinha?tinha+'\n'+v:v;
-    if(msg)msg.textContent=(tinha?'Sugestão da IA adicionada abaixo do que você já tinha escrito. ':'Campo preenchido pela IA. ')+'Analisadas '+bl.length+(bl.length===1?' foto':' fotos')+(ids.length>bl.length?' de '+ids.length:'')+'. Revise antes de salvar.';
+    poe(v.slice(0,2000),r.res.length,sel.length);
   }catch(e){if(S.route!==rt)return;console.error(e);var m2=$('#iam-'+k);if(m2)m2.textContent=iaErro(e)}
   finally{if(S.route===rt){var b2=document.querySelector('[data-act="ia-um"][data-k="'+k+'"]');if(b2)b2.disabled=false}}
 }
@@ -1195,19 +1214,30 @@ async function iaUmGrupo(gi){
   var g=(rt.draft.grupos||[])[gi],msg=$('#iag-'+gi),blk=document.querySelectorAll('[data-g-blk]')[gi],btn=document.querySelector('[data-act="ia-grupo"][data-g="'+gi+'"]');
   if(!g||!blk)return;
   if(!(g.fotos||[]).length){if(msg)msg.textContent='Adicione fotos neste grupo primeiro.';return}
-  if(btn)btn.disabled=true;if(msg)msg.textContent='Analisando as fotos deste grupo… (pode levar um minuto)';
+  if(btn)btn.disabled=true;
   try{
     var caps=await S.sample.limits().catch(function(){return null});
     if(!(caps&&caps.images)){if(msg)msg.textContent='As fotos não puderam ser enviadas à IA nesta visualização.';return}
-    var bl=await blobsDe(g.fotos,4);if(!bl.length){if(msg)msg.textContent='Nenhuma foto pôde ser lida.';return}
-    var prompt='Você é engenheiro de segurança do trabalho no Brasil. Estas '+bl.length+' fotos formam UM grupo do relatório de campo, chamado "'+(g.titulo||'Registros')+'" (empresa '+(empNomeDe(rt.draft.empresaId)||'não informada')+'). Escreva só sobre o que estas fotos mostram.\n\nRegras:\n- "apontamento": a condição observada, em 1 a 3 frases. Se não houver irregularidade, escreva "Sem irregularidades aparentes nas fotos."\n- "orientacao": lista de recomendações para corrigir o que foi apontado (se não houver irregularidade, ["Manter as condições observadas."]).\n- Não invente nada. Não identifique pessoas. Português do Brasil.\n\nResponda somente com JSON: {"apontamento":"...","orientacao":["..."]}';
-    var r=await S.sample.json(prompt,{images:bl});
+    var sel=fotosEsp(g.fotos,8),tit=g.titulo||'Registros';
+    var r=await analisaUma(sel,msg,rt,function(n,t){return 'Você é engenheiro de segurança do trabalho no Brasil. Esta é a foto '+n+' de '+t+' do grupo "'+tit+'" do relatório de campo (empresa '+(empNomeDe(rt.draft.empresaId)||'não informada')+'). Escreva só sobre o que esta foto mostra.\n\nRegras:\n- "ativ": descreva em 1 frase a atividade que alguém está executando na foto. Se a foto não mostra ninguém executando atividade, escreva exatamente "Não se aplica".\n- "obs": a condição observada, em 1 a 2 frases. Se não houver irregularidade, escreva "Sem irregularidades aparentes."\n- "recom": lista de recomendações para corrigir o que foi observado (vazia se não houver irregularidade).\n- Não invente nada. Não identifique pessoas. Português do Brasil.\n\nResponda somente com JSON: {"ativ":"...","obs":"...","recom":["..."]}'});
+    if(!r||S.route!==rt)return;
+    var obs=r.res.map(function(x){return String(x&&x.obs||'').trim()}).filter(Boolean),rec=[];
+    r.res.forEach(function(x){(Array.isArray(x&&x.recom)?x.recom:[]).forEach(function(y){y=String(y||'').trim();if(y)rec.push(y)})});
+    if(!obs.length){if(msg)msg.textContent='A IA não encontrou o que sugerir para este grupo.';return}
+    if(msg)msg.textContent='Reunindo o resultado das '+r.res.length+' fotos…';
+    var ats=r.res.map(function(x){return String(x&&x.ativ||'').trim()}).filter(function(x){return x&&!/^n[ãa]o se aplica\.?$/i.test(x)}),at=ats.length?ats.filter(function(x,j,a){return a.indexOf(x)===j}).join('; '):'Não se aplica';
+    var ap=obs.join(' '),or=rec.join('\n');
+    try{
+      var r2=await S.sample.json('Você é engenheiro de segurança do trabalho no Brasil. Junte as anotações abaixo, de várias fotos do grupo "'+tit+'", em um único apontamento (1 a 3 frases, a condição observada) e uma lista de orientações / recomendações sem repetição. Se nenhuma foto mostra irregularidade, apontamento = "Sem irregularidades aparentes nas fotos." e orientacao = ["Manter as condições observadas."]. Não invente nada.\n\nObservações:\n'+JSON.stringify(obs)+'\nRecomendações:\n'+JSON.stringify(rec)+'\n\nResponda somente com JSON: {"apontamento":"...","orientacao":["..."]}');
+      var a2=String(r2&&r2.apontamento||'').trim(),o2=juntaTxt(r2&&r2.orientacao);if(a2)ap=a2;if(o2)or=o2;
+    }catch(e2){if(e2&&e2.code==='cancelled')throw e2;console.error(e2)}
     if(S.route!==rt)return;
-    var ap=String(r&&r.apontamento||'').trim().slice(0,1500),or=juntaTxt(r&&r.orientacao).slice(0,1500);
+    ap=ap.slice(0,1500);or=or.slice(0,1500);at=at.slice(0,500);
+    var gat=blk.querySelector('[data-gativ]');if(gat&&!gat.value.trim())gat.value=at;
     var ga=blk.querySelector('[data-gapont]'),go=blk.querySelector('[data-gorient]'),ja=ga&&ga.value.trim();
     if(ga&&ap)ga.value=ja?ga.value.trim()+'\n'+ap:ap;
     if(go&&or)go.value=go.value.trim()?go.value.trim()+'\n'+or:or;
-    if(msg)msg.textContent=(ap||or?(ja?'Sugestão da IA adicionada abaixo do que já estava escrito. ':'Apontamento e orientação preenchidos pela IA. ')+'Revise antes de salvar.':'A IA não encontrou o que sugerir para este grupo.');
+    if(msg)msg.textContent=(ja?'Sugestão da IA adicionada abaixo do que já estava escrito. ':'Apontamento e orientação preenchidos pela IA. ')+'Analisadas '+r.res.length+(r.res.length===1?' foto':' fotos')+(g.fotos.length>sel.length?' de '+g.fotos.length:'')+'. Revise antes de salvar.';
   }catch(e){if(S.route!==rt)return;console.error(e);var m2=$('#iag-'+gi);if(m2)m2.textContent=iaErro(e)}
   finally{if(S.route===rt){var b2=document.querySelector('[data-act="ia-grupo"][data-g="'+gi+'"]');if(b2)b2.disabled=false}}
 }
@@ -1249,8 +1279,8 @@ function thumbsG(ids,k){
 function gruposHtml(d){
   return (d.grupos||[]).map(function(g,k){
     return '<div class="un-blk ph-blk" data-g-blk><div class="ph-head"><b>'+(g.titulo?esc(g.titulo):'Grupo '+(k+1))+'</b>'+(S.assets?'<button type="button" class="ph-rm" data-act="g-rm" data-g="'+k+'">Remover grupo</button>':'')+'</div>'+
-    '<label class="field"><span>Título do grupo de fotos (descrição da atividade)</span><input data-gtitulo value="'+esc(g.titulo)+'" placeholder="Ex.: Furo em parede"></label><label class="field"><span>Apontamento (o que foi verificado)</span><textarea data-gapont rows="2" placeholder="Ex.: Verificação de nivelamento de piso">'+esc(g.apontamento)+'</textarea>'+(S.sample?'<small class="muted">&#10024; Este campo recebe sugestão da IA a partir das fotos deste grupo.</small>':'')+'</label><label class="field"><span>Orientação / recomendação (uma por linha)</span><textarea data-gorient rows="2" placeholder="Ex.: Garantir que a base esteja em piso firme e nivelado">'+esc(g.orientacao)+'</textarea>'+(S.sample?'<small class="muted">&#10024; Este campo recebe sugestão da IA a partir das fotos deste grupo.</small>':'')+'</label>'+(S.sample?'<button type="button" class="btn btn-ghost ia-um" data-act="ia-grupo" data-g="'+k+'">&#10024; Analisar este grupo com IA</button><p class="muted small" id="iag-'+k+'" aria-live="polite">A IA lê só as fotos deste grupo e sugere o apontamento e a orientação. Adicione as fotos primeiro.</p>':'')+'<p class="muted small">Quem tiver apontamento ou orientação entra no relatório como atividade numerada e na consolidação dos apontamentos.</p>'+(S.sample&&g.ia!==false?'<p class="muted small ia-aviso"><b>&#10024; A IA analisa as fotos deste grupo</b> e sugere o preenchimento do relatório. Você revisa tudo antes de salvar.</p>':'')+
-    '<div id="fg-'+k+'">'+thumbsG(g.fotos,k)+'</div>'+
+    '<label class="field"><span>Nome do grupo de fotos</span><input data-gtitulo value="'+esc(g.titulo)+'" placeholder="Ex.: Furo em parede"></label><label class="field"><span>Descrição da atividade (quem está executando e o quê)</span><textarea data-gativ rows="2" placeholder="Ex.: Pintura da parede da sala de aula. Se ninguém está executando atividade: Não se aplica">'+esc(g.atividade)+'</textarea>'+(S.sample?'<small class="muted">&#10024; A IA sugere este campo. Se as fotos não mostram ninguém executando atividade, ela sugere &ldquo;Não se aplica&rdquo;.</small>':'')+'</label><label class="field"><span>Apontamento (o que foi verificado)</span><textarea data-gapont rows="2" placeholder="Ex.: Verificação de nivelamento de piso">'+esc(g.apontamento)+'</textarea>'+(S.sample?'<small class="muted">&#10024; Este campo recebe sugestão da IA a partir das fotos deste grupo.</small>':'')+'</label><label class="field"><span>Orientação / recomendação (uma por linha)</span><textarea data-gorient rows="2" placeholder="Ex.: Garantir que a base esteja em piso firme e nivelado">'+esc(g.orientacao)+'</textarea>'+(S.sample?'<small class="muted">&#10024; Este campo recebe sugestão da IA a partir das fotos deste grupo.</small>':'')+'</label>'+(S.sample?'<button type="button" class="btn btn-ghost ia-um" data-act="ia-grupo" data-g="'+k+'">&#10024; Analisar este grupo com IA</button><p class="muted small" id="iag-'+k+'" aria-live="polite">A IA lê só as fotos deste grupo e sugere o apontamento e a orientação. Adicione as fotos primeiro.</p>':'')+'<p class="muted small">Quem tiver apontamento ou orientação entra no relatório como atividade numerada e na consolidação dos apontamentos.</p>'+(S.sample&&g.ia!==false?'<p class="muted small ia-aviso"><b>&#10024; A IA analisa as fotos deste grupo</b> e sugere o preenchimento do relatório. Você revisa tudo antes de salvar.</p>':'')+
+    '<p class="lbl" style="margin:10px 0 6px;font-weight:700">Evidência fotográfica</p><div id="fg-'+k+'">'+thumbsG(g.fotos,k)+'</div>'+
     (S.assets?'<div class="ph-actions"><label class="btn btn-primary file-btn"><input class="sr-only" type="file" accept="image/*" capture="environment" data-chg="foto-g" data-g="'+k+'">&#128247; Tirar foto</label><label class="btn btn-ghost file-btn"><input class="sr-only" type="file" accept="image/*" multiple data-chg="foto-g" data-g="'+k+'">&#128193; Galeria</label></div><p class="muted small" id="fgst-'+k+'" aria-live="polite"></p>':'<p class="muted small">O envio de fotos exige permissão de edição.</p>')+'</div>'}).join('');
 }
 function gruposField(d){
@@ -1258,7 +1288,7 @@ function gruposField(d){
 }
 function syncGrupos(){
   var d=S.route&&S.route.draft;if(!d||!d.grupos)return;
-  document.querySelectorAll('[data-g-blk]').forEach(function(b,k){if(d.grupos[k]){d.grupos[k].titulo=b.querySelector('[data-gtitulo]').value;var ga=b.querySelector('[data-gapont]'),go2=b.querySelector('[data-gorient]');if(ga)d.grupos[k].apontamento=ga.value;if(go2)d.grupos[k].orientacao=go2.value;var gi=b.querySelector('[data-gia]');if(gi)d.grupos[k].ia=gi.checked}});
+  document.querySelectorAll('[data-g-blk]').forEach(function(b,k){if(d.grupos[k]){d.grupos[k].titulo=b.querySelector('[data-gtitulo]').value;var gat=b.querySelector('[data-gativ]');if(gat)d.grupos[k].atividade=gat.value;var ga=b.querySelector('[data-gapont]'),go2=b.querySelector('[data-gorient]');if(ga)d.grupos[k].apontamento=ga.value;if(go2)d.grupos[k].orientacao=go2.value;var gi=b.querySelector('[data-gia]');if(gi)d.grupos[k].ia=gi.checked}});
 }
 function renderGrupos(){var g=$('#grupos');if(g)g.innerHTML=gruposHtml(S.route.draft)}
 /* ---------- itens da inspeção de segurança (formulário) ---------- */
@@ -1368,7 +1398,7 @@ async function addFotosG(files,gi,inp){
 var GRUPOS_PADRAO=[['Identificação da Escola',false],['Instalações área externa',false],['Ferramentas e materiais armazenados',false],['Registros das atividades',true]];
 function gruposNovos(){return GRUPOS_PADRAO.map(function(g){return {titulo:g[0],fotos:[],ia:g[1]}})}
 function draftInsp(i){
-  var d={tipo:i.tipo||'',data:i.data,empresaId:i.empresaId||'',unidade:i.unidade||'',setor:i.setor||'',responsavel:i.responsavel||'',observacoes:i.observacoes||'',fotos:(i.fotos||[]).slice(),grupos:(i.grupos||[]).map(function(g){return {titulo:g.titulo||'',fotos:(g.fotos||[]).slice(),ia:g.ia!==false,apontamento:g.apontamento||'',orientacao:g.orientacao||''}})};
+  var d={tipo:i.tipo||'',data:i.data,empresaId:i.empresaId||'',unidade:i.unidade||'',setor:i.setor||'',responsavel:i.responsavel||'',observacoes:i.observacoes||'',fotos:(i.fotos||[]).slice(),grupos:(i.grupos||[]).map(function(g){return {titulo:g.titulo||'',fotos:(g.fotos||[]).slice(),ia:g.ia!==false,atividade:g.atividade||'',apontamento:g.apontamento||'',orientacao:g.orientacao||''}})};
   CAMPOS.forEach(function(c){d[c[0]]=i[c[0]]||''});
   for(var en=1;en<=6;en++){d['esp'+en]=i['esp'+en]||'';d['espo'+en]=i['espo'+en]||''}
   d.epiLista=(i.epiLista||[]).map(function(r){return Object.assign({},r)});
@@ -1385,8 +1415,8 @@ function camposView(i){
   if(espL.length)ex+='<section class="card"><div class="card-h"><h2>Atividades especiais</h2></div>'+espL.map(function(e){var v=i['esp'+e[0]];return '<h3 style="margin-top:10px">'+esc(e[1])+'</h3><p class="text-block">'+(v==='A'?'Aplicável':v==='N'?'Não aplicável':'Não marcado')+(i['espo'+e[0]]?' — '+esc(i['espo'+e[0]]):'')+'</p>'}).join('')+'</section>';
   var epiL=(i.epiLista||[]).filter(function(r){return r&&(r.epi||r.ca||r.cond||r.obs)});
   if(epiL.length)ex+='<section class="card"><div class="card-h"><h2>EPI utilizados</h2></div>'+epiL.map(function(r){return '<p class="text-block"><b>'+esc(r.epi||'-')+'</b>'+(r.ca?' · CA '+esc(r.ca):'')+(r.cond?' · '+esc(r.cond):'')+(r.obs?' · '+esc(r.obs):'')+'</p>'}).join('')+'</section>';
-  var gr=(i.grupos||[]).filter(function(g){return (g.fotos&&g.fotos.length)||g.apontamento||g.orientacao});
-  var fh=gr.length?'<section class="card"><div class="card-h"><h2>Registros fotográficos</h2></div>'+gr.map(function(g){return '<h3 style="margin:12px 0 8px">'+esc(g.titulo||'Registros')+'</h3>'+thumbs(g.fotos||[])+(g.apontamento?'<p class="text-block"><b>Apontamento:</b> '+esc(g.apontamento)+'</p>':'')+(g.orientacao?'<p class="text-block"><b>Orientação / recomendação:</b> '+esc(g.orientacao)+'</p>':'')}).join('')+'</section>':'';
+  var gr=(i.grupos||[]).filter(function(g){return (g.fotos&&g.fotos.length)||g.apontamento||g.orientacao||g.atividade});
+  var fh=gr.length?'<section class="card"><div class="card-h"><h2>Registros fotográficos</h2></div>'+gr.map(function(g){return '<h3 style="margin:12px 0 8px">'+esc(g.titulo||'Registros')+'</h3>'+(g.atividade?'<p class="text-block"><b>Descrição da atividade:</b> '+esc(g.atividade)+'</p>':'')+thumbs(g.fotos||[])+(g.apontamento?'<p class="text-block"><b>Apontamento:</b> '+esc(g.apontamento)+'</p>':'')+(g.orientacao?'<p class="text-block"><b>Orientação / recomendação:</b> '+esc(g.orientacao)+'</p>':'')}).join('')+'</section>':'';
   /* mesma ordem dos arquivos: empresa executante, fotos e, abaixo, os campos preenchidos */
   return secs[0]+fh+ex+secs.slice(1).join('');
 }
@@ -1671,7 +1701,7 @@ async function salvar(form,rascunho){
         }
         if(IT.length&&!v.revisado){nao('Confirme a revisão dos itens.');return}
         itensSalvar=IT;
-      }data.grupos=(r.draft.grupos||[]).map(function(g){return {titulo:(g.titulo||'').trim()||'Registros',fotos:g.fotos||[],ia:g.ia!==false,apontamento:String(g.apontamento||'').trim(),orientacao:String(g.orientacao||'').trim()}}).filter(function(g){return g.fotos.length||g.apontamento||g.orientacao});
+      }data.grupos=(r.draft.grupos||[]).map(function(g){return {titulo:(g.titulo||'').trim()||'Registros',fotos:g.fotos||[],ia:g.ia!==false,atividade:String(g.atividade||'').trim(),apontamento:String(g.apontamento||'').trim(),orientacao:String(g.orientacao||'').trim()}}).filter(function(g){return g.fotos.length||g.apontamento||g.orientacao});
       if(v.regProf)lsSet('sevia.reg',v.regProf);if(v.respFuncao)lsSet('sevia.func',v.respFuncao);
       lsSet('sevia.resp',v.responsavel);
     }else if(kind==='nc'){
@@ -1882,14 +1912,14 @@ async function gerarPDFCampo(insp){
   page();titulo('REGISTROS FOTOGRÁFICOS E APONTAMENTOS');
   var cw=CW/2,iw=(cw-6)/2;
   function medir(b){
-    var h=2+wrap('DESCRIÇÃO DA ATIVIDADE'+(b.n?' '+b.n+': '+b.titulo:': NA'+(b.titulo?' ('+b.titulo+')':'')),cw-4,1).length*LH+LH+2;
+    var h=2+cabBloco(b).reduce(function(a,t,j){return a+wrap(t,cw-4,!j).length*LH},0)+LH+2;
     var nf=(b.fotos||[]).filter(function(i){return cache[i]}).length;h+=(nf?Math.ceil(nf/2)*(iw*0.75+2):LH)+2;
     if(b.n){h+=LH+wrap(b.ap||'NA',cw-4).length*LH+LH+linhasLista(b.or,cw-4,false).length*LH+2}
     return h;
   }
   function pinta(b,x,y0,h){
     doc.rect(x,y0,cw,h,'S');var yy=y0+2;
-    wrap('DESCRIÇÃO DA ATIVIDADE'+(b.n?' '+b.n+': '+b.titulo:': NA'+(b.titulo?' ('+b.titulo+')':'')),cw-4,1).forEach(function(t){font(1);doc.text(t,x+2,yy+LH-1);yy+=LH});
+    cabBloco(b).forEach(function(t0,j){wrap(t0,cw-4,!j).forEach(function(t){font(!j);doc.text(t,x+2,yy+LH-1);yy+=LH})});
     font(1,8);doc.text('FOTO / EVIDÊNCIA',x+2,yy+LH-1);yy+=LH+2;
     var fs=(b.fotos||[]).filter(function(i){return cache[i]});
     if(!fs.length){font(0);doc.text('Sem foto',x+2,yy+LH-1);yy+=LH}
@@ -2095,11 +2125,17 @@ function blocosCampo(insp){
   var gerais=[],ativ=[];
   if((insp.fotos||[]).length)gerais.push({titulo:'Fotos gerais',fotos:insp.fotos.slice()});
   (insp.grupos||[]).forEach(function(g){
-    if(g.apontamento||g.orientacao)ativ.push({titulo:g.titulo||'',fotos:(g.fotos||[]).slice(),ap:g.apontamento||'',or:g.orientacao||''});
-    else if((g.fotos||[]).length)gerais.push({titulo:g.titulo||'Registros',fotos:g.fotos.slice()});
+    if(g.apontamento||g.orientacao)ativ.push({titulo:g.titulo||'',at:g.atividade||'',fotos:(g.fotos||[]).slice(),ap:g.apontamento||'',or:g.orientacao||''});
+    else if((g.fotos||[]).length)gerais.push({titulo:g.titulo||'Registros',at:g.atividade||'',fotos:g.fotos.slice()});
   });
   ativ.forEach(function(b,k){b.n=String(k+1).padStart(2,'0')});
   return {gerais:gerais,ativ:ativ};
+}
+/* cabeçalho do bloco: "DESCRIÇÃO DA ATIVIDADE [NN]: ..." e, abaixo, o nome do grupo */
+function cabBloco(b){
+  var d=b.at||(b.n?b.titulo:'')||'NA',l=['DESCRIÇÃO DA ATIVIDADE'+(b.n?' '+b.n:'')+': '+d];
+  if(b.titulo&&b.titulo!=='Fotos gerais'&&b.titulo!==d)l.push('Grupo: '+b.titulo);
+  return l;
 }
 async function gerarWordCampo(insp){
   var D=window.docx;
@@ -2173,7 +2209,7 @@ async function gerarWordCampo(insp){
     return ps.length?ps:[P('Sem foto',{color:'666666'})];
   }
   function bloco(b){
-    var k=[P('DESCRIÇÃO DA ATIVIDADE'+(b.n?' '+b.n+': ':': ')+(b.n?b.titulo:'NA')+(b.n?'':(b.titulo?' ('+b.titulo+')':'')),{b:true,after:60}),P('FOTO / EVIDÊNCIA',{b:true,color:'444444',after:40})].concat(fotosCel(b.fotos));
+    var cb=cabBloco(b),k=cb.map(function(t,j){return P(t,{b:!j,after:j===cb.length-1?60:10,color:j?'444444':'000000'})}).concat([P('FOTO / EVIDÊNCIA',{b:true,color:'444444',after:40})]).concat(fotosCel(b.fotos));
     if(b.n){k.push(P('APONTAMENTO:',{b:true,before:60,after:20}));k=k.concat(texto(b.ap));k.push(P('ORIENTAÇÃO / RECOMENDAÇÃO:',{b:true,before:60,after:20}));k=k.concat(lista(b.or,false))}
     return k;
   }
