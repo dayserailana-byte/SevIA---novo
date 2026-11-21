@@ -74,17 +74,20 @@
   window.addEventListener("online", function () { semSinal = false; faixa(); listeners.slice().forEach(function (f) { f(); }); });
   window.addEventListener("offline", faixa);
   document.addEventListener("DOMContentLoaded", faixa);
+  function usaGuardado(g) {
+    perfil = g; semSinal = true; faixa();
+    window.SEVIA_PERFIL = perfil.perfil;
+    window.SEVIA_EU = { nome: perfil.nome || "", funcao: perfil.funcao || "", registro: perfil.registro_prof || "" };
+    return true;
+  }
   var ready = (async function () {
+    var g = perfilGuardado();
+    /* sem sinal: usa o perfil guardado na hora (o login do Supabase ficaria tentando renovar a sessão por vários segundos) */
+    if (!navigator.onLine && g && temSessaoLocal()) return usaGuardado(g);
     var s;
     try { s = await sb.auth.getSession(); } catch (e) { s = { data: { session: null }, error: e }; }
-    var g = perfilGuardado();
     if (!s.data.session) {
-      if (g && temSessaoLocal() && (semRede(s.error) || !navigator.onLine)) {
-        perfil = g; semSinal = true; faixa();
-        window.SEVIA_PERFIL = perfil.perfil;
-        window.SEVIA_EU = { nome: perfil.nome || "", funcao: perfil.funcao || "", registro: perfil.registro_prof || "" };
-        return true;
-      }
+      if (g && temSessaoLocal() && (semRede(s.error) || !navigator.onLine)) return usaGuardado(g);
       return toLogin();
     }
     var uid = s.data.session.user.id;
