@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-21-1930 atividade-nao-se-aplica --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-21-2030 ia-matriz-obs --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -1072,7 +1072,7 @@ function formInsp(r){
   :
   stp(2,'Empresa executante','Quem executou o serviço',  '<div class="fields">'+camposCab(d)+'</div>',!!(d.execNome||d.execCnpj||!r.id))+
   stp(3,'Fotos','',gruposField(d)+autoPanel(),true)+
-  stp(4,'Detalhes do serviço',S.sample?'✨ Sugerido pela IA: serviços, segurança, riscos e observações':'Serviços, segurança, riscos e observações',(S.sample?'<p class="ia-aviso-etapa"><b>&#10024; Os campos desta etapa são sugeridos pela IA</b> a partir das fotos do grupo Registros das atividades. Use <b>Preencher a partir das fotos</b> (acima) para todos de uma vez, ou o botão <b>Analisar com IA</b> de cada campo. Revise antes de salvar.</p>':'')+camposForm(d,1,5,true)+field('Observações','f-obs','<textarea id="f-obs" name="observacoes" placeholder="Condições gerais do local, perigos identificados">'+esc(d.observacoes)+'</textarea>','full'),!!r.id)+
+  stp(4,'Detalhes do serviço',S.sample?'✨ Sugerido pela IA: serviços, segurança, riscos e observações':'Serviços, segurança, riscos e observações',(S.sample?'<p class="ia-aviso-etapa"><b>&#10024; Os campos desta etapa são sugeridos pela IA</b> a partir das fotos do grupo Registros das atividades. Use <b>Preencher a partir das fotos</b> (acima) para todos de uma vez, ou o botão <b>Analisar com IA</b> de cada campo. Revise antes de salvar.</p>':'')+camposForm(d,1,5,true)+field('Observações','f-obs','<textarea id="f-obs" name="observacoes" placeholder="Condições gerais do local, perigos identificados">'+esc(d.observacoes)+'</textarea>'+(S.sample?'<button type="button" class="btn btn-ghost ia-um" data-act="ia-obs">&#10024; Analisar com IA (matriz de riscos)</button><p class="muted small" id="iam-observacoes" aria-live="polite">A IA classifica os principais riscos na matriz de riscos (severidade × frequência). A frequência é uma estimativa pelas fotos: confirme com o que você acompanhou.</p>':''),'full'),!!r.id)+
   stp(5,'Responsável técnico','Nome, função e registro profissional',camposForm(d,5,6,true),true))+
   '<div class="savebar"><button type="button" class="btn btn-ghost" data-act="back">Cancelar</button><button type="button" class="btn btn-ghost" data-act="save-draft">Salvar rascunho</button><button class="btn btn-primary" type="submit">'+(rasc?'Finalizar e salvar':(d.tipo==='inspecao'?'Salvar inspeção':'Salvar relatório'))+'</button></div></form>';
 }
@@ -1106,7 +1106,7 @@ async function preencherIA(){
     var caps=await S.sample.limits().catch(function(){return null});
     if(!(caps&&caps.images)){out.textContent='As fotos não puderam ser enviadas à IA nesta visualização.';return}
     var n=Math.min(fotos.length,20);
-    var achados=[],obs=[],lidas=0,falhas=0,ultErr=null;
+    var achados=[],obs=[],lidas=0,falhas=0,ultErr=null,mzI=[],mzE=[],mzA=[];
     for(var i=0;i<n;i++){
       if(S.route!==rt)return;
       if(auCtl.signal.aborted){var ce=new Error('cancelled');ce.code='cancelled';throw ce}
@@ -1114,11 +1114,12 @@ async function preencherIA(){
       var b=await fotoBlob(fotos[i]);
       if(!b){falhas++;continue}
       lidas++;
-      var p1='Você é engenheiro de segurança do trabalho no Brasil. Analise APENAS esta foto (grupo: '+rot[i]+'; empresa '+(empNomeDe(rt.draft.empresaId)||'não informada')+').\n\nRegras:\n- Liste somente riscos e não conformidades que a foto realmente mostra; não presuma o que não aparece.\n- Classifique cada achado em gravidade "Alta", "Média" ou "Baixa" (Alta = risco de lesão grave, incêndio, queda, choque elétrico ou exposição séria).\n- Não identifique pessoas.\n- Português do Brasil, frases curtas.\n\nAlém dos achados, registre o que a foto mostra de: EPI (em uso ou ausentes), isolamento e sinalização, ferramentas e equipamentos, atividade e ambiente. E identifique, como engenheiro de segurança, os perigos ocupacionais prováveis para o que aparece, por categoria (ex.: ferramenta elétrica ou motorizada, como furadeira, esmerilhadeira, serra, roçadeira ou compressor, indica risco físico de ruído e vibração; poeira, tintas, solventes ou produtos químicos indicam risco químico; esgoto, lixo, mofo ou animais indicam risco biológico; postura, carga ou repetição indicam risco ergonômico; altura, eletricidade, piso irregular ou máquina sem proteção indicam risco de acidente).\n\nResponda somente com JSON: {"achados":[{"descricao":"...","categoria":"físico|químico|biológico|ergonômico|acidente","gravidade":"Alta|Média|Baixa","evidencia":"o que se vê na foto"}],"observacoes":{"epi":"","isolamento":"","ferramentas":"","atividade":""},"riscos":{"fisicos":"","quimicos":"","biologicos":"","ergonomicos":"","acidentes":""},"verificar":["o que confirmar no local"]}. Deixe vazio o que a foto não permitir concluir.';
+      var p1='Você é engenheiro de segurança do trabalho no Brasil. Analise APENAS esta foto (grupo: '+rot[i]+'; empresa '+(empNomeDe(rt.draft.empresaId)||'não informada')+').\n\nRegras:\n- Liste somente riscos e não conformidades que a foto realmente mostra; não presuma o que não aparece.\n- Classifique cada achado em gravidade "Alta", "Média" ou "Baixa" (Alta = risco de lesão grave, incêndio, queda, choque elétrico ou exposição séria).\n- Não identifique pessoas.\n- Português do Brasil, frases curtas.\n\nAlém dos achados, registre o que a foto mostra de: EPI (em uso ou ausentes), isolamento e sinalização, ferramentas e equipamentos, atividade e ambiente. E identifique, como engenheiro de segurança, os perigos ocupacionais prováveis para o que aparece, por categoria (ex.: ferramenta elétrica ou motorizada, como furadeira, esmerilhadeira, serra, roçadeira ou compressor, indica risco físico de ruído e vibração; poeira, tintas, solventes ou produtos químicos indicam risco químico; esgoto, lixo, mofo ou animais indicam risco biológico; postura, carga ou repetição indicam risco ergonômico; altura, eletricidade, piso irregular ou máquina sem proteção indicam risco de acidente).\n- Em \"matriz\", para cada risco relevante da foto, classifique a severidade (Leve, Moderada, Grave, Crítica ou Catastrófica) e a frequência provável (Remota, Pouco provável, Ocasional, Provável ou Freqüente), conforme a matriz de riscos; a frequência é uma estimativa pela exposição mostrada na foto. Em \"altura\", escreva 1 frase se a foto mostrar trabalho em altura.\n\nResponda somente com JSON: {"achados":[{"descricao":"...","categoria":"físico|químico|biológico|ergonômico|acidente","gravidade":"Alta|Média|Baixa","evidencia":"o que se vê na foto"}],"observacoes":{"epi":"","isolamento":"","ferramentas":"","atividade":""},"riscos":{"fisicos":"","quimicos":"","biologicos":"","ergonomicos":"","acidentes":""},"matriz":[{"risco":"...","severidade":"Moderada","frequencia":"Pouco provável"}],"altura":"","verificar":["o que confirmar no local"]}. Deixe vazio o que a foto não permitir concluir.';
       try{
         var r1=await S.sample.json(p1,{signal:auCtl.signal,images:[b]});
         (Array.isArray(r1&&r1.achados)?r1.achados:[]).forEach(function(a){if(a&&a.descricao)achados.push({foto:i+1,gn:rn[i],grupo:rot[i],descricao:String(a.descricao),categoria:String(a.categoria||''),gravidade:String(a.gravidade||'Média'),evidencia:String(a.evidencia||'')})});
         (Array.isArray(r1&&r1.verificar)?r1.verificar:[]).forEach(function(v){if(v)achados.push({verificar:String(v)})});
+        if(r1){(Array.isArray(r1.matriz)?r1.matriz:[]).forEach(function(m){if(m)mzI.push(m)});if(r1.observacoes&&r1.observacoes.epi)mzE.push(String(r1.observacoes.epi));if(r1.altura)mzA.push(String(r1.altura))}
         if(r1&&(r1.observacoes||r1.riscos))obs.push({foto:i+1,gn:rn[i],grupo:rot[i],observacoes:r1.observacoes||{},riscos:r1.riscos||{}});
       }catch(e1){if(e1&&e1.code==='cancelled')throw e1;ultErr=e1;falhas++;console.error(e1)}
     }
@@ -1138,6 +1139,7 @@ async function preencherIA(){
       if(!v||el[k].value.trim())return;
       el[k].value=v.slice(0,2000);n2++;
     });
+    var oe=f.elements.observacoes;if(oe&&!oe.value.trim()&&(mzI.length||mzE.length||mzA.length)){oe.value=mzTexto(mzI,mzE,mzA).slice(0,2500);n2++}
     var blks=document.querySelectorAll('[data-g-blk]');
     (Array.isArray(r&&r.grupos)?r.grupos:[]).forEach(function(g){
       var b=g&&blks[(+g.n||0)-1];if(!b)return;
@@ -1208,6 +1210,28 @@ async function iaUmCampo(k){
     poe(v.slice(0,2000),r.res.length,sel.length);
   }catch(e){if(S.route!==rt)return;console.error(e);var m2=$('#iam-'+k);if(m2)m2.textContent=iaErro(e)}
   finally{if(S.route===rt){var b2=document.querySelector('[data-act="ia-um"][data-k="'+k+'"]');if(b2)b2.disabled=false}}
+}
+async function iaObservacoes(){
+  var rt=S.route;if(!rt||!S.sample)return;
+  var f=$('form[data-form="insp"]'),msg=$('#iam-observacoes'),btn=document.querySelector('[data-act="ia-obs"]');if(!f||!f.elements.observacoes)return;
+  syncGrupos();
+  var ids=[];(rt.draft.grupos||[]).forEach(function(g){if(g.ia!==false)ids=ids.concat(g.fotos||[])});
+  if(!ids.length){if(msg)msg.textContent='Adicione fotos no grupo Registros das atividades para a IA analisar.';return}
+  if(btn)btn.disabled=true;
+  try{
+    var caps=await S.sample.limits().catch(function(){return null});
+    if(!(caps&&caps.images)){if(msg)msg.textContent='As fotos não puderam ser enviadas à IA nesta visualização.';return}
+    var sel=fotosEsp(ids,8);
+    var r=await analisaUma(sel,msg,rt,function(n,t){return 'Você é engenheiro de segurança do trabalho no Brasil. Esta é a foto '+n+' de '+t+' de uma inspeção (empresa '+(empNomeDe(rt.draft.empresaId)||'não informada')+'). Liste os riscos relevantes que a foto mostra e classifique cada um na matriz de riscos: severidade (Leve, Moderada, Grave, Crítica ou Catastrófica) e frequência provável (Remota, Pouco provável, Ocasional, Provável ou Freqüente). A frequência é uma estimativa pela exposição mostrada na foto.\n\nRegras:\n- Só riscos que a foto realmente mostra; não invente.\n- "epi": 1 frase sobre os EPI visíveis (em uso ou ausentes); vazio se não der para ver.\n- "altura": 1 frase se houver trabalho em altura; vazio se não houver.\n- Não identifique pessoas. Português do Brasil.\n\nResponda somente com JSON: {"matriz":[{"risco":"...","severidade":"Moderada","frequencia":"Pouco provável"}],"epi":"","altura":""}'});
+    if(!r||S.route!==rt)return;
+    var I=[],E=[],A=[];
+    r.res.forEach(function(x){(Array.isArray(x&&x.matriz)?x.matriz:[]).forEach(function(m){if(m)I.push(m)});if(x&&x.epi)E.push(x.epi);if(x&&x.altura)A.push(x.altura)});
+    var tx=mzTexto(I,E,A).slice(0,2500),el=f.elements.observacoes,tinha=el.value.trim();
+    el.value=tinha?tinha+'\n\n'+tx:tx;
+    var nr=mzClassifica(I).length;
+    if(msg)msg.textContent=(tinha?'Sugestão da IA adicionada abaixo do que você já tinha escrito. ':'Campo preenchido pela IA. ')+(nr?nr+(nr===1?' risco classificado':' riscos classificados')+' na matriz. ':'')+'A frequência é uma estimativa pelas fotos: confirme e ajuste antes de salvar.';
+  }catch(e){if(S.route!==rt)return;console.error(e);var m2=$('#iam-observacoes');if(m2)m2.textContent=iaErro(e)}
+  finally{if(S.route===rt){var b2=document.querySelector('[data-act="ia-obs"]');if(b2)b2.disabled=false}}
 }
 async function iaUmGrupo(gi){
   var rt=S.route;if(!rt||!S.sample)return;syncGrupos();
@@ -1935,8 +1959,15 @@ async function gerarPDFCampo(insp){
   if(insp.rNota)linhasTxt(insp.rNota,tw).forEach(function(l){rl.push(l)});
   box('RISCOS OCUPACIONAIS / PERIGOS OBSERVADOS',rl);
   var obl=linhasTxt(insp.observacoes,tw);
-  need(12+obl.length*LH+62);
+  /* observações e matriz nunca se separam: se não couberem juntas, reduz o texto das observações; se ainda não couber, vão juntas para a página seguinte */
+  var MZH=64,avail=BOT-y,cheio=6+obl.length*LH+5+MZH;
+  if(cheio>avail){
+    var cort=obl.slice(0,3);
+    if(obl.length>3&&6+cort.length*LH+5+MZH<=avail){cort[2]={t:cort[2].t.replace(/\s*\S*$/,'')+' …',x:0};obl=cort}
+    else need(cheio);
+  }
   box('OBSERVAÇÕES GERAIS',obl);
+  need(MZH);
   /* matriz de riscos desenhada (nítida em qualquer zoom) */
   function hx(h){return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]}
   function cm(t,x,w,h,fill,col,sz){var f=hx(fill);doc.setFillColor(f[0],f[1],f[2]);doc.rect(x,y,w,h,'FD');var c=hx(col);doc.setTextColor(c[0],c[1],c[2]);font(1,sz);doc.text(t,x+w/2,y+h/2+sz*0.12,{align:'center'});doc.setTextColor(0,0,0)}
@@ -2193,6 +2224,32 @@ function imgBytes(id){
 function linhasDe(t){return String(t==null?'':t).split(/\r?\n/).map(function(s){return s.replace(/^\s*(?:[-•*–]|\d+[.)])\s*/,'').trim()}).filter(Boolean)}
 var MZ_F=[['REMOTA',2],['POUCO PROVÁVEL',3],['OCASIONAL',5],['PROVÁVEL',8],['FREQÜENTE',13]],MZ_S=[['CATASTRÓFICA',32],['CRÍTICA',16],['GRAVE',8],['MODERADA',4],['LEVE',2]];
 var MZ_LEG=[['MUITO ALTO (160 ou mais)',160],['ALTO (80 a 128)',80],['MÉDIO (26 a 64)',26],['BAIXO (10 a 24)',10],['MUITO BAIXO (4 a 8)',0]];
+function mzNorm(t){return String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/freq\w*ente/,'frequente').trim()}
+function mzNivel(v){return v>=160?'muito alto':v>=80?'alto':v>=26?'médio':v>=10?'baixo':'muito baixo'}
+/* classifica na matriz: a conta e a faixa são feitas aqui, não pela IA */
+function mzClassifica(items){
+  var mp={};
+  (items||[]).forEach(function(it){
+    if(!it||!it.risco)return;
+    var si=-1,fi=-1;MZ_S.forEach(function(x,i){if(mzNorm(x[0])===mzNorm(it.severidade))si=i});MZ_F.forEach(function(x,i){if(mzNorm(x[0])===mzNorm(it.frequencia))fi=i});
+    if(si<0||fi<0)return;
+    var v=MZ_S[si][1]*MZ_F[fi][1],k=mzNorm(it.risco);
+    if(!mp[k]||mp[k].v<v)mp[k]={risco:String(it.risco).trim(),sn:MZ_S[si][0],sp:MZ_S[si][1],fn:MZ_F[fi][0],fp:MZ_F[fi][1],v:v};
+  });
+  return Object.keys(mp).map(function(k){return mp[k]}).sort(function(a,b){return b.v-a.v}).slice(0,4);
+}
+function mzTexto(items,epis,alts){
+  var R=mzClassifica(items),out=[];
+  function cap(t){t=String(t||'').trim();return t.charAt(0).toUpperCase()+t.slice(1)}
+  function lc(t){return String(t).toLowerCase()}
+  if(R.length)out.push('Durante o acompanhamento das atividades, foi aplicada a matriz de riscos aos principais riscos observados nas fotos. '+R.map(function(r){return cap(r.risco)+': severidade ('+cap(lc(r.sn))+' = '+r.sp+') e frequência ('+cap(lc(r.fn))+' = '+r.fp+'), resultado '+r.v+', sendo considerado risco '+mzNivel(r.v)+'.'}).join(' '));
+  else out.push('Nas fotos analisadas não foram identificados riscos relevantes para classificação na matriz de riscos.');
+  function un(l,n){var o={};return (l||[]).map(function(x){return String(x||'').trim()}).filter(function(x){var k=lc(x);if(!x||o[k])return false;o[k]=1;return true}).slice(0,n)}
+  var e=un(epis,2),a=un(alts,1);
+  if(e.length)out.push(e.join(' '));
+  if(a.length)out.push(a.join(' '));
+  return out.join('\n\n');
+}
 function mzCor(v){return v>=160?['E5231B','FFFFFF']:v>=80?['F59A23','000000']:v>=26?['FFE600','000000']:v>=10?['8CC63F','000000']:['2E9E6E','FFFFFF']}
 async function matrizBytes(){
   try{var r=await fetch('/matriz-riscos.png');if(!r.ok)return null;var u=new Uint8Array(await r.arrayBuffer());
@@ -2233,13 +2290,13 @@ async function gerarWordCampo(insp){
     var L=linhasDe(txt);if(!L.length)return [P('NA')];
     return L.map(function(s,k){return new D.Paragraph({spacing:{after:30},indent:{left:360,hanging:360},children:[R((num?(k+1)+'.':'•')+'\t'+s)],tabStops:[{type:D.TabStopType.LEFT,position:360}]})});
   }
-  function texto(t){var L=String(t==null?'':t).split(/\r?\n/).filter(function(s){return s.trim()});return L.length?L.map(function(s){return P(s.trim())}):[P('NA')]}
+  function texto(t,kn){var L=String(t==null?'':t).split(/\r?\n/).filter(function(s){return s.trim()});return L.length?L.map(function(s){return P(s.trim(),{kn:kn})}):[P('NA',{kn:kn})]}
   function cel(kids,w,o){o=o||{};return new D.TableCell({width:{size:Math.round(TW*w/100),type:D.WidthType.DXA},borders:borders,verticalAlign:o.va,columnSpan:o.span,shading:o.fill?{type:D.ShadingType.CLEAR,fill:o.fill,color:'auto'}:undefined,margins:{top:60,bottom:60,left:100,right:100},children:kids})}
   function tbl(rows,ws){return new D.Table({width:{size:TW,type:D.WidthType.DXA},layout:D.TableLayoutType.FIXED,columnWidths:ws.map(function(w){return Math.round(TW*w/100)}),rows:rows})}
-  function gap(n){return new D.Paragraph({spacing:{after:n==null?80:n},children:[R('',{size:8})]})}
+  function gap(n,kn){return new D.Paragraph({keepNext:!!kn,spacing:{after:n==null?80:n},children:[R('',{size:8})]})}
   var out=[];
-  function sec(label,kids){
-    out.push(tbl([new D.TableRow({cantSplit:true,children:[cel([P(label,{b:true,after:0})],100,{fill:GR})]}),new D.TableRow({children:[cel(kids,100)]})],[100]),gap());
+  function sec(label,kids,kn){
+    out.push(tbl([new D.TableRow({cantSplit:true,children:[cel([P(label,{b:true,after:0,kn:true})],100,{fill:GR})]}),new D.TableRow({cantSplit:!!kn,children:[cel(kids,100)]})],[100]),gap(80,kn));
   }
   function sec2(l1,k1,l2,k2){
     out.push(tbl([new D.TableRow({cantSplit:true,children:[cel([P(l1,{b:true,after:0})],50,{fill:GR}),cel([P(l2,{b:true,after:0})],50,{fill:GR})]}),new D.TableRow({children:[cel(k1,50),cel(k2,50)]})],[50,50]),gap());
@@ -2276,7 +2333,7 @@ async function gerarWordCampo(insp){
   /* riscos */
   var rk=[];[['Físicos','rFis'],['Químicos','rQuim'],['Biológicos','rBio'],['Ergonômicos','rErgo'],['Acidentes','rAcid'],['Outros','rOutros']].forEach(function(r){rk.push(new D.Paragraph({spacing:{after:50},indent:{left:1700,hanging:1700},tabStops:[{type:D.TabStopType.LEFT,position:1700}],children:[R(r[0]+':',{b:true}),R('\t'+(insp[r[1]]||'NA'))]}))});
   sec('RISCOS OCUPACIONAIS / PERIGOS OBSERVADOS',rk.concat(insp.rNota?[P(insp.rNota,{before:40})]:[]));
-  sec('OBSERVAÇÕES GERAIS',texto(insp.observacoes));
+  sec('OBSERVAÇÕES GERAIS',texto(insp.observacoes,true),true);
   /* matriz de riscos desenhada (nítida em qualquer zoom) */
   function cc(t,w,fill,col,o){o=o||{};return cel([P(t,{b:o.b!==false,al:AL.CENTER,after:0,size:o.size||18,color:col||'000000',kn:true})],w,{fill:fill,va:D.VerticalAlign.CENTER,span:o.span})}
   var mr=[new D.TableRow({cantSplit:true,children:[cc('SEVERIDADE',25,GR,'000000',{span:2})].concat(MZ_F.map(function(f){return cc(f[0]+' ('+f[1]+')',15,GR,'000000',{size:15})}))})];
@@ -2688,6 +2745,7 @@ document.addEventListener('click',function(e){
     case 'copiar-ultima':copiarUltima();break;
     case 'ia-campo':preencherIA();break;
     case 'ia-um':iaUmCampo(el.dataset.k);break;
+    case 'ia-obs':iaObservacoes();break;
     case 'ia-grupo':iaUmGrupo(+el.dataset.g);break;
     case 'epi-add':syncDraft();S.route.draft.epiLista=(S.route.draft.epiLista||[]).concat([{}]);var e1=$('#epi-lista');if(e1)e1.innerHTML=epiRows(S.route.draft);break;
     case 'epi-rm':syncDraft();var e3=(S.route.draft.epiLista||[]).slice();e3.splice(+el.dataset.i,1);S.route.draft.epiLista=e3;var e2=$('#epi-lista');if(e2)e2.innerHTML=epiRows(S.route.draft);break;
