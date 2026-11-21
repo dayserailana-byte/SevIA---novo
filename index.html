@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-21-2359 sync-tempo-real --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-22-0010 epi-espaco --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -1890,7 +1890,7 @@ async function gerarPDFCampo(insp){
   function page(){doc.addPage();y=TOP}
   function need(h){if(y+h>BOT)page()}
   /* linhas de conteúdo: {t,x,b,pre} */
-  function linhasTxt(txt,w){var L=String(txt==null?'':txt).split(/\r?\n/).filter(function(s){return s.trim()}),o=[];if(!L.length)L=['NA'];L.forEach(function(s){s=s.trim();var bl=/^[•\-] /.test(s);if(bl)s='• '+s.slice(2);wrap(s,bl?w-3.5:w).forEach(function(r,i){o.push({t:r,x:(bl&&i>0)?3.5:0})})});return o}
+  function linhasTxt(txt,w){var L=String(txt==null?'':txt).split(/\r?\n/).map(function(s){return s.trim()}).filter(function(s,i,A){return s||(i>0&&A[i-1]&&A.slice(i+1).some(Boolean))}),o=[];if(!L.length)L=['NA'];L.forEach(function(s){if(!s){o.push({t:'',x:0});return}s=s.trim();var bl=/^[•\-] /.test(s);if(bl)s='• '+s.slice(2);wrap(s,bl?w-3.5:w).forEach(function(r,i){o.push({t:r,x:(bl&&i>0)?3.5:0})})});return o}
   function linhasLista(txt,w,num){var L=linhasDe(txt),o=[];if(!L.length)return [{t:'NA',x:0}];L.forEach(function(s,k){wrap(s,w-6).forEach(function(r,j){o.push({t:r,x:6,pre:j?'':(num?(k+1)+'.':'•')})})});return o}
   function rotulo(x,w,t,h){doc.setFillColor(GRY[0],GRY[1],GRY[2]);doc.rect(x,y,w,h,'FD');font(1);doc.text(t,x+2,y+h/2+1.2)}
   /* caixa com rótulo e conteúdo que pode quebrar de página */
@@ -2247,6 +2247,7 @@ function mzTexto(items,epis,alts){
   else out.push('Nas fotos analisadas não foram identificados riscos relevantes para classificação na matriz de riscos.');
   function un(l,n){var o={};return (l||[]).map(function(x){return String(x||'').trim()}).filter(function(x){var k=lc(x);if(!x||o[k])return false;o[k]=1;return true}).slice(0,n)}
   var e=un(epis,1),a=un(alts,1);
+  if(e.length||a.length)out.push('');
   if(e.length)out.push('EPI: '+e[0]);
   if(a.length)out.push('Trabalho em altura: '+a[0]);
   return out.join('\n');
@@ -2291,7 +2292,7 @@ async function gerarWordCampo(insp){
     var L=linhasDe(txt);if(!L.length)return [P('NA')];
     return L.map(function(s,k){return new D.Paragraph({spacing:{after:30},indent:{left:360,hanging:360},children:[R((num?(k+1)+'.':'•')+'\t'+s)],tabStops:[{type:D.TabStopType.LEFT,position:360}]})});
   }
-  function texto(t,kn){var L=String(t==null?'':t).split(/\r?\n/).filter(function(s){return s.trim()});return L.length?L.map(function(s){return P(s.trim(),{kn:kn})}):[P('NA',{kn:kn})]}
+  function texto(t,kn){var L=String(t==null?'':t).split(/\r?\n/).map(function(s){return s.trim()}).filter(function(s,i,A){return s||(i>0&&A[i-1]&&A.slice(i+1).some(Boolean))});return L.length?L.map(function(s){return P(s,{kn:kn})}):[P('NA',{kn:kn})]}
   function cel(kids,w,o){o=o||{};return new D.TableCell({width:{size:Math.round(TW*w/100),type:D.WidthType.DXA},borders:borders,verticalAlign:o.va,columnSpan:o.span,shading:o.fill?{type:D.ShadingType.CLEAR,fill:o.fill,color:'auto'}:undefined,margins:{top:60,bottom:60,left:100,right:100},children:kids})}
   function tbl(rows,ws){return new D.Table({width:{size:TW,type:D.WidthType.DXA},layout:D.TableLayoutType.FIXED,columnWidths:ws.map(function(w){return Math.round(TW*w/100)}),rows:rows})}
   function gap(n,kn){return new D.Paragraph({keepNext:!!kn,spacing:{after:n==null?80:n},children:[R('',{size:8})]})}
