@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-20-1900 rascunho-automatico --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-21-1100 modelo-campo --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -334,6 +334,9 @@ body:has(.savebar) .fab{display:none}
 .det summary{font-weight:700;padding:14px 0;cursor:pointer;min-height:44px}
 .det[open] summary{border-bottom:1px solid var(--border);margin-bottom:14px}
 .det .fields{padding-bottom:16px}
+.esp{display:grid;gap:0;border:1px solid var(--border);border-radius:10px;overflow:hidden}.esp-row{display:grid;gap:6px;padding:10px 12px;border-bottom:1px solid var(--border)}.esp-row:last-child{border-bottom:0}.esp-in{display:grid;grid-template-columns:minmax(120px,170px) 1fr;gap:8px}
+.epi-row{display:grid;grid-template-columns:1fr 90px;gap:6px;margin-bottom:10px;padding:10px;border:1px solid var(--border);border-radius:10px}.epi-row input[data-ep=epi]{grid-column:1/2}.epi-row input[data-ep=ca]{grid-column:2/3}.epi-row input[data-ep=cond],.epi-row input[data-ep=obs]{grid-column:1/3}.epi-row button{grid-column:1/3}
+@media(min-width:720px){.epi-row{grid-template-columns:2fr 110px 2fr 2fr 44px;padding:0;border:0}.epi-row input[data-ep],.epi-row button{grid-column:auto!important}}
 </style></head><body>
 
 <div id="app"></div>
@@ -363,14 +366,14 @@ var CAMPOS=[
  ['execNome','Empresa executante','in'],['execCnpj','CNPJ da executante','in'],['representante','Representante da empresa','in'],['equipe','Equipe','ta'],['codigoLocal','Código do local (INEP ou outro)','in'],['endereco','Endereço','in'],
  ['servicos','Descrição dos serviços executados','ta'],['atividades','Atividades realizadas','ta'],['localTrabalho','Local de trabalho','ta'],
  ['apr','Análise preliminar de riscos – APR / procedimentos','ta'],['condFerramentas','Condições de ferramentas e equipamentos','ta'],['isolamento','Isolamento e sinalização nos locais de trabalho','ta'],
- ['atividadeEspecial','Atividade especial (NR 35 / NR 10)','ta'],['epi','Equipamentos de proteção individual – EPI','ta'],['ordemServico','Ordem de serviço','in'],['exames','Exames ocupacionais','in'],
- ['rFis','Riscos físicos','in'],['rQuim','Riscos químicos','in'],['rBio','Riscos biológicos','in'],['rErgo','Riscos ergonômicos','in'],['rAcid','Riscos de acidentes','in'],['rNota','Nota sobre os riscos','ta'],
+ ['atividadeEspecial','Avaliação das atividades especiais aplicáveis','ta'],['epi','Equipamentos de proteção individual – EPI (observações gerais)','ta'],['ordemServico','Ordem de serviço / orientações de SST','ta'],['exames','Aptidão / exames ocupacionais','ta'],['capacitacoes','Capacitações / treinamentos','ta'],
+ ['rFis','Riscos físicos','in'],['rQuim','Riscos químicos','in'],['rBio','Riscos biológicos','in'],['rErgo','Riscos ergonômicos','in'],['rAcid','Riscos de acidentes','in'],['rOutros','Outros riscos','in'],['rNota','Nota sobre os riscos','ta'],['consideracoes','Considerações finais','ta'],['referencias','Referências / requisitos aplicáveis','ta'],
  ['respNome','Nome do responsável técnico','in'],['respFuncao','Função (ex.: Técnico em Segurança do Trabalho)','in'],['regProf','Registro profissional (REG / MTE)','in']
 ];
 var CD={};CAMPOS.forEach(function(c){CD[c[0]]=c});
 /* responsável técnico: o que está no relatório e, se vazio, o cadastro do usuário */
 function respTec(i){var eu=window.SEVIA_EU||{};return {nome:i.respNome||eu.nome||i.responsavel||'',funcao:i.respFuncao||eu.funcao||'',reg:i.regProf||eu.registro||''}}
-var GRP=[['Empresa executante',['execNome','execCnpj','representante','equipe','codigoLocal','endereco']],['Serviços e local de trabalho',['servicos','atividades','localTrabalho']],['Segurança no trabalho',['apr','condFerramentas','isolamento','atividadeEspecial','epi','ordemServico','exames']],['Riscos ocupacionais',['rFis','rQuim','rBio','rErgo','rAcid','rNota']],['Responsável técnico',['respNome','respFuncao','regProf']]];
+var GRP=[['Empresa executante',['execNome','execCnpj','representante','equipe','codigoLocal','endereco']],['Serviços e local de trabalho',['servicos','atividades','localTrabalho']],['Segurança no trabalho',['apr','condFerramentas','isolamento','atividadeEspecial','epi','ordemServico','exames','capacitacoes']],['Riscos ocupacionais',['rFis','rQuim','rBio','rErgo','rAcid','rOutros','rNota']],['Considerações finais e referências',['consideracoes','referencias']],['Responsável técnico',['respNome','respFuncao','regProf']]];
 var S={marca:null,db:null,assets:null,downloads:null,sample:null,dbFail:false,insp:[],ncs:[],acoes:[],empresas:[],contratos:[],cad:null,user:null,me:{id:'',name:''},perfil:'Administradora',canWrite:true,acessos:null,mig:false,skipHash:false,
   R:{insp:[],ncs:[],acoes:[],empresas:[],contratos:[],usuarios:[]},
   loaded:{i:false,n:false,a:false,e:false,c:false,k:false,x:false,p:false},view:'painel',route:null,hist:[],
@@ -981,6 +984,10 @@ function viewManual(){
     '<p>Na tela <b>Início</b> ou em <b>Relatórios e inspeções</b>, toque em <b>Novo relatório fotográfico</b>. O formulário tem etapas que abrem e fecham ao tocar no título. Para salvar é preciso que a empresa tenha um <b>contrato vigente</b>.</p>'+
     ol(['<b>Identificação:</b> data, empresa e <b>unidade</b>. O <b>CNPJ da empresa</b> aparece sozinho ao escolher a empresa. A unidade é obrigatória e é ela que faz o relatório entrar nos <b>Indicadores</b> por unidade. O seu nome sai no relatório como quem realizou o trabalho.','<b>Empresa executante:</b> quem executou o serviço. Se você informar o nome, o <b>CNPJ</b> é obrigatório e precisa ser um CNPJ válido.','<b>Fotos:</b> as fotos ficam em grupos. Use <b>Tirar foto</b> ou <b>Galeria</b>. Para remover uma foto, toque no <b>X</b> vermelho dela. Os grupos podem ser renomeados, adicionados ou removidos.','<b>Detalhes do serviço:</b> serviços, segurança, riscos e observações.','<b>Responsável técnico:</b> nome, função e registro profissional. Já vêm do seu cadastro.'])+
     '<p>No final, toque em <b>Salvar relatório</b>. O número do relatório é gerado ao salvar. Se não der para terminar agora, toque em <b>Salvar rascunho</b>.</p>'],
+  ['Relatório de campo (modelo do cliente)',tec,
+    '<p>O Word e o PDF do relatório fotográfico saem no <b>modelo Relatório de Campo</b>: cabeçalho com logo e número, dados da empresa executante, atividades especiais, EPI, riscos, fotos com apontamento e orientação, consolidação, considerações finais, referências e responsável técnico.</p>'+
+    ol(['Em <b>Atividades especiais</b>, marque Aplicável ou Não aplicável para cada NR e escreva a observação.','Na tabela de <b>EPI</b>, use <b>Adicionar EPI</b> para cada item (EPI, CA, condições de uso, observações).','Em cada grupo de fotos, preencha <b>Apontamento</b> e <b>Orientação / recomendação</b>. Os grupos preenchidos viram atividades numeradas e entram na <b>consolidação dos apontamentos</b>. Grupos sem texto saem como fotos gerais.','Preencha <b>Considerações finais</b> e <b>Referências</b> (uma norma por linha).'])+
+    li(['Campos em branco saem como <b>NA</b> no documento.','A matriz de riscos é inserida automaticamente após as observações gerais.','A inspeção de segurança continua com o modelo próprio.'])],
   ['Salvar como rascunho',tec,
     '<p>Quando não der para finalizar na hora, guarde o trabalho como rascunho:</p>'+ol(['No relatório fotográfico ou na inspeção de segurança, toque em <b>Salvar rascunho</b>. É preciso apenas escolher a empresa.','O documento aparece em <b>Relatórios e inspeções</b> com o selo <b>Rascunho</b>.','Para continuar, abra o rascunho e toque em <b>Continuar rascunho</b>. Quando terminar, toque em <b>Finalizar e salvar</b>.'])+li(['O rascunho <b>só aparece para você</b>, mesmo que outras pessoas tenham acesso à empresa. Ele passa a ser visto pelos demais somente depois de finalizado.','Enquanto for rascunho, o PDF, o Word e o Excel não ficam disponíveis, e o número do relatório ainda não é gerado.','Para apagar um rascunho, abra-o e toque em <b>Excluir</b>.','Se você sair da tela <b>sem salvar nada</b>, o que já preencheu fica guardado <b>neste aparelho</b> por até 7 dias. Ao tocar em <b>Novo relatório fotográfico</b> (ou <b>Nova inspeção de segurança</b>) de novo, o sistema recupera o formulário e avisa. Para começar em branco, toque em <b>Começar do zero</b>. Esse guardado automático não aparece em outro aparelho: para isso, use <b>Salvar rascunho</b>.'])],
   ['Preenchimento com a IA',tec,
@@ -1063,8 +1070,8 @@ function formInsp(r){
   :
   stp(2,'Empresa executante','Quem executou o serviço',  '<div class="fields">'+camposCab(d)+'</div>',!!(d.execNome||d.execCnpj||!r.id))+
   stp(3,'Fotos','',gruposField(d)+autoPanel(),true)+
-  stp(4,'Detalhes do serviço','Serviços, segurança, riscos e observações',camposForm(d,1,4,true)+field('Observações','f-obs','<textarea id="f-obs" name="observacoes" placeholder="Condições gerais do local, perigos identificados">'+esc(d.observacoes)+'</textarea>','full'),!!r.id)+
-  stp(5,'Responsável técnico','Nome, função e registro profissional',camposForm(d,4,5,true),true))+
+  stp(4,'Detalhes do serviço','Serviços, segurança, riscos e observações',camposForm(d,1,5,true)+field('Observações','f-obs','<textarea id="f-obs" name="observacoes" placeholder="Condições gerais do local, perigos identificados">'+esc(d.observacoes)+'</textarea>','full'),!!r.id)+
+  stp(5,'Responsável técnico','Nome, função e registro profissional',camposForm(d,5,6,true),true))+
   '<div class="savebar"><button type="button" class="btn btn-ghost" data-act="back">Cancelar</button><button type="button" class="btn btn-ghost" data-act="save-draft">Salvar rascunho</button><button class="btn btn-primary" type="submit">'+(rasc?'Finalizar e salvar':(d.tipo==='inspecao'?'Salvar inspeção':'Salvar relatório'))+'</button></div></form>';
 }
 function autoPanel(){
@@ -1119,7 +1126,7 @@ async function preencherIA(){
     if(!riscos.length&&!obs.length){out.innerHTML='<p><b>A IA não identificou riscos visíveis nas '+lidas+' fotos analisadas.</b> Preencha os campos manualmente se necessário.</p>';return}
     out.textContent='Reunindo os riscos de maior gravidade…';
     var chaves=CAMPOS.filter(function(c){return ['execNome','execCnpj','representante','equipe','codigoLocal','endereco','regProf','respNome','respFuncao'].indexOf(c[0])<0}).map(function(c){return '"'+c[0]+'": '+(c[2]==='ta'?'["item", "item"]':'"texto"')+'  // '+c[1]});
-    var prompt='Você é engenheiro de segurança do trabalho no Brasil e vai preencher o RELATÓRIO DE CAMPO de uma inspeção. Cada foto já foi analisada separadamente; os achados estão abaixo (JSON).\n\nAchados (riscos):\n'+JSON.stringify(riscos)+'\n\nObservações e perigos prováveis por foto:\n'+JSON.stringify(obs)+'\n\nContexto: empresa '+(empNomeDe(rt.draft.empresaId)||'não informada')+', setor '+(rt.draft.setor||'não informado')+'.\n\nRegras obrigatórias:\n- Campos de riscos (rFis, rQuim, rBio, rErgo, rAcid): preencha cada um com TODOS os riscos identificados na categoria, desde o menor até o maior, a partir dos achados e dos perigos prováveis por foto, sem omitir os de gravidade Baixa; ordene do mais grave para o menos grave e junte os repetidos. Se não houver evidência para a categoria, escreva "Não identificado nas fotos analisadas."\n- Ruído: se aparecer ferramenta elétrica ou motorizada (furadeira, esmerilhadeira, serra, roçadeira, compressor etc.), registre em rFis o risco de ruído (e vibração, quando couber) e que a medição quantitativa (dosimetria ou decibelímetro) deve confirmar.\n- EPI, isolamento e sinalização, condições de ferramentas, atividades, serviços e local de trabalho: descreva o que as observações mostram (EPI em uso ou ausentes; isolamento e sinalização presentes ou ausentes). Se nada aparecer, escreva o que não foi possível verificar.\n- APR / procedimentos, ordem de serviço e exames ocupacionais são documentos e não aparecem em fotos: escreva "Não verificável pelas fotos; conferir no local."\n- Junte achados repetidos em um só e não invente nada além do que as fotos e os achados indicam.\n- Não identifique pessoas.\n- Riscos: categorias físicos, químicos, biológicos, ergonômicos e acidentes, só com evidência.\n- Português do Brasil, frases curtas.\n- Em "verificar", liste o que precisa ser confirmado presencialmente.\n\nResponda somente com JSON neste formato:\n{"campos":{\n'+chaves.join(',\n')+'\n},"verificar":["..."]}';
+    var prompt='Você é engenheiro de segurança do trabalho no Brasil e vai preencher o RELATÓRIO DE CAMPO de uma inspeção. Cada foto já foi analisada separadamente; os achados estão abaixo (JSON).\n\nAchados (riscos):\n'+JSON.stringify(riscos)+'\n\nObservações e perigos prováveis por foto:\n'+JSON.stringify(obs)+'\n\nContexto: empresa '+(empNomeDe(rt.draft.empresaId)||'não informada')+', setor '+(rt.draft.setor||'não informado')+'.\n\nRegras obrigatórias:\n- Campos de riscos (rFis, rQuim, rBio, rErgo, rAcid): preencha cada um com TODOS os riscos identificados na categoria, desde o menor até o maior, a partir dos achados e dos perigos prováveis por foto, sem omitir os de gravidade Baixa; ordene do mais grave para o menos grave e junte os repetidos. Se não houver evidência para a categoria, escreva "Não identificado nas fotos analisadas."\n- Ruído: se aparecer ferramenta elétrica ou motorizada (furadeira, esmerilhadeira, serra, roçadeira, compressor etc.), registre em rFis o risco de ruído (e vibração, quando couber) e que a medição quantitativa (dosimetria ou decibelímetro) deve confirmar.\n- EPI, isolamento e sinalização, condições de ferramentas, atividades, serviços e local de trabalho: descreva o que as observações mostram (EPI em uso ou ausentes; isolamento e sinalização presentes ou ausentes). Se nada aparecer, escreva o que não foi possível verificar.\n- APR / procedimentos, ordem de serviço, exames ocupacionais e capacitações / treinamentos são documentos e não aparecem em fotos: escreva "Não verificável pelas fotos; conferir no local."\n- Junte achados repetidos em um só e não invente nada além do que as fotos e os achados indicam.\n- Não identifique pessoas.\n- Riscos: categorias físicos, químicos, biológicos, ergonômicos e acidentes, só com evidência.\n- Português do Brasil, frases curtas.\n- Em "verificar", liste o que precisa ser confirmado presencialmente.\n\nResponda somente com JSON neste formato:\n{"campos":{\n'+chaves.join(',\n')+'\n},"verificar":["..."]}';
     var r=await S.sample.json(prompt,{signal:auCtl.signal});
     if(S.route!==rt)return;
     var c=(r&&r.campos&&typeof r.campos==='object')?r.campos:{},n2=0,el=f.elements;
@@ -1139,7 +1146,28 @@ async function preencherIA(){
   }finally{if(S.route===rt){var rb=$('#au-run'),sb=$('#au-stop');if(rb)rb.disabled=false;if(sb)sb.hidden=true}}
 }
 function empNomeDe(id){var e=id&&empDe(id);return e?e.nome:''}
+var ESP=[['1','NR-35 - Trabalho em altura abaixo de 2 metros'],['2','NR-10 - Eletricidade'],['3','NR-33 - Espaço confinado'],['4','NR-11 - Movimentação / içamento de cargas'],['5','NR-18 / NR-34 - Trabalho a quente'],['6','Outras NRs - Atividades especiais']];
+function espHtml(d){
+  return '<div class="field full"><span class="lbl">Atividades especiais / requisitos específicos</span><div class="esp">'+ESP.map(function(e){var n=e[0];
+    return '<div class="esp-row"><b>'+esc(e[1])+'</b><div class="esp-in"><select name="esp'+n+'" aria-label="'+esc(e[1])+'">'+opts([['','Não marcado'],['A','Aplicável'],['N','Não aplicável']],d['esp'+n]||'')+'</select><input name="espo'+n+'" value="'+esc(d['espo'+n])+'" placeholder="Observação" aria-label="Observação sobre '+esc(e[1])+'"></div></div>'}).join('')+'</div></div>';
+}
+function epiRows(d){
+  var L=d.epiLista&&d.epiLista.length?d.epiLista:[{}];
+  return L.map(function(r,k){return '<div class="epi-row" data-epi-blk><input data-ep="epi" value="'+esc(r.epi)+'" placeholder="EPI (ex.: Capacete de segurança)" aria-label="EPI"><input data-ep="ca" value="'+esc(r.ca)+'" placeholder="CA" inputmode="numeric" aria-label="CA"><input data-ep="cond" value="'+esc(r.cond)+'" placeholder="Condições de uso" aria-label="Condições de uso"><input data-ep="obs" value="'+esc(r.obs)+'" placeholder="Observações" aria-label="Observações"><button type="button" class="btn btn-ghost" data-act="epi-rm" data-i="'+k+'" aria-label="Remover EPI '+(k+1)+'">&times;</button></div>'}).join('');
+}
+function epiHtml(d){
+  return '<div class="field full"><span class="lbl">EPI observados (tabela do relatório: EPI, CA, condições de uso, observações)</span><div id="epi-lista">'+epiRows(d)+'</div><button type="button" class="btn btn-ghost" data-act="epi-add">+ Adicionar EPI</button></div>';
+}
+function syncEpi(){
+  var d=S.route&&S.route.draft;if(!d||!document.getElementById('epi-lista'))return;
+  d.epiLista=Array.prototype.map.call(document.querySelectorAll('[data-epi-blk]'),function(b){var o={};b.querySelectorAll('[data-ep]').forEach(function(i){o[i.dataset.ep]=i.value});return o});
+}
 function campoIn(d,k){var c=CD[k],ta=c[2]==='ta';
+  if(k==='atividadeEspecial')return espHtml(d)+campoIn2(d,k);
+  if(k==='epi')return campoIn2(d,k)+epiHtml(d);
+  return campoIn2(d,k);
+}
+function campoIn2(d,k){var c=CD[k],ta=c[2]==='ta';
   return field(c[1],'i-'+k,ta?'<textarea id="i-'+k+'" name="'+k+'" placeholder="Um item por linha">'+esc(d[k])+'</textarea>':'<input id="i-'+k+'" name="'+k+'" value="'+esc(d[k])+'"'+(k==='execCnpj'?' inputmode="numeric" maxlength="18" placeholder="00.000.000/0000-00"':'')+'>',ta?'full':'')}
 function camposCab(d){return GRP[0][1].map(function(k){return campoIn(d,k)}).join('')}
 function camposForm(d,a,b,raw){
@@ -1153,7 +1181,7 @@ function thumbsG(ids,k){
 function gruposHtml(d){
   return (d.grupos||[]).map(function(g,k){
     return '<div class="un-blk ph-blk" data-g-blk><div class="ph-head"><b>'+(g.titulo?esc(g.titulo):'Grupo '+(k+1))+'</b>'+(S.assets?'<button type="button" class="ph-rm" data-act="g-rm" data-g="'+k+'">Remover grupo</button>':'')+'</div>'+
-    '<label class="field"><span>Título do grupo de fotos</span><input data-gtitulo value="'+esc(g.titulo)+'" placeholder="Ex.: Instalações área externa"></label>'+(S.sample&&g.ia!==false?'<p class="muted small ia-aviso"><b>&#10024; A IA analisa as fotos deste grupo</b> e sugere o preenchimento do relatório. Você revisa tudo antes de salvar.</p>':'')+
+    '<label class="field"><span>Título do grupo de fotos (descrição da atividade)</span><input data-gtitulo value="'+esc(g.titulo)+'" placeholder="Ex.: Furo em parede"></label><label class="field"><span>Apontamento (o que foi verificado)</span><textarea data-gapont rows="2" placeholder="Ex.: Verificação de nivelamento de piso">'+esc(g.apontamento)+'</textarea></label><label class="field"><span>Orientação / recomendação (uma por linha)</span><textarea data-gorient rows="2" placeholder="Ex.: Garantir que a base esteja em piso firme e nivelado">'+esc(g.orientacao)+'</textarea></label><p class="muted small">Quem tiver apontamento ou orientação entra no relatório como atividade numerada e na consolidação dos apontamentos.</p>'+(S.sample&&g.ia!==false?'<p class="muted small ia-aviso"><b>&#10024; A IA analisa as fotos deste grupo</b> e sugere o preenchimento do relatório. Você revisa tudo antes de salvar.</p>':'')+
     '<div id="fg-'+k+'">'+thumbsG(g.fotos,k)+'</div>'+
     (S.assets?'<div class="ph-actions"><label class="btn btn-primary file-btn"><input class="sr-only" type="file" accept="image/*" capture="environment" data-chg="foto-g" data-g="'+k+'">&#128247; Tirar foto</label><label class="btn btn-ghost file-btn"><input class="sr-only" type="file" accept="image/*" multiple data-chg="foto-g" data-g="'+k+'">&#128193; Galeria</label></div><p class="muted small" id="fgst-'+k+'" aria-live="polite"></p>':'<p class="muted small">O envio de fotos exige permissão de edição.</p>')+'</div>'}).join('');
 }
@@ -1162,7 +1190,7 @@ function gruposField(d){
 }
 function syncGrupos(){
   var d=S.route&&S.route.draft;if(!d||!d.grupos)return;
-  document.querySelectorAll('[data-g-blk]').forEach(function(b,k){if(d.grupos[k]){d.grupos[k].titulo=b.querySelector('[data-gtitulo]').value;var gi=b.querySelector('[data-gia]');if(gi)d.grupos[k].ia=gi.checked}});
+  document.querySelectorAll('[data-g-blk]').forEach(function(b,k){if(d.grupos[k]){d.grupos[k].titulo=b.querySelector('[data-gtitulo]').value;var ga=b.querySelector('[data-gapont]'),go2=b.querySelector('[data-gorient]');if(ga)d.grupos[k].apontamento=ga.value;if(go2)d.grupos[k].orientacao=go2.value;var gi=b.querySelector('[data-gia]');if(gi)d.grupos[k].ia=gi.checked}});
 }
 function renderGrupos(){var g=$('#grupos');if(g)g.innerHTML=gruposHtml(S.route.draft)}
 /* ---------- itens da inspeção de segurança (formulário) ---------- */
@@ -1272,8 +1300,10 @@ async function addFotosG(files,gi,inp){
 var GRUPOS_PADRAO=[['Identificação da Escola',false],['Instalações área externa',false],['Ferramentas e materiais armazenados',false],['Registros das atividades',true]];
 function gruposNovos(){return GRUPOS_PADRAO.map(function(g){return {titulo:g[0],fotos:[],ia:g[1]}})}
 function draftInsp(i){
-  var d={tipo:i.tipo||'',data:i.data,empresaId:i.empresaId||'',unidade:i.unidade||'',setor:i.setor||'',responsavel:i.responsavel||'',observacoes:i.observacoes||'',fotos:(i.fotos||[]).slice(),grupos:(i.grupos||[]).map(function(g){return {titulo:g.titulo||'',fotos:(g.fotos||[]).slice(),ia:g.ia!==false}})};
+  var d={tipo:i.tipo||'',data:i.data,empresaId:i.empresaId||'',unidade:i.unidade||'',setor:i.setor||'',responsavel:i.responsavel||'',observacoes:i.observacoes||'',fotos:(i.fotos||[]).slice(),grupos:(i.grupos||[]).map(function(g){return {titulo:g.titulo||'',fotos:(g.fotos||[]).slice(),ia:g.ia!==false,apontamento:g.apontamento||'',orientacao:g.orientacao||''}})};
   CAMPOS.forEach(function(c){d[c[0]]=i[c[0]]||''});
+  for(var en=1;en<=6;en++){d['esp'+en]=i['esp'+en]||'';d['espo'+en]=i['espo'+en]||''}
+  d.epiLista=(i.epiLista||[]).map(function(r){return Object.assign({},r)});
   if(!d.grupos.length)d.grupos=gruposNovos();
   if(i.rascunho&&i.tipo==='inspecao')d.itens=(i.itensRascunho&&i.itensRascunho.length)?i.itensRascunho:[itemVazio(d)];
   return d;
@@ -1282,10 +1312,15 @@ function camposView(i){
   var secs=GRP.map(function(g){
     var l=g[1].filter(function(k){return i[k]});if(!l.length)return '';
     return '<section class="card"><div class="card-h"><h2>'+esc(g[0])+'</h2></div>'+l.map(function(k){return '<h3 style="margin-top:10px">'+esc(CD[k][1])+'</h3><p class="text-block">'+esc(i[k])+'</p>'}).join('')+'</section>'});
-  var gr=(i.grupos||[]).filter(function(g){return g.fotos&&g.fotos.length});
-  var fh=gr.length?'<section class="card"><div class="card-h"><h2>Registros fotográficos</h2></div>'+gr.map(function(g){return '<h3 style="margin:12px 0 8px">'+esc(g.titulo||'Registros')+'</h3>'+thumbs(g.fotos)}).join('')+'</section>':'';
+  var ex='';
+  var espL=ESP.filter(function(e){return i['esp'+e[0]]||i['espo'+e[0]]});
+  if(espL.length)ex+='<section class="card"><div class="card-h"><h2>Atividades especiais</h2></div>'+espL.map(function(e){var v=i['esp'+e[0]];return '<h3 style="margin-top:10px">'+esc(e[1])+'</h3><p class="text-block">'+(v==='A'?'Aplicável':v==='N'?'Não aplicável':'Não marcado')+(i['espo'+e[0]]?' — '+esc(i['espo'+e[0]]):'')+'</p>'}).join('')+'</section>';
+  var epiL=(i.epiLista||[]).filter(function(r){return r&&(r.epi||r.ca||r.cond||r.obs)});
+  if(epiL.length)ex+='<section class="card"><div class="card-h"><h2>EPI utilizados</h2></div>'+epiL.map(function(r){return '<p class="text-block"><b>'+esc(r.epi||'-')+'</b>'+(r.ca?' · CA '+esc(r.ca):'')+(r.cond?' · '+esc(r.cond):'')+(r.obs?' · '+esc(r.obs):'')+'</p>'}).join('')+'</section>';
+  var gr=(i.grupos||[]).filter(function(g){return (g.fotos&&g.fotos.length)||g.apontamento||g.orientacao});
+  var fh=gr.length?'<section class="card"><div class="card-h"><h2>Registros fotográficos</h2></div>'+gr.map(function(g){return '<h3 style="margin:12px 0 8px">'+esc(g.titulo||'Registros')+'</h3>'+thumbs(g.fotos||[])+(g.apontamento?'<p class="text-block"><b>Apontamento:</b> '+esc(g.apontamento)+'</p>':'')+(g.orientacao?'<p class="text-block"><b>Orientação / recomendação:</b> '+esc(g.orientacao)+'</p>':'')}).join('')+'</section>':'';
   /* mesma ordem dos arquivos: empresa executante, fotos e, abaixo, os campos preenchidos */
-  return secs[0]+fh+secs.slice(1).join('');
+  return secs[0]+fh+ex+secs.slice(1).join('');
 }
 function cardLogo(){
   var tem=S.marca&&S.marca.logo;if(!S.assets&&!tem)return '';
@@ -1552,7 +1587,9 @@ async function salvar(form,rascunho){
       if(!old&&contVigente(v.empresaId)===false&&!rascunho){nao('O contrato desta empresa não está vigente. Cadastre ou renove o contrato antes de registrar inspeções.');return}
       data={tipo:(old&&old.tipo)||r.draft.tipo||'fotografico',numero:(old&&old.numero)||(rascunho?0:proxNumero()),data:v.data,empresaId:v.empresaId,empresaNome:emp?emp.nome:'',empresaCnpj:emp?(emp.cnpj||''):'',unidade:v.unidade,setor:v.setor,responsavel:v.responsavel,realizadoPorId:(old&&old.realizadoPorId)||S.me.id,observacoes:v.observacoes||(old&&old.observacoes)||'',fotos:r.draft.fotos||[]};
       CAMPOS.forEach(function(c){data[c[0]]=(c[0] in v)?v[c[0]]:((old&&old[c[0]])||'')});
-      syncGrupos();syncItens();
+      syncGrupos();syncItens();syncEpi();
+      for(var en=1;en<=6;en++){data['esp'+en]=(('esp'+en) in v)?v['esp'+en]:((old&&old['esp'+en])||'');data['espo'+en]=(('espo'+en) in v)?v['espo'+en]:((old&&old['espo'+en])||'')}
+      data.epiLista=(r.draft.epiLista||[]).map(function(x){return {epi:String(x.epi||'').trim(),ca:String(x.ca||'').trim(),cond:String(x.cond||'').trim(),obs:String(x.obs||'').trim()}}).filter(function(x){return x.epi||x.ca||x.cond||x.obs});
       data.rascunho=!!rascunho;
       if(rascunho){data.itensRascunho=(r.draft.tipo==='inspecao')?(r.draft.itens||[]):[]}else{data.itensRascunho=[]}
       if(!rascunho&&r.draft.tipo==='inspecao'&&(!r.id||(old&&old.rascunho))){
@@ -1566,7 +1603,7 @@ async function salvar(form,rascunho){
         }
         if(IT.length&&!v.revisado){nao('Confirme a revisão dos itens.');return}
         itensSalvar=IT;
-      }data.grupos=(r.draft.grupos||[]).map(function(g){return {titulo:(g.titulo||'').trim()||'Registros',fotos:g.fotos||[],ia:g.ia!==false}}).filter(function(g){return g.fotos.length});
+      }data.grupos=(r.draft.grupos||[]).map(function(g){return {titulo:(g.titulo||'').trim()||'Registros',fotos:g.fotos||[],ia:g.ia!==false,apontamento:String(g.apontamento||'').trim(),orientacao:String(g.orientacao||'').trim()}}).filter(function(g){return g.fotos.length||g.apontamento||g.orientacao});
       if(v.regProf)lsSet('sevia.reg',v.regProf);if(v.respFuncao)lsSet('sevia.func',v.respFuncao);
       lsSet('sevia.resp',v.responsavel);
     }else if(kind==='nc'){
@@ -1686,10 +1723,159 @@ function imgData(id){
     im.onerror=function(){res(null)};im.src=BLOB(id);
   });
 }
+/* ---------- Relatório de campo (modelo do cliente) — PDF ---------- */
+async function gerarPDFCampo(insp){
+  var J=window.jspdf&&window.jspdf.jsPDF;
+  if(!J||!S.downloads){toast('A geração de PDF não está disponível agora.');return}
+  toast('Gerando o relatório…');
+  var B=blocosCampo(insp),ids=[];
+  B.gerais.concat(B.ativ).forEach(function(b){ids=ids.concat(b.fotos)});
+  var cache={};await Promise.all(uniq(ids).map(async function(i){cache[i]=await imgData(i)}));
+  var empO=empDe(insp.empresaId),logoId=(empO&&empO.logo)||(S.marca&&S.marca.logo)||'';
+  var logo=logoId?await imgData(logoId):null,mxb=await matrizBytes(),mx=null;
+  if(mxb){try{var bin='',u=mxb.d;for(var q=0;q<u.length;q+=8192)bin+=String.fromCharCode.apply(null,u.subarray(q,q+8192));mx={d:'data:image/png;base64,'+btoa(bin),w:mxb.w,h:mxb.h}}catch(e){mx=null}}
+  var doc=new J({unit:'mm',format:'a4'}),PW=210,PH=297,M=10,CW=PW-2*M,TOP=32,BOT=PH-14,y=TOP,LH=4.3,FS=9,GRY=[217,217,217];
+  doc.setLineWidth(0.25);doc.setDrawColor(0,0,0);
+  function font(b,s){doc.setFont('helvetica',b?'bold':'normal');doc.setFontSize(s||FS)}
+  function wrap(t,w,b,s){font(b,s);return doc.splitTextToSize(String(t==null?'':t),w)}
+  function fit(im,bw,bh){var r=Math.min(bw/im.w,bh/im.h);return {w:im.w*r,h:im.h*r}}
+  function page(){doc.addPage();y=TOP}
+  function need(h){if(y+h>BOT)page()}
+  /* linhas de conteúdo: {t,x,b,pre} */
+  function linhasTxt(txt,w){var L=String(txt==null?'':txt).split(/\r?\n/).filter(function(s){return s.trim()}),o=[];if(!L.length)L=['NA'];L.forEach(function(s){wrap(s.trim(),w).forEach(function(r){o.push({t:r,x:0})})});return o}
+  function linhasLista(txt,w,num){var L=linhasDe(txt),o=[];if(!L.length)return [{t:'NA',x:0}];L.forEach(function(s,k){wrap(s,w-6).forEach(function(r,j){o.push({t:r,x:6,pre:j?'':(num?(k+1)+'.':'•')})})});return o}
+  function rotulo(x,w,t,h){doc.setFillColor(GRY[0],GRY[1],GRY[2]);doc.rect(x,y,w,h,'FD');font(1);doc.text(t,x+2,y+h/2+1.2)}
+  /* caixa com rótulo e conteúdo que pode quebrar de página */
+  function box(label,lines){
+    need(6+Math.min(lines.length,2)*LH+2);
+    rotulo(M,CW,label,6);y+=6;
+    var seg=y;
+    lines.forEach(function(l){
+      if(y+LH+1.5>BOT){doc.rect(M,seg,CW,y-seg+1,'S');page();seg=y}
+      font(l.b);if(l.pre)doc.text(l.pre,M+2,y+LH-1);doc.text(l.t,M+2+l.x,y+LH-1);y+=LH;
+    });
+    y+=1.5;doc.rect(M,seg,CW,y-seg,'S');y+=3;
+  }
+  function box2(l1,L1,l2,L2){
+    var n=Math.max(L1.length,L2.length);need(6+n*LH+2);
+    var hw=CW/2;rotulo(M,hw,l1,6);rotulo(M+hw,hw,l2,6);y+=6;
+    [[L1,M],[L2,M+hw]].forEach(function(c){c[0].forEach(function(l,k){font(0);doc.text(l.t,c[1]+2,y+LH*(k+1)-1)})});
+    var h=n*LH+1.5;doc.rect(M,y,hw,h,'S');doc.rect(M+hw,y,hw,h,'S');y+=h+3;
+  }
+  function titulo(t){need(14);font(1,10);doc.text(t,M,y+3.5);y+=6}
+  /* tabela: ws em %, cabeçalho hd, linhas de células (array de linhas {t,x,pre} ou {chk}) */
+  function tabela(hd,ws,rows){
+    var W=ws.map(function(p){return CW*p/100});
+    function cab(){need(8);var x=M;doc.setFillColor(GRY[0],GRY[1],GRY[2]);hd.forEach(function(t,k){doc.rect(x,y,W[k],6.5,'FD');font(1,8);var tw=doc.getTextWidth(t);doc.text(t,x+W[k]/2-Math.min(tw,W[k]-2)/2,y+4.3);x+=W[k]});y+=6.5}
+    cab();
+    rows.forEach(function(r){
+      var h=Math.max.apply(null,r.map(function(c){return c.chk!==undefined?7:c.length*LH+1.5}));h=Math.max(h,7);
+      if(y+h>BOT){page();cab()}
+      var x=M;r.forEach(function(c,k){
+        doc.rect(x,y,W[k],h,'S');
+        if(c.chk!==undefined){var cx=x+W[k]/2,cy=y+h/2;doc.rect(cx-2.2,cy-2.2,4.4,4.4,'S');if(c.chk){doc.line(cx-2.2,cy-2.2,cx+2.2,cy+2.2);doc.line(cx-2.2,cy+2.2,cx+2.2,cy-2.2)}}
+        else c.forEach(function(l,j){font(l.b);if(l.pre)doc.text(l.pre,x+2,y+LH*(j+1)-0.8);doc.text(l.t,x+2+(l.x||0),y+LH*(j+1)-0.8)});
+        x+=W[k]});
+      y+=h});
+    y+=3;
+  }
+  var tw=CW-4,rt=respTec(insp);
+  box('DATA',linhasTxt(fmt(insp.data),tw));
+  box2('EMPRESA EXECUTANTE',linhasTxt(insp.execNome||empNome(insp),CW/2-4),'CNPJ EXECUTANTE',linhasTxt(insp.execCnpj,CW/2-4));
+  box('REPRESENTANTE DA EMPRESA',linhasTxt(insp.representante,tw));
+  box('EQUIPE',linhasLista(insp.equipe,tw,true));
+  box2('INEP / IDENTIFICAÇÃO DA UNIDADE',linhasTxt(insp.codigoLocal,CW/2-4),'ESCOLA / UNIDADE',linhasTxt(insp.unidade,CW/2-4));
+  box('ENDEREÇO',linhasTxt(insp.endereco,tw));
+  box('DESCRIÇÃO DOS SERVIÇOS / ATIVIDADES ACOMPANHADAS',linhasTxt(insp.servicos,tw).concat([{t:'Atividades realizadas:',x:0,b:1}],linhasLista(insp.atividades,tw,false)));
+  box('LOCAL DE TRABALHO / ÁREA AUDITADA',linhasLista(insp.localTrabalho,tw,false));
+  box('APR / PROCEDIMENTOS',linhasTxt(insp.apr,tw));
+  box('CONDIÇÕES DE FERRAMENTAS E EQUIPAMENTOS',linhasTxt(insp.condFerramentas,tw));
+  box('ISOLAMENTO E SINALIZAÇÃO',linhasTxt(insp.isolamento,tw));
+  titulo('ATIVIDADES ESPECIAIS');
+  tabela(['ATIVIDADE / REQUISITO','APLICÁVEL','NÃO APLICÁVEL','OBSERVAÇÃO'],[34,13,15,38],ESP.map(function(e){var n=e[0],v=insp['esp'+n];
+    return [wrap(e[1],CW*.34-4,1).map(function(t){return {t:t,x:0,b:1}}),{chk:v==='A'},{chk:v==='N'},linhasTxt(insp['espo'+n]||' ',CW*.38-4).map(function(l){return l.t==='NA'?{t:'',x:0}:l})]}));
+  box('AVALIAÇÃO DAS ATIVIDADES ESPECIAIS APLICÁVEIS',linhasTxt(insp.atividadeEspecial,tw));
+  titulo('EQUIPAMENTOS DE PROTEÇÃO INDIVIDUAL – EPI');
+  if(insp.epi){linhasTxt(insp.epi,CW).forEach(function(l){need(LH+1);font(0);doc.text(l.t,M,y+LH-1);y+=LH});y+=2}
+  var el=(insp.epiLista||[]).filter(function(r){return r&&(r.epi||r.ca||r.cond||r.obs)});
+  tabela(['EPI','CA','CONDIÇÕES DE USO','OBSERVAÇÕES'],[32,14,24,30],(el.length?el:[{epi:'NA'}]).map(function(r){
+    function c(v,p){return linhasTxt(v||' ',CW*p/100-4).map(function(l){return l.t==='NA'?{t:'',x:0}:l})}
+    return [r.epi==='NA'?[{t:'NA',x:0}]:c(r.epi,.32*100),c(r.ca,14),c(r.cond,24),c(r.obs,30)]}));
+  box('ORDEM DE SERVIÇO / ORIENTAÇÕES DE SST',linhasLista(insp.ordemServico,tw,true));
+  box('APTIDÃO / EXAMES OCUPACIONAIS',linhasLista(insp.exames,tw,true));
+  box('CAPACITAÇÕES / TREINAMENTOS',linhasLista(insp.capacitacoes,tw,true));
+  var rl=[];[['Físicos','rFis'],['Químicos','rQuim'],['Biológicos','rBio'],['Ergonômicos','rErgo'],['Acidentes','rAcid'],['Outros','rOutros']].forEach(function(r){
+    wrap(r[0]+': '+(insp[r[1]]||'NA'),tw).forEach(function(t,j){rl.push({t:t,x:0,b:0})})});
+  if(insp.rNota)linhasTxt(insp.rNota,tw).forEach(function(l){rl.push(l)});
+  box('RISCOS OCUPACIONAIS / PERIGOS OBSERVADOS',rl);
+  box('OBSERVAÇÕES GERAIS',linhasTxt(insp.observacoes,tw));
+  if(mx){var f=fit(mx,CW,60);need(f.h+2);doc.addImage(mx.d,'PNG',M+(CW-f.w)/2,y,f.w,f.h);y+=f.h+4}
+  /* registros fotográficos */
+  page();titulo('REGISTROS FOTOGRÁFICOS E APONTAMENTOS');
+  var cw=CW/2,iw=(cw-6)/2;
+  function medir(b){
+    var h=2+wrap('DESCRIÇÃO DA ATIVIDADE'+(b.n?' '+b.n+': '+b.titulo:': NA'+(b.titulo?' ('+b.titulo+')':'')),cw-4,1).length*LH+LH+2;
+    var nf=(b.fotos||[]).filter(function(i){return cache[i]}).length;h+=(nf?Math.ceil(nf/2)*(iw*0.75+2):LH)+2;
+    if(b.n){h+=LH+wrap(b.ap||'NA',cw-4).length*LH+LH+linhasLista(b.or,cw-4,false).length*LH+2}
+    return h;
+  }
+  function pinta(b,x,y0,h){
+    doc.rect(x,y0,cw,h,'S');var yy=y0+2;
+    wrap('DESCRIÇÃO DA ATIVIDADE'+(b.n?' '+b.n+': '+b.titulo:': NA'+(b.titulo?' ('+b.titulo+')':'')),cw-4,1).forEach(function(t){font(1);doc.text(t,x+2,yy+LH-1);yy+=LH});
+    font(1,8);doc.text('FOTO / EVIDÊNCIA',x+2,yy+LH-1);yy+=LH+2;
+    var fs=(b.fotos||[]).filter(function(i){return cache[i]});
+    if(!fs.length){font(0);doc.text('Sem foto',x+2,yy+LH-1);yy+=LH}
+    fs.forEach(function(i,k){var im=cache[i],f=fit(im,iw,iw*0.75),col=k%2,rowh=iw*0.75+2;
+      doc.addImage(im.d,'JPEG',x+3+col*(iw)+(iw-f.w)/2,yy+(iw*0.75-f.h)/2,f.w,f.h);if(col===1||k===fs.length-1)yy+=rowh});
+    yy+=2;
+    if(b.n){
+      font(1);doc.text('APONTAMENTO:',x+2,yy+LH-1);yy+=LH;
+      wrap(b.ap||'NA',cw-4).forEach(function(t){font(0);doc.text(t,x+2,yy+LH-1);yy+=LH});
+      font(1);doc.text('ORIENTAÇÃO / RECOMENDAÇÃO:',x+2,yy+LH-1);yy+=LH;
+      linhasLista(b.or,cw-4,false).forEach(function(l){font(0);if(l.pre)doc.text(l.pre,x+2,yy+LH-1);doc.text(l.t,x+2+l.x,yy+LH-1);yy+=LH});
+    }
+  }
+  var todos=B.gerais.concat(B.ativ);
+  if(!todos.length){font(0);doc.text('Sem registros fotográficos.',M,y+LH);y+=LH+3}
+  for(var q=0;q<todos.length;q+=2){
+    var a=todos[q],c=todos[q+1],h=Math.max(medir(a),c?medir(c):0);
+    if(y+h>BOT)page();
+    pinta(a,M,y,h);if(c)pinta(c,M+cw,y,h);else doc.rect(M+cw,y,cw,h,'S');
+    y+=h;
+  }
+  y+=4;
+  titulo('CONSOLIDAÇÃO DOS APONTAMENTOS');
+  tabela(['Nº','APONTAMENTO / CONDIÇÃO OBSERVADA','ORIENTAÇÃO / RECOMENDAÇÃO'],[8,46,46],(B.ativ.length?B.ativ:[{n:'--',ap:'NA',or:''}]).map(function(b){
+    return [[{t:b.n,x:0}],linhasTxt(b.ap,CW*.46-4),linhasLista(b.or,CW*.46-4,false)]}));
+  box('CONSIDERAÇÕES FINAIS',linhasTxt(insp.consideracoes,tw));
+  box('REFERÊNCIAS / REQUISITOS APLICÁVEIS',linhasLista(insp.referencias,tw,false));
+  need(38);
+  rotulo(M,CW,'RESPONSÁVEL TÉCNICO',6);y+=6;
+  var lw=CW*.22;
+  [['Nome',rt.nome+(rt.funcao?' — '+rt.funcao:''),7],['Registro profissional','Registro MTE: '+(rt.reg||'-'),7],['Assinatura','',22]].forEach(function(r){
+    doc.rect(M,y,lw,r[2],'S');doc.rect(M+lw,y,CW-lw,r[2],'S');font(1);doc.text(r[0],M+2,y+(r[2]>10?r[2]-3:4.7));font(0);doc.text(r[1],M+lw+2,y+4.7);y+=r[2]});
+  /* cabeçalho e rodapé em todas as páginas */
+  var n=doc.getNumberOfPages();
+  for(var p=1;p<=n;p++){
+    doc.setPage(p);doc.setDrawColor(0,0,0);doc.setLineWidth(0.25);
+    var hy=8,hh=19,x1=M+CW*.24,x2=M+CW*.78;
+    doc.rect(M,hy,CW,hh,'S');doc.line(x1,hy,x1,hy+hh);doc.line(x2,hy,x2,hy+hh);
+    if(logo){var f2=fit(logo,CW*.24-6,hh-5);doc.addImage(logo.d,'JPEG',M+(CW*.24-f2.w)/2,hy+(hh-f2.h)/2,f2.w,f2.h)}
+    font(1,15);doc.text('RELATÓRIO DE CAMPO',(x1+x2)/2,hy+hh/2+2,{align:'center'});
+    font(1,10);doc.text('Nº '+num(insp),(x2+M+CW)/2,hy+hh/2+1.5,{align:'center'});
+    font(0,8);doc.setTextColor(68,68,68);doc.text('Página '+p,PW/2,PH-8,{align:'center'});doc.setTextColor(0,0,0);
+  }
+  try{
+    await S.downloads.save({filename:'relatorio-de-campo-'+num(insp)+'-'+slug(insp.unidade||insp.setor||empNome(insp))+'.pdf',data:doc.output('arraybuffer')});
+    toast('Relatório pronto.');
+  }catch(e){if(!e||e.code!=='declined'){console.error(e);toast('Não foi possível salvar o arquivo PDF.')}}
+}
+
 async function gerarPDF(id){
   var J=window.jspdf&&window.jspdf.jsPDF;
   if(!J||!S.downloads){toast('A geração de PDF não está disponível agora.');return}
   var insp=inspDe(id);if(!insp)return;
+  if(!isIns(insp))return gerarPDFCampo(insp);
   toast('Gerando o relatório…');
   var ncs=ncsDe(id).sort(byGrau);
   var ids=(insp.fotos||[]).slice();(insp.grupos||[]).forEach(function(g){ids=ids.concat(g.fotos||[])});ncs.forEach(function(n){ids=ids.concat(n.fotos||[])});
@@ -1828,10 +2014,143 @@ function imgBytes(id){
     im.onerror=function(){res(null)};im.src=BLOB(id);
   });
 }
+/* ---------- Relatório de campo (modelo do cliente) — Word ---------- */
+function linhasDe(t){return String(t==null?'':t).split(/\r?\n/).map(function(s){return s.replace(/^\s*(?:[-•*–]|\d+[.)])\s*/,'').trim()}).filter(Boolean)}
+async function matrizBytes(){
+  try{var r=await fetch('/matriz-riscos.png');if(!r.ok)return null;var u=new Uint8Array(await r.arrayBuffer());
+    if(u.length<24||u[1]!==0x50)return null;
+    return {d:u,w:((u[16]<<24)|(u[17]<<16)|(u[18]<<8)|u[19])>>>0,h:((u[20]<<24)|(u[21]<<16)|(u[22]<<8)|u[23])>>>0};
+  }catch(e){return null}
+}
+/* blocos de atividade: grupos com apontamento/orientação são numerados; os demais são fotos gerais */
+function blocosCampo(insp){
+  var gerais=[],ativ=[];
+  if((insp.fotos||[]).length)gerais.push({titulo:'Fotos gerais',fotos:insp.fotos.slice()});
+  (insp.grupos||[]).forEach(function(g){
+    if(g.apontamento||g.orientacao)ativ.push({titulo:g.titulo||'',fotos:(g.fotos||[]).slice(),ap:g.apontamento||'',or:g.orientacao||''});
+    else if((g.fotos||[]).length)gerais.push({titulo:g.titulo||'Registros',fotos:g.fotos.slice()});
+  });
+  ativ.forEach(function(b,k){b.n=String(k+1).padStart(2,'0')});
+  return {gerais:gerais,ativ:ativ};
+}
+async function gerarWordCampo(insp){
+  var D=window.docx;
+  if(!D||!S.downloads){toast('A geração de Word não está disponível agora.');return}
+  toast('Gerando o relatório em Word…');
+  var B=blocosCampo(insp),ids=[];
+  B.gerais.concat(B.ativ).forEach(function(b){ids=ids.concat(b.fotos)});
+  var cache={};await Promise.all(uniq(ids).map(async function(i){cache[i]=await imgBytes(i)}));
+  var empW=empDe(insp.empresaId),logoW=(empW&&empW.logo)||(S.marca&&S.marca.logo)||'';
+  var logo=logoW?await imgBytes(logoW):null,mx=await matrizBytes();
+  var AL=D.AlignmentType,TW=10300,GR='D9D9D9';
+  var bd={style:D.BorderStyle.SINGLE,size:6,color:'000000'},borders={top:bd,bottom:bd,left:bd,right:bd};
+  var nob={style:D.BorderStyle.NONE,size:0,color:'FFFFFF'};
+  function R(t,o){o=o||{};return new D.TextRun({text:String(t==null?'':t),bold:!!o.b,size:o.size||20,color:o.color||'000000',font:'Arial'})}
+  function P(t,o){o=o||{};return new D.Paragraph({alignment:o.al,spacing:{after:o.after==null?40:o.after,before:o.before||0},indent:o.ind,children:[R(t,o)]})}
+  function lista(txt,num){
+    var L=linhasDe(txt);if(!L.length)return [P('NA')];
+    return L.map(function(s,k){return new D.Paragraph({spacing:{after:30},indent:{left:360,hanging:360},children:[R((num?(k+1)+'.':'•')+'\t'+s)],tabStops:[{type:D.TabStopType.LEFT,position:360}]})});
+  }
+  function texto(t){var L=String(t==null?'':t).split(/\r?\n/).filter(function(s){return s.trim()});return L.length?L.map(function(s){return P(s.trim())}):[P('NA')]}
+  function cel(kids,w,o){o=o||{};return new D.TableCell({width:{size:Math.round(TW*w/100),type:D.WidthType.DXA},borders:borders,verticalAlign:o.va,columnSpan:o.span,shading:o.fill?{type:D.ShadingType.CLEAR,fill:o.fill,color:'auto'}:undefined,margins:{top:60,bottom:60,left:100,right:100},children:kids})}
+  function tbl(rows,ws){return new D.Table({width:{size:TW,type:D.WidthType.DXA},layout:D.TableLayoutType.FIXED,columnWidths:ws.map(function(w){return Math.round(TW*w/100)}),rows:rows})}
+  function gap(n){return new D.Paragraph({spacing:{after:n==null?80:n},children:[R('',{size:8})]})}
+  var out=[];
+  function sec(label,kids){
+    out.push(tbl([new D.TableRow({cantSplit:true,children:[cel([P(label,{b:true,after:0})],100,{fill:GR})]}),new D.TableRow({children:[cel(kids,100)]})],[100]),gap());
+  }
+  function sec2(l1,k1,l2,k2){
+    out.push(tbl([new D.TableRow({cantSplit:true,children:[cel([P(l1,{b:true,after:0})],50,{fill:GR}),cel([P(l2,{b:true,after:0})],50,{fill:GR})]}),new D.TableRow({children:[cel(k1,50),cel(k2,50)]})],[50,50]),gap());
+  }
+  var rt=respTec(insp);
+  sec('DATA',[P(fmt(insp.data))]);
+  sec2('EMPRESA EXECUTANTE',[P(insp.execNome||empNome(insp)||'NA')],'CNPJ EXECUTANTE',[P(insp.execCnpj||'NA')]);
+  sec('REPRESENTANTE DA EMPRESA',[P(insp.representante||'NA')]);
+  sec('EQUIPE',lista(insp.equipe,true));
+  sec2('INEP / IDENTIFICAÇÃO DA UNIDADE',[P(insp.codigoLocal||'NA')],'ESCOLA / UNIDADE',[P(insp.unidade||'NA')]);
+  sec('ENDEREÇO',[P(insp.endereco||'NA')]);
+  sec('DESCRIÇÃO DOS SERVIÇOS / ATIVIDADES ACOMPANHADAS',texto(insp.servicos).concat([P('Atividades realizadas:',{b:true,before:60})],lista(insp.atividades,false)));
+  sec('LOCAL DE TRABALHO / ÁREA AUDITADA',lista(insp.localTrabalho,false));
+  sec('APR / PROCEDIMENTOS',texto(insp.apr));
+  sec('CONDIÇÕES DE FERRAMENTAS E EQUIPAMENTOS',texto(insp.condFerramentas));
+  sec('ISOLAMENTO E SINALIZAÇÃO',texto(insp.isolamento));
+  /* atividades especiais */
+  var hd=function(t,w){return cel([P(t,{b:true,al:AL.CENTER,after:0})],w,{fill:GR})};
+  var er=[new D.TableRow({tableHeader:true,cantSplit:true,children:[hd('ATIVIDADE / REQUISITO',34),hd('APLICÁVEL',13),hd('NÃO APLICÁVEL',15),hd('OBSERVAÇÃO',38)]})];
+  ESP.forEach(function(e){var n=e[0],v=insp['esp'+n];
+    er.push(new D.TableRow({cantSplit:true,children:[cel([P(e[1],{b:true,after:0})],34),cel([P(v==='A'?'☒':'☐',{al:AL.CENTER,size:26,after:0})],13),cel([P(v==='N'?'☒':'☐',{al:AL.CENTER,size:26,after:0})],15),cel([P(insp['espo'+n]||'',{after:0})],38)]}))});
+  out.push(P('ATIVIDADES ESPECIAIS',{b:true,after:40}),tbl(er,[34,13,15,38]),gap());
+  sec('AVALIAÇÃO DAS ATIVIDADES ESPECIAIS APLICÁVEIS',texto(insp.atividadeEspecial));
+  /* EPI */
+  var el=(insp.epiLista||[]).filter(function(r){return r&&(r.epi||r.ca||r.cond||r.obs)});
+  var epiRowsW=[new D.TableRow({tableHeader:true,cantSplit:true,children:[hd('EPI',32),hd('CA',14),hd('CONDIÇÕES DE USO',24),hd('OBSERVAÇÕES',30)]})];
+  (el.length?el:[{epi:'NA'}]).forEach(function(r){epiRowsW.push(new D.TableRow({cantSplit:true,children:[cel([P(r.epi||'',{after:0})],32),cel([P(r.ca||'',{after:0})],14),cel([P(r.cond||'',{after:0})],24),cel([P(r.obs||'',{after:0})],30)]}))});
+  out.push(P('EQUIPAMENTOS DE PROTEÇÃO INDIVIDUAL – EPI',{b:true,after:40}));
+  if(insp.epi)out.push(P(insp.epi,{after:60}));
+  out.push(tbl(epiRowsW,[32,14,24,30]),gap());
+  sec('ORDEM DE SERVIÇO / ORIENTAÇÕES DE SST',lista(insp.ordemServico,true));
+  sec('APTIDÃO / EXAMES OCUPACIONAIS',lista(insp.exames,true));
+  sec('CAPACITAÇÕES / TREINAMENTOS',lista(insp.capacitacoes,true));
+  /* riscos */
+  var rk=[];[['Físicos','rFis'],['Químicos','rQuim'],['Biológicos','rBio'],['Ergonômicos','rErgo'],['Acidentes','rAcid'],['Outros','rOutros']].forEach(function(r){rk.push(new D.Paragraph({spacing:{after:50},children:[R(r[0]+': ',{b:true}),R(insp[r[1]]||'NA')]}))});
+  sec('RISCOS OCUPACIONAIS / PERIGOS OBSERVADOS',rk.concat(insp.rNota?[P(insp.rNota,{before:40})]:[]));
+  var ob=texto(insp.observacoes);
+  if(mx){var k=Math.min(620/mx.w,200/mx.h);ob.push(new D.Paragraph({alignment:AL.CENTER,spacing:{before:80,after:40},children:[new D.ImageRun({type:'png',data:mx.d,transformation:{width:Math.round(mx.w*k),height:Math.round(mx.h*k)}})]}))}
+  sec('OBSERVAÇÕES GERAIS',ob);
+  /* registros fotográficos */
+  out.push(new D.Paragraph({pageBreakBefore:true,spacing:{after:80},children:[R('REGISTROS FOTOGRÁFICOS E APONTAMENTOS',{b:true,size:22})]}));
+  function fotosCel(list){
+    var it=list.map(function(i){return cache[i]}).filter(Boolean),ps=[];
+    for(var k=0;k<it.length;k+=2)ps.push(new D.Paragraph({alignment:AL.CENTER,spacing:{after:60},children:it.slice(k,k+2).reduce(function(a,im){var r=Math.min(1/Math.max(1,im.w/150),1/Math.max(1,im.h/110));a.push(new D.ImageRun({type:'jpg',data:im.d,transformation:{width:Math.round(im.w*r),height:Math.round(im.h*r)}}),R('  '));return a},[])}));
+    return ps.length?ps:[P('Sem foto',{color:'666666'})];
+  }
+  function bloco(b){
+    var k=[P('DESCRIÇÃO DA ATIVIDADE'+(b.n?' '+b.n+': ':': ')+(b.n?b.titulo:'NA')+(b.n?'':(b.titulo?' ('+b.titulo+')':'')),{b:true,after:60}),P('FOTO / EVIDÊNCIA',{b:true,color:'444444',after:40})].concat(fotosCel(b.fotos));
+    if(b.n){k.push(P('APONTAMENTO:',{b:true,before:60,after:20}));k=k.concat(texto(b.ap));k.push(P('ORIENTAÇÃO / RECOMENDAÇÃO:',{b:true,before:60,after:20}));k=k.concat(lista(b.or,false))}
+    return k;
+  }
+  var todos=B.gerais.concat(B.ativ),rows=[];
+  for(var q=0;q<todos.length;q+=2){var a=todos[q],c=todos[q+1];
+    rows.push(new D.TableRow({children:[cel(bloco(a),50),cel(c?bloco(c):[P('')],50)]}))}
+  if(rows.length)out.push(tbl(rows,[50,50]),gap());else out.push(P('Sem registros fotográficos.'),gap());
+  /* consolidação */
+  var cr=[new D.TableRow({tableHeader:true,cantSplit:true,children:[hd('Nº',8),hd('APONTAMENTO / CONDIÇÃO OBSERVADA',46),hd('ORIENTAÇÃO / RECOMENDAÇÃO',46)]})];
+  (B.ativ.length?B.ativ:[{n:'--',ap:'NA',or:''}]).forEach(function(b){cr.push(new D.TableRow({cantSplit:true,children:[cel([P(b.n,{al:AL.CENTER,after:0})],8),cel(texto(b.ap),46),cel(lista(b.or,false),46)]}))});
+  out.push(P('CONSOLIDAÇÃO DOS APONTAMENTOS',{b:true,after:40}),tbl(cr,[8,46,46]),gap());
+  sec('CONSIDERAÇÕES FINAIS',texto(insp.consideracoes));
+  sec('REFERÊNCIAS / REQUISITOS APLICÁVEIS',lista(insp.referencias,false));
+  /* responsável técnico */
+  out.push(tbl([
+    new D.TableRow({cantSplit:true,children:[cel([P('RESPONSÁVEL TÉCNICO',{b:true,after:0})],100,{fill:GR,span:2})]}),
+    new D.TableRow({cantSplit:true,children:[cel([P('Nome',{b:true,after:0})],22),cel([P(rt.nome+(rt.funcao?' — '+rt.funcao:''),{after:0})],78)]}),
+    new D.TableRow({cantSplit:true,children:[cel([P('Registro profissional',{b:true,after:0})],22),cel([P('Registro MTE: '+(rt.reg||'-'),{after:0})],78)]}),
+    new D.TableRow({cantSplit:true,height:{value:900,rule:D.HeightRule.ATLEAST},children:[cel([P('Assinatura',{b:true,after:0})],22,{va:D.VerticalAlign.BOTTOM}),cel([P('',{after:0})],78)]})
+  ],[22,78]));
+  /* cabeçalho com moldura e rodapé */
+  var lg=logo?[new D.ImageRun({type:'jpg',data:logo.d,transformation:{width:Math.round(logo.w*Math.min(110/logo.w,44/logo.h)),height:Math.round(logo.h*Math.min(110/logo.w,44/logo.h))}})]:[R('')];
+  var head=tbl([new D.TableRow({children:[cel([new D.Paragraph({alignment:AL.CENTER,children:lg})],24,{va:D.VerticalAlign.CENTER}),cel([P('RELATÓRIO DE CAMPO',{b:true,size:30,al:AL.CENTER,after:0})],54,{va:D.VerticalAlign.CENTER}),cel([P('Nº '+num(insp),{b:true,al:AL.CENTER,after:0})],22,{va:D.VerticalAlign.CENTER})]})],[24,54,22]);
+  var doc=new D.Document({
+    creator:'SevIA SST 4.0',title:'Relatório de campo '+num(insp),
+    styles:{default:{document:{run:{font:'Arial',size:20}}}},
+    sections:[{
+      properties:{page:{size:{width:11906,height:16838},margin:{top:1700,bottom:1000,left:800,right:800,header:500,footer:400}}},
+      headers:{default:new D.Header({children:[head]})},
+      footers:{default:new D.Footer({children:[new D.Paragraph({alignment:AL.CENTER,children:[R('Página ',{size:16,color:'444444'}),new D.TextRun({children:[D.PageNumber.CURRENT],size:16,color:'444444'})]})]})},
+      children:out
+    }]
+  });
+  try{
+    var blob=await D.Packer.toBlob(doc);
+    await S.downloads.save({filename:'relatorio-de-campo-'+num(insp)+'-'+slug(insp.unidade||insp.setor||empNome(insp))+'.docx',data:blob});
+    toast('Relatório pronto.');
+  }catch(e){if(!e||e.code!=='declined'){console.error(e);toast('Não foi possível salvar o arquivo Word.')}}
+}
+
 async function gerarWord(id){
   var D=window.docx;
   if(!D||!S.downloads){toast('A geração de Word não está disponível agora.');return}
   var insp=inspDe(id);if(!insp)return;
+  if(!isIns(insp))return gerarWordCampo(insp);
   toast('Gerando o relatório em Word…');
   var ncs=ncsDe(id).sort(byGrau);
   var ids=(insp.fotos||[]).slice();(insp.grupos||[]).forEach(function(g){ids=ids.concat(g.fotos||[])});ncs.forEach(function(n){ids=ids.concat(n.fotos||[])});
@@ -2095,7 +2414,7 @@ function draftNc(o){
   return {inspId:'',titulo:'',setor:'',gravidade:'Médio',prioridade:'Média',classificacao:'Não conformidade',prazo:addDias(hoje(),30),descricao:'',recomendacao:'',requisitoLegal:'',norma:'',refValidada:false,planoAcao:'',responsavel:lsGet('sevia.resp'),revisado:false,fotos:[]};
 }
 function syncDraft(){
-  var f=$('form[data-form="insp"]');if(!f||!S.route||!S.route.draft)return;syncGrupos();syncItens();
+  var f=$('form[data-form="insp"]');if(!f||!S.route||!S.route.draft)return;syncGrupos();syncItens();syncEpi();
   Array.prototype.forEach.call(f.elements,function(el){if(el.name&&el.type!=='file')S.route.draft[el.name]=el.value});
 }
 /* rascunho automático: guarda neste aparelho o que está sendo preenchido, para o caso de sair da tela sem salvar */
@@ -2113,7 +2432,7 @@ function autoLer(inspecao){
 }
 function marcaSujo(e){var t=e.target,f=t&&t.form;if(f&&f.dataset&&f.dataset.form==='insp'&&S.route&&S.route.name==='insp-form')S.route._sujo=true}
 document.addEventListener('input',marcaSujo,true);document.addEventListener('change',marcaSujo,true);
-document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('[data-act]');if(a&&['gphoto-rm','g-rm','g-add','iphoto-rm','i-add','i-rm','i-photo-rm'].indexOf(a.dataset.act)>-1&&S.route&&S.route.name==='insp-form')S.route._sujo=true},true);
+document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('[data-act]');if(a&&['gphoto-rm','g-rm','g-add','iphoto-rm','i-add','i-rm','i-photo-rm','epi-add','epi-rm'].indexOf(a.dataset.act)>-1&&S.route&&S.route.name==='insp-form')S.route._sujo=true},true);
 setInterval(autoGuarda,3000);
 window.addEventListener('pagehide',autoGuarda);
 document.addEventListener('visibilitychange',function(){if(document.hidden)autoGuarda()});
@@ -2182,6 +2501,8 @@ document.addEventListener('click',function(e){
     case 'ac-rm':confirmar('Remover acesso','Esta pessoa deixa de ter acesso a esta empresa. Deseja remover?','Remover',function(){acessoRm(id)});break;
     case 'copiar-ultima':copiarUltima();break;
     case 'ia-campo':preencherIA();break;
+    case 'epi-add':syncDraft();S.route.draft.epiLista=(S.route.draft.epiLista||[]).concat([{}]);var e1=$('#epi-lista');if(e1)e1.innerHTML=epiRows(S.route.draft);break;
+    case 'epi-rm':syncDraft();var e3=(S.route.draft.epiLista||[]).slice();e3.splice(+el.dataset.i,1);S.route.draft.epiLista=e3;var e2=$('#epi-lista');if(e2)e2.innerHTML=epiRows(S.route.draft);break;
     case 'save-draft':var fd0=$('form[data-form="insp"]');if(fd0)salvar(fd0,true);break;
     case 'ia-campo-stop':if(auCtl)auCtl.abort();break;
     case 'tt-up':ttUp();break;
