@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-22-0010 epi-espaco --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-22-0030 epi-espaco2 --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -1959,7 +1959,7 @@ async function gerarPDFCampo(insp){
     wrap(insp[r[1]]||'NA',tw-28).forEach(function(t,j){rl.push({t:t,x:28,pre:j?'':r[0]+':',pb:1})})});
   if(insp.rNota)linhasTxt(insp.rNota,tw).forEach(function(l){rl.push(l)});
   box('RISCOS OCUPACIONAIS / PERIGOS OBSERVADOS',rl);
-  var obl=linhasTxt(insp.observacoes,tw);
+  var obl=linhasTxt(obsEsp(insp.observacoes),tw);
   /* observações e matriz nunca se separam: se não couberem juntas, reduz o texto das observações; se ainda não couber, vão juntas para a página seguinte */
   var MZH=64,avail=BOT-y,cheio=6+obl.length*LH+5+MZH;
   if(cheio>avail){
@@ -2161,7 +2161,7 @@ async function gerarPDF(id){
   }
   /* ordem do preenchimento: identificação, empresa executante, fotos e, abaixo delas, a análise e os campos preenchidos */
   secGrp(GRP[0]);secFotos();GRP.slice(1).forEach(secGrp);
-  if(insp.observacoes){gn++;section(gn+'. Observações');txt(insp.observacoes,{gap:4})}
+  if(insp.observacoes){gn++;section(gn+'. Observações');txt(obsEsp(insp.observacoes),{gap:4})}
   if(ncs.length){gn++;section(gn+'. Itens e não conformidades identificados')}
   ncs.forEach(function(n,idx){
     need(30);
@@ -2222,6 +2222,7 @@ function imgBytes(id){
   });
 }
 /* ---------- Relatório de campo (modelo do cliente) — Word ---------- */
+function obsEsp(t){return String(t==null?'':t).replace(/([^\n])\n(EPI: )/g,'$1\n\n$2')}
 function linhasDe(t){return String(t==null?'':t).split(/\r?\n/).map(function(s){return s.replace(/^\s*(?:[-•*–]|\d+[.)])\s*/,'').trim()}).filter(Boolean)}
 var MZ_F=[['REMOTA',2],['POUCO PROVÁVEL',3],['OCASIONAL',5],['PROVÁVEL',8],['FREQÜENTE',13]],MZ_S=[['CATASTRÓFICA',32],['CRÍTICA',16],['GRAVE',8],['MODERADA',4],['LEVE',2]];
 var MZ_LEG=[['MUITO ALTO (160 ou mais)',160],['ALTO (80 a 128)',80],['MÉDIO (26 a 64)',26],['BAIXO (10 a 24)',10],['MUITO BAIXO (4 a 8)',0]];
@@ -2335,7 +2336,7 @@ async function gerarWordCampo(insp){
   /* riscos */
   var rk=[];[['Físicos','rFis'],['Químicos','rQuim'],['Biológicos','rBio'],['Ergonômicos','rErgo'],['Acidentes','rAcid'],['Outros','rOutros']].forEach(function(r){rk.push(new D.Paragraph({spacing:{after:50},indent:{left:1700,hanging:1700},tabStops:[{type:D.TabStopType.LEFT,position:1700}],children:[R(r[0]+':',{b:true}),R('\t'+(insp[r[1]]||'NA'))]}))});
   sec('RISCOS OCUPACIONAIS / PERIGOS OBSERVADOS',rk.concat(insp.rNota?[P(insp.rNota,{before:40})]:[]));
-  sec('OBSERVAÇÕES GERAIS',texto(insp.observacoes,true),true);
+  sec('OBSERVAÇÕES GERAIS',texto(obsEsp(insp.observacoes),true),true);
   /* matriz de riscos desenhada (nítida em qualquer zoom) */
   function cc(t,w,fill,col,o){o=o||{};return cel([P(t,{b:o.b!==false,al:AL.CENTER,after:0,size:o.size||18,color:col||'000000',kn:true})],w,{fill:fill,va:D.VerticalAlign.CENTER,span:o.span})}
   var mr=[new D.TableRow({cantSplit:true,children:[cc('SEVERIDADE',25,GR,'000000',{span:2})].concat(MZ_F.map(function(f){return cc(f[0]+' ('+f[1]+')',15,GR,'000000',{size:15})}))})];
@@ -2441,7 +2442,7 @@ async function gerarWord(id){
   inlineRow('ordemServico');inlineRow('exames');
   var rk=['rFis','rQuim','rBio','rErgo','rAcid'].filter(function(k){return insp[k]});
   if(rk.length||insp.rNota){var rr=[lbl('Riscos ocupacionais')];rk.forEach(function(k){rr.push(new D.Paragraph({spacing:{after:40},children:[new D.TextRun({text:CD[k][1].replace('Riscos ','').replace(/^./,function(c){return c.toUpperCase()})+': ',bold:true,size:20}),new D.TextRun({text:insp[k],size:20})]}))});if(insp.rNota)rr.push(new D.Paragraph({spacing:{before:80,after:40},children:[new D.TextRun({text:'Nota: ',bold:true,size:20}),new D.TextRun({text:insp.rNota,size:20})]}));row1(rr)}
-  if(insp.observacoes)row1([lbl('Observações')].concat(lin(insp.observacoes)));
+  if(insp.observacoes)row1([lbl('Observações')].concat(lin(obsEsp(insp.observacoes))));
   var rt=respTec(insp);
   row1([
     new D.Paragraph({alignment:D.AlignmentType.CENTER,spacing:{before:520},children:[new D.TextRun({text:'______________________________________',size:20})]}),
