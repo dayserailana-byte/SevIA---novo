@@ -307,6 +307,46 @@
       return null;
     }
   };
+  /* ---------- garante que o sistema abre sem internet ---------- */
+  (function () {
+    if (!("serviceWorker" in navigator) || !window.caches) return;
+    var CV = "sevia-v2";
+    var LOC = ["/", "/login", "/config.js", "/sevia-supabase.js", "/manifest.webmanifest", "/icon-192.png"];
+    var CDNS = [
+      "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js",
+      "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",
+      "https://cdn.jsdelivr.net/npm/docx@9.8.1/dist/index.iife.js",
+      "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"
+    ];
+    function aviso(t) {
+      var el = document.createElement("div");
+      el.style.cssText = "position:fixed;left:12px;right:12px;bottom:14px;z-index:99997;background:#14532d;color:#fff;font:14px/1.35 system-ui,sans-serif;padding:10px 14px;border-radius:10px;text-align:center";
+      el.textContent = t; document.body.appendChild(el);
+      setTimeout(function () { el.remove(); }, 6000);
+    }
+    async function garante() {
+      try {
+        await navigator.serviceWorker.ready;
+        if (!navigator.onLine) return;
+        var c = await caches.open(CV), falta = 0;
+        for (var i = 0; i < LOC.length; i++) {
+          if (!(await c.match(LOC[i], { ignoreSearch: true }))) {
+            try { var r = await fetch(LOC[i], { cache: "reload" }); if (r.ok && !r.redirected) await c.put(LOC[i], r); else falta++; } catch (e) { falta++; }
+          }
+        }
+        for (var j = 0; j < CDNS.length; j++) {
+          if (!(await c.match(CDNS[j]))) {
+            try { var r2 = await fetch(CDNS[j], { mode: "no-cors" }); await c.put(CDNS[j], r2); } catch (e) { falta++; }
+          }
+        }
+        var ok = !falta && navigator.serviceWorker.controller;
+        var antes = localStorage.getItem("sevia.offlineOk") === CV;
+        if (ok && !antes) { localStorage.setItem("sevia.offlineOk", CV); aviso("Pronto: o SevIA já abre sem internet neste aparelho."); }
+        if (!ok) console.warn("SevIA offline: faltam arquivos guardados ou o service worker ainda não assumiu. Recarregue a página.");
+      } catch (e) { console.warn("SevIA offline:", e); }
+    }
+    window.addEventListener("load", function () { setTimeout(garante, 2500); });
+  })();
   window.SEVIA_SAIR = async function () {
     try { localStorage.removeItem(CK); } catch (e) {}
     try { await sb.auth.signOut(); } catch (e) {}
