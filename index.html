@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-21-1415 ia-grupos-todos --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-21-1430 aviso-etapa4 --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -177,6 +177,7 @@ button.row:hover,.row-main:hover{background:var(--surface2)}
 .ia-d{margin:0;color:var(--fg)}
 .ia-btns{display:grid;grid-template-columns:1fr;gap:10px}
 .ia-um{width:100%;min-height:44px;margin-top:8px}
+.ia-aviso-etapa{margin:0 0 14px;padding:12px 14px;border:1px solid #1D5FBF;background:#EEF4FD;border-radius:10px;font-size:.95rem;line-height:1.4}
 .ia-btns .btn{width:100%;min-height:52px}
 .ia-n{margin:0}
 .ia-out:empty{display:none}
@@ -1071,7 +1072,7 @@ function formInsp(r){
   :
   stp(2,'Empresa executante','Quem executou o serviço',  '<div class="fields">'+camposCab(d)+'</div>',!!(d.execNome||d.execCnpj||!r.id))+
   stp(3,'Fotos','',gruposField(d)+autoPanel(),true)+
-  stp(4,'Detalhes do serviço','Serviços, segurança, riscos e observações',camposForm(d,1,5,true)+field('Observações','f-obs','<textarea id="f-obs" name="observacoes" placeholder="Condições gerais do local, perigos identificados">'+esc(d.observacoes)+'</textarea>','full'),!!r.id)+
+  stp(4,'Detalhes do serviço',S.sample?'✨ Sugerido pela IA: serviços, segurança, riscos e observações':'Serviços, segurança, riscos e observações',(S.sample?'<p class="ia-aviso-etapa"><b>&#10024; Os campos desta etapa são sugeridos pela IA</b> a partir das fotos do grupo Registros das atividades. Use <b>Preencher a partir das fotos</b> (acima) para todos de uma vez, ou o botão <b>Analisar com IA</b> de cada campo. Revise antes de salvar.</p>':'')+camposForm(d,1,5,true)+field('Observações','f-obs','<textarea id="f-obs" name="observacoes" placeholder="Condições gerais do local, perigos identificados">'+esc(d.observacoes)+'</textarea>','full'),!!r.id)+
   stp(5,'Responsável técnico','Nome, função e registro profissional',camposForm(d,5,6,true),true))+
   '<div class="savebar"><button type="button" class="btn btn-ghost" data-act="back">Cancelar</button><button type="button" class="btn btn-ghost" data-act="save-draft">Salvar rascunho</button><button class="btn btn-primary" type="submit">'+(rasc?'Finalizar e salvar':(d.tipo==='inspecao'?'Salvar inspeção':'Salvar relatório'))+'</button></div></form>';
 }
