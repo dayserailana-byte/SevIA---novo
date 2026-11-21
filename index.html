@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-21-1915 titulo-registros-junto --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-21-1930 atividade-nao-se-aplica --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -2205,15 +2205,15 @@ function blocosCampo(insp){
   var gerais=[],ativ=[];
   if((insp.fotos||[]).length)gerais.push({titulo:'Fotos gerais',fotos:insp.fotos.slice()});
   (insp.grupos||[]).forEach(function(g){
-    if(g.apontamento||g.orientacao)ativ.push({titulo:g.titulo||'',at:g.atividade||'',fotos:(g.fotos||[]).slice(),ap:g.apontamento||'',or:g.orientacao||''});
-    else if((g.fotos||[]).length)gerais.push({titulo:g.titulo||'Registros',at:g.atividade||'',fotos:g.fotos.slice()});
+    if(g.apontamento||g.orientacao)ativ.push({titulo:g.titulo||'',at:g.atividade,fotos:(g.fotos||[]).slice(),ap:g.apontamento||'',or:g.orientacao||''});
+    else if((g.fotos||[]).length)gerais.push({titulo:g.titulo||'Registros',at:g.atividade,fotos:g.fotos.slice()});
   });
   ativ.forEach(function(b,k){b.n=String(k+1).padStart(2,'0')});
   return {gerais:gerais,ativ:ativ};
 }
 /* cabeçalho do bloco: "DESCRIÇÃO DA ATIVIDADE [NN]: ..." e, abaixo, o nome do grupo */
 function cabBloco(b){
-  return {l:'DESCRIÇÃO DA ATIVIDADE'+(b.n?' '+b.n:'')+': ',v:b.at||(b.n?b.titulo:'')||'NA'};
+  return {l:'DESCRIÇÃO DA ATIVIDADE'+(b.n?' '+b.n:'')+': ',v:String(b.at||'').trim()||((b.at===undefined&&b.n)?b.titulo:'')||'Não se aplica'};
 }
 async function gerarWordCampo(insp){
   var D=window.docx;
