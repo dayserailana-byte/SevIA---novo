@@ -138,16 +138,22 @@
   async function lerColecao(col) {
     if (col === "usuarios") {
       if (!perfil || perfil.perfil !== "Administradora") return [];
-      var u = await sb.from("sevia_perfis").select("*").order("nome");
-      if (u.error) throw u.error;
-      return u.data.map(function (r) { return { id: r.id, d: usuarioDe(r) }; });
+      var u;
+      try { u = await sb.from("sevia_perfis").select("*").order("nome"); } catch (e) { u = { error: e }; }
+      if (u.error) {
+        if (semRede(u.error)) { var cu = await IDB.get("c:usuarios"); semSinal = true; faixa(); return cu || []; }
+        throw u.error;
+      }
+      var LU = u.data.map(function (r) { return { id: r.id, d: usuarioDe(r) }; });
+      IDB.set("c:usuarios", LU);
+      return LU;
     }
     var r;
     try { r = await sb.from("sevia_documentos").select("path,dados").eq("colecao", col); }
     catch (e) { r = { error: e }; }
     if (r.error) {
       var c = semRede(r.error) ? await IDB.get("c:" + col) : undefined;
-      if (c) { semSinal = true; faixa(); return c; }
+      if (semRede(r.error)) { semSinal = true; faixa(); return c || []; }
       throw r.error;
     }
     var L = r.data.map(function (x) { return { id: x.path.slice(col.length + 1), d: x.dados }; });
@@ -165,7 +171,7 @@
     catch (e) { r = { error: e }; }
     if (r.error) {
       var c = semRede(r.error) ? await IDB.get("d:" + path) : undefined;
-      if (c !== undefined) { semSinal = true; faixa(); return c; }
+      if (semRede(r.error)) { semSinal = true; faixa(); return c === undefined ? null : c; }
       throw r.error;
     }
     IDB.set("d:" + path, r.data ? r.data.dados : null);
