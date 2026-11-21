@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-21-2300 rodape-sevia --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-21-2320 rodape-simples --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -2069,7 +2069,7 @@ async function gerarPDFCampo(insp){
     if(logo){var f2=fit(logo,CW*.24-6,hh-5);doc.addImage(logo.d,'PNG',M+(CW*.24-f2.w)/2,hy+(hh-f2.h)/2,f2.w,f2.h)}
     font(1,15);doc.text('RELATÓRIO DE CAMPO',(x1+x2)/2,hy+hh/2+2,{align:'center'});
     font(1,10);doc.text('Nº '+num(insp),(x2+M+CW)/2,hy+hh/2+1.5,{align:'center'});
-    font(0,8);doc.setTextColor(68,68,68);doc.text('Página '+p+' de '+n,PW/2,PH-8,{align:'center'});doc.text('Gerado pelo SevIA SST 4.0',M,PH-8);doc.text('Relatório de campo nº '+num(insp),PW-M,PH-8,{align:'right'});doc.setTextColor(0,0,0);
+    font(0,8);doc.setTextColor(68,68,68);doc.text('Página '+p+' de '+n,PW/2,PH-8,{align:'center'});doc.text('Gerado pelo SevIA SST 4.0',M,PH-8);doc.setTextColor(0,0,0);
   }
   try{
     await S.downloads.save({filename:'relatorio-de-campo-'+num(insp)+'-'+slug(insp.unidade||insp.setor||empNome(insp))+'.pdf',data:doc.output('arraybuffer')});
@@ -2378,7 +2378,7 @@ async function gerarWordCampo(insp){
     sections:[{
       properties:{page:{size:{width:11906,height:16838},margin:{top:1700,bottom:1000,left:800,right:800,header:500,footer:400}}},
       headers:{default:new D.Header({children:[head]})},
-      footers:{default:new D.Footer({children:[new D.Paragraph({alignment:AL.CENTER,children:[R('Gerado pelo SevIA SST 4.0  |  Relatório de campo nº '+num(insp)+'  |  Página ',{size:16,color:'444444'}),new D.TextRun({children:[D.PageNumber.CURRENT],size:16,color:'444444'}),R(' de ',{size:16,color:'444444'}),new D.TextRun({children:[D.PageNumber.TOTAL_PAGES],size:16,color:'444444'})]})]})},
+      footers:{default:new D.Footer({children:[new D.Paragraph({alignment:AL.CENTER,children:[R('Gerado pelo SevIA SST 4.0  |  Página ',{size:16,color:'444444'}),new D.TextRun({children:[D.PageNumber.CURRENT],size:16,color:'444444'}),R(' de ',{size:16,color:'444444'}),new D.TextRun({children:[D.PageNumber.TOTAL_PAGES],size:16,color:'444444'})]})]})},
       children:out
     }]
   });
