@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-22-0030 epi-espaco2 --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-22-0100 matriz-modelo --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -1961,7 +1961,7 @@ async function gerarPDFCampo(insp){
   box('RISCOS OCUPACIONAIS / PERIGOS OBSERVADOS',rl);
   var obl=linhasTxt(obsEsp(insp.observacoes),tw);
   /* observações e matriz nunca se separam: se não couberem juntas, reduz o texto das observações; se ainda não couber, vão juntas para a página seguinte */
-  var MZH=64,avail=BOT-y,cheio=6+obl.length*LH+5+MZH;
+  var MZH=58,avail=BOT-y,cheio=6+obl.length*LH+5+MZH;
   if(cheio>avail){
     var cort=obl.slice(0,3);
     if(obl.length>3&&6+cort.length*LH+5+MZH<=avail){cort[2]={t:cort[2].t.replace(/\s*\S*$/,'')+' …',x:0};obl=cort}
@@ -1972,18 +1972,35 @@ async function gerarPDFCampo(insp){
   /* matriz de riscos desenhada (nítida em qualquer zoom) */
   function hx(h){return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]}
   function cm(t,x,w,h,fill,col,sz){var f=hx(fill);doc.setFillColor(f[0],f[1],f[2]);doc.rect(x,y,w,h,'FD');var c=hx(col);doc.setTextColor(c[0],c[1],c[2]);font(1,sz);doc.text(t,x+w/2,y+h/2+sz*0.12,{align:'center'});doc.setTextColor(0,0,0)}
-  font(1,10);doc.text('MATRIZ DE RISCOS (frequência × severidade)',M,y+3.5);y+=6;
-  var mw=[CW*.08,CW*.17,CW*.15,CW*.15,CW*.15,CW*.15,CW*.15],mx0=M;
-  cm('SEVERIDADE',M,mw[0]+mw[1],9,'D9D9D9','000000',8);
-  MZ_F.forEach(function(f,k){var xx=M+mw[0]+mw[1]+k*mw[2];doc.setFillColor(217,217,217);doc.rect(xx,y,mw[2],9,'FD');font(1,6.5);doc.text(f[0],xx+mw[2]/2,y+3.6,{align:'center'});font(1,7.5);doc.text('('+f[1]+')',xx+mw[2]/2,y+7.2,{align:'center'})});
-  y+=9;
-  MZ_S.forEach(function(sv){
-    cm(String(sv[1]),M,mw[0],6.5,'D9D9D9','000000',8);cm(sv[0],M+mw[0],mw[1],6.5,'D9D9D9','000000',7);
-    MZ_F.forEach(function(f,k){var v=sv[1]*f[1],c=mzCor(v);cm(String(v),M+mw[0]+mw[1]+k*mw[2],mw[2],6.5,c[0],c[1],9)});
-    y+=6.5});
-  y+=2;
-  MZ_LEG.forEach(function(l,k){var c=mzCor(l[1]);cm(l[0],M+k*CW/5,CW/5,6,c[0],c[1],7)});
-  y+=6;font(0,7.5);doc.setTextColor(68,68,68);doc.text('Fonte: INS-0037 - Análise e Gerenciamento de Risco',M,y+4);doc.setTextColor(0,0,0);y+=8;
+  /* layout idêntico ao modelo: título e FREQÜÊNCIA no topo, pesos, SEVERIDADE na vertical e legenda "Nível de Risco" ao lado */
+  var y0=y;y+=1.5;
+  var X=M+2,AW=(CW-4)*.74,c0=AW*.05,c1=AW*.07,c2=AW*.18,cf=(AW-c0-c1-c2)/5,H1=6,H2=5,H3=7,HR=5.2,HT=H1+H2+H3+5*HR;
+  doc.setLineWidth(.3);doc.setDrawColor(0,0,0);
+  function cz(t,x,yy,w,h,fill,col,sz,b){var f=fill?hx(fill):[255,255,255];doc.setFillColor(f[0],f[1],f[2]);doc.rect(x,yy,w,h,'FD');if(t==null||t==='')return;var c=hx(col||'000000');doc.setTextColor(c[0],c[1],c[2]);font(b===0?0:1,sz);doc.text(String(t),x+w/2,yy+h/2+sz*0.12,{align:'center'});doc.setTextColor(0,0,0)}
+  function ajusta(t,w,sz){font(1,sz);while(sz>4&&doc.getTextWidth(t)>w-2.4){sz-=.2;font(1,sz)}return sz}
+  function vert(t,x,yy,w,h,sz){doc.setFillColor(255,255,255);doc.rect(x,yy,w,h,'FD');font(1,sz);var tw=doc.getTextWidth(t);doc.text(t,x+w/2+sz*0.17,yy+h/2+tw/2,{angle:90})}
+  var yt=y;
+  doc.setFillColor(255,255,255);doc.rect(X,yt,c0+c1,H1+H2,'FD');font(1,6.5);doc.text('MATRIZ DE',X+(c0+c1)/2,yt+4.3,{align:'center'});doc.text('RISCOS',X+(c0+c1)/2,yt+8.3,{align:'center'});
+  cz('FREQÜÊNCIA',X+c0+c1,yt,AW-c0-c1,H1,null,'000000',8);
+  cz('PESOS',X+c0+c1,yt+H1,c2,H2,null,'000000',6.5);
+  MZ_F.forEach(function(f,k){cz(String(f[1]),X+c0+c1+c2+k*cf,yt+H1,cf,H2,null,'000000',7.5)});
+  var y3=yt+H1+H2;
+  vert('SEVERIDADE',X,y3,c0,H3+5*HR,8);
+  vert('PESOS',X+c0,y3,c1,H3,4.3);
+  cz('',X+c0+c1,y3,c2,H3,'BFBFBF');
+  MZ_F.forEach(function(f,k){var sz=ajusta(f[0],cf,5.6);cz(f[0],X+c0+c1+c2+k*cf,y3,cf,H3,null,'000000',sz)});
+  MZ_S.forEach(function(sv,r){var yy=y3+H3+r*HR;
+    cz(String(sv[1]),X+c0,yy,c1,HR,null,'000000',7.5);
+    cz(sv[0],X+c0+c1,yy,c2,HR,null,'000000',ajusta(sv[0],c2,7));
+    MZ_F.forEach(function(f,k){var v=sv[1]*f[1],c=mzCor(v);cz(String(v),X+c0+c1+c2+k*cf,yy,cf,HR,c[0],c[1],8.5)})});
+  /* legenda */
+  var lx=X+AW+(CW-4)*.05,lw=(CW-4)*.21;
+  cz('Nível de Risco',lx,yt,lw,6,'595959','FFFFFF',7);
+  MZ_LEG.forEach(function(l,k){var c=mzCor(l[1]);cz(l[0],lx,yt+7+k*6.8,lw,6,c[0],c[1],ajusta(l[0],lw,6.4))});
+  y=yt+HT+2;
+  font(0,7.5);doc.setTextColor(68,68,68);doc.text('Fonte: INS-0037 - Análise e Gerenciamento de Risco',X,y+3.5);doc.setTextColor(0,0,0);y+=5.5;
+  doc.setDrawColor(84,130,53);doc.setLineWidth(.4);doc.setLineDashPattern([1.2,1.2],0);doc.rect(M,y0,CW,y-y0,'S');doc.setLineDashPattern([],0);
+  doc.setDrawColor(0,0,0);doc.setLineWidth(.25);y+=4;
   /* registros fotográficos */
   function tituloReg(){doc.rect(M,y,CW,7,'S');font(1,10);doc.text('REGISTROS FOTOGRÁFICOS E APONTAMENTOS:',M+2,y+4.9);y+=7}
   var cw=CW/2,iw=(cw-6)/2;
@@ -2338,11 +2355,22 @@ async function gerarWordCampo(insp){
   sec('RISCOS OCUPACIONAIS / PERIGOS OBSERVADOS',rk.concat(insp.rNota?[P(insp.rNota,{before:40})]:[]));
   sec('OBSERVAÇÕES GERAIS',texto(obsEsp(insp.observacoes),true),true);
   /* matriz de riscos desenhada (nítida em qualquer zoom) */
-  function cc(t,w,fill,col,o){o=o||{};return cel([P(t,{b:o.b!==false,al:AL.CENTER,after:0,size:o.size||18,color:col||'000000',kn:true})],w,{fill:fill,va:D.VerticalAlign.CENTER,span:o.span})}
-  var mr=[new D.TableRow({cantSplit:true,children:[cc('SEVERIDADE',25,GR,'000000',{span:2})].concat(MZ_F.map(function(f){return cc(f[0]+' ('+f[1]+')',15,GR,'000000',{size:15})}))})];
-  MZ_S.forEach(function(sv){mr.push(new D.TableRow({cantSplit:true,children:[cc(String(sv[1]),8,GR),cc(sv[0],17,GR,'000000',{size:16})].concat(MZ_F.map(function(f){var v=sv[1]*f[1],c=mzCor(v);return cc(String(v),15,c[0],c[1])}))}))});
-  var lg2=[new D.TableRow({cantSplit:true,children:MZ_LEG.map(function(l){var c=mzCor(l[1]);return cc(l[0],20,c[0],c[1],{size:15})})})];
-  out.push(P('MATRIZ DE RISCOS (frequência × severidade)',{b:true,after:40,kn:true}),tbl(mr,[8,17,15,15,15,15,15]),gap(40),tbl(lg2,[20,20,20,20,20]),P('Fonte: INS-0037 - Análise e Gerenciamento de Risco',{size:16,color:'444444',before:40}),gap());
+  /* matriz no mesmo layout do modelo: FREQÜÊNCIA, pesos, SEVERIDADE vertical e legenda ao lado */
+  function mc(t,w,fill,col,o){o=o||{};var nb={style:D.BorderStyle.NONE,size:0,color:'FFFFFF'};
+    return new D.TableCell({width:{size:Math.round(TW*w/100),type:D.WidthType.DXA},borders:o.sem?{top:nb,bottom:nb,left:nb,right:nb}:borders,columnSpan:o.span,rowSpan:o.rows,textDirection:o.vert?D.TextDirection.BOTTOM_TO_TOP_LEFT_TO_RIGHT:undefined,verticalAlign:D.VerticalAlign.CENTER,
+      shading:fill?{type:D.ShadingType.CLEAR,fill:fill,color:'auto'}:undefined,margins:{top:30,bottom:30,left:50,right:50},
+      children:[P(t,{b:o.b!==false,al:AL.CENTER,after:0,size:o.size||16,color:col||'000000',kn:true})]})}
+  var LGD=MZ_LEG.map(function(l){var c=mzCor(l[1]);return {t:l[0],f:c[0],c:c[1]}});
+  function lg(k){return mc(LGD[k].t,20,LGD[k].f,LGD[k].c,{size:13})}
+  var mr=[];
+  mr.push(new D.TableRow({cantSplit:true,children:[mc('MATRIZ DE RISCOS',13,null,'000000',{span:2,rows:2,size:15}),mc('FREQÜÊNCIA',67,null,'000000',{span:6,size:17}),mc('Nível de Risco',20,'595959','FFFFFF',{size:14})]}));
+  mr.push(new D.TableRow({cantSplit:true,children:[mc('PESOS',17,null,'000000',{size:14})].concat(MZ_F.map(function(f){return mc(String(f[1]),10,null,'000000',{size:16})})).concat([lg(0)])}));
+  mr.push(new D.TableRow({cantSplit:true,children:[mc('SEVERIDADE',5,null,'000000',{rows:6,vert:true,size:16}),mc('PESOS',8,null,'000000',{size:10}),mc('',17,'BFBFBF')].concat(MZ_F.map(function(f){return mc(f[0],10,null,'000000',{size:11})})).concat([lg(1)])}));
+  MZ_S.forEach(function(sv,r){
+    var ch=[mc(String(sv[1]),8,null,'000000',{size:16}),mc(sv[0],17,null,'000000',{size:15})].concat(MZ_F.map(function(f){var v=sv[1]*f[1],c=mzCor(v);return mc(String(v),10,c[0],c[1],{size:18})}));
+    if(r<3)ch.push(lg(r+2)); else if(r===3)ch.push(mc('',20,null,'000000',{rows:2,sem:true}));
+    mr.push(new D.TableRow({cantSplit:true,children:ch}))});
+  out.push(tbl(mr,[5,8,17,10,10,10,10,10,20]),P('Fonte: INS-0037 - Análise e Gerenciamento de Risco',{size:16,color:'444444',before:40}),gap());
   /* registros fotográficos */
   function fotosCel(list){
     var it=list.map(function(i){return cache[i]}).filter(Boolean),ps=[];
