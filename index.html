@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-21-1740 layout-diretoria --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-21-1800 matriz-nitida --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -1830,8 +1830,7 @@ async function gerarPDFCampo(insp){
   B.gerais.concat(B.ativ).forEach(function(b){ids=ids.concat(b.fotos)});
   var cache={};await Promise.all(uniq(ids).map(async function(i){cache[i]=await imgData(i)}));
   var empO=empDe(insp.empresaId),logoId=(empO&&empO.logo)||(S.marca&&S.marca.logo)||'';
-  var logo=logoId?await imgData(logoId):null,mxb=await matrizBytes(),mx=null;
-  if(mxb){try{var bin='',u=mxb.d;for(var q=0;q<u.length;q+=8192)bin+=String.fromCharCode.apply(null,u.subarray(q,q+8192));mx={d:'data:image/png;base64,'+btoa(bin),w:mxb.w,h:mxb.h}}catch(e){mx=null}}
+  var logo=logoId?await imgData(logoId):null;
   var doc=new J({unit:'mm',format:'a4'}),PW=210,PH=297,M=10,CW=PW-2*M,TOP=32,BOT=PH-14,y=TOP,LH=4.3,FS=9,GRY=[217,217,217];
   doc.setLineWidth(0.25);doc.setDrawColor(0,0,0);
   function font(b,s){doc.setFont('helvetica',b?'bold':'normal');doc.setFontSize(s||FS)}
@@ -1909,10 +1908,24 @@ async function gerarPDFCampo(insp){
     wrap(insp[r[1]]||'NA',tw-28).forEach(function(t,j){rl.push({t:t,x:28,pre:j?'':r[0]+':',pb:1})})});
   if(insp.rNota)linhasTxt(insp.rNota,tw).forEach(function(l){rl.push(l)});
   box('RISCOS OCUPACIONAIS / PERIGOS OBSERVADOS',rl);
-  var obl=linhasTxt(insp.observacoes,tw),fmx=mx?fit(mx,CW,60):null;
-  need(12+obl.length*LH+(fmx?fmx.h+6:0));
+  var obl=linhasTxt(insp.observacoes,tw);
+  need(12+obl.length*LH+62);
   box('OBSERVAÇÕES GERAIS',obl);
-  if(fmx){doc.addImage(mx.d,'PNG',M+(CW-fmx.w)/2,y,fmx.w,fmx.h);y+=fmx.h+4}
+  /* matriz de riscos desenhada (nítida em qualquer zoom) */
+  function hx(h){return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]}
+  function cm(t,x,w,h,fill,col,sz){var f=hx(fill);doc.setFillColor(f[0],f[1],f[2]);doc.rect(x,y,w,h,'FD');var c=hx(col);doc.setTextColor(c[0],c[1],c[2]);font(1,sz);doc.text(t,x+w/2,y+h/2+sz*0.12,{align:'center'});doc.setTextColor(0,0,0)}
+  font(1,10);doc.text('MATRIZ DE RISCOS (frequência × severidade)',M,y+3.5);y+=6;
+  var mw=[CW*.08,CW*.17,CW*.15,CW*.15,CW*.15,CW*.15,CW*.15],mx0=M;
+  cm('SEVERIDADE',M,mw[0]+mw[1],9,'D9D9D9','000000',8);
+  MZ_F.forEach(function(f,k){var xx=M+mw[0]+mw[1]+k*mw[2];doc.setFillColor(217,217,217);doc.rect(xx,y,mw[2],9,'FD');font(1,6.5);doc.text(f[0],xx+mw[2]/2,y+3.6,{align:'center'});font(1,7.5);doc.text('('+f[1]+')',xx+mw[2]/2,y+7.2,{align:'center'})});
+  y+=9;
+  MZ_S.forEach(function(sv){
+    cm(String(sv[1]),M,mw[0],6.5,'D9D9D9','000000',8);cm(sv[0],M+mw[0],mw[1],6.5,'D9D9D9','000000',7);
+    MZ_F.forEach(function(f,k){var v=sv[1]*f[1],c=mzCor(v);cm(String(v),M+mw[0]+mw[1]+k*mw[2],mw[2],6.5,c[0],c[1],9)});
+    y+=6.5});
+  y+=2;
+  MZ_LEG.forEach(function(l,k){var c=mzCor(l[1]);cm(l[0],M+k*CW/5,CW/5,6,c[0],c[1],7)});
+  y+=6;font(0,7.5);doc.setTextColor(68,68,68);doc.text('Fonte: INS-0037 - Análise e Gerenciamento de Risco',M,y+4);doc.setTextColor(0,0,0);y+=8;
   /* registros fotográficos */
   need(90);titulo('REGISTROS FOTOGRÁFICOS E APONTAMENTOS');
   var cw=CW/2,iw=(cw-6)/2;
@@ -2142,6 +2155,9 @@ function imgBytes(id){
 }
 /* ---------- Relatório de campo (modelo do cliente) — Word ---------- */
 function linhasDe(t){return String(t==null?'':t).split(/\r?\n/).map(function(s){return s.replace(/^\s*(?:[-•*–]|\d+[.)])\s*/,'').trim()}).filter(Boolean)}
+var MZ_F=[['REMOTA',2],['POUCO PROVÁVEL',3],['OCASIONAL',5],['PROVÁVEL',8],['FREQÜENTE',13]],MZ_S=[['CATASTRÓFICA',32],['CRÍTICA',16],['GRAVE',8],['MODERADA',4],['LEVE',2]];
+var MZ_LEG=[['MUITO ALTO (≥ 160)',160],['ALTO (80 a 128)',80],['MÉDIO (26 a 64)',26],['BAIXO (10 a 24)',10],['MUITO BAIXO (4 a 8)',0]];
+function mzCor(v){return v>=160?['E5231B','FFFFFF']:v>=80?['F59A23','000000']:v>=26?['FFE600','000000']:v>=10?['8CC63F','000000']:['2E9E6E','FFFFFF']}
 async function matrizBytes(){
   try{var r=await fetch('/matriz-riscos.png');if(!r.ok)return null;var u=new Uint8Array(await r.arrayBuffer());
     if(u.length<24||u[1]!==0x50)return null;
@@ -2173,7 +2189,7 @@ async function gerarWordCampo(insp){
   B.gerais.concat(B.ativ).forEach(function(b){ids=ids.concat(b.fotos)});
   var cache={};await Promise.all(uniq(ids).map(async function(i){cache[i]=await imgBytes(i)}));
   var empW=empDe(insp.empresaId),logoW=(empW&&empW.logo)||(S.marca&&S.marca.logo)||'';
-  var logo=logoW?await imgBytes(logoW):null,mx=await matrizBytes();
+  var logo=logoW?await imgBytes(logoW):null;
   var AL=D.AlignmentType,TW=10300,GR='D9D9D9';
   var bd={style:D.BorderStyle.SINGLE,size:6,color:'000000'},borders={top:bd,bottom:bd,left:bd,right:bd};
   var nob={style:D.BorderStyle.NONE,size:0,color:'FFFFFF'};
@@ -2226,9 +2242,13 @@ async function gerarWordCampo(insp){
   /* riscos */
   var rk=[];[['Físicos','rFis'],['Químicos','rQuim'],['Biológicos','rBio'],['Ergonômicos','rErgo'],['Acidentes','rAcid'],['Outros','rOutros']].forEach(function(r){rk.push(new D.Paragraph({spacing:{after:50},indent:{left:1700,hanging:1700},tabStops:[{type:D.TabStopType.LEFT,position:1700}],children:[R(r[0]+':',{b:true}),R('\t'+(insp[r[1]]||'NA'))]}))});
   sec('RISCOS OCUPACIONAIS / PERIGOS OBSERVADOS',rk.concat(insp.rNota?[P(insp.rNota,{before:40})]:[]));
-  var ob=texto(insp.observacoes);
-  if(mx){var k=Math.min(620/mx.w,200/mx.h);ob.push(new D.Paragraph({alignment:AL.CENTER,spacing:{before:80,after:40},children:[new D.ImageRun({type:'png',data:mx.d,transformation:{width:Math.round(mx.w*k),height:Math.round(mx.h*k)}})]}))}
-  sec('OBSERVAÇÕES GERAIS',ob);
+  sec('OBSERVAÇÕES GERAIS',texto(insp.observacoes));
+  /* matriz de riscos desenhada (nítida em qualquer zoom) */
+  function cc(t,w,fill,col,o){o=o||{};return cel([P(t,{b:o.b!==false,al:AL.CENTER,after:0,size:o.size||18,color:col||'000000',kn:true})],w,{fill:fill,va:D.VerticalAlign.CENTER,span:o.span})}
+  var mr=[new D.TableRow({cantSplit:true,children:[cc('SEVERIDADE',25,GR,'000000',{span:2})].concat(MZ_F.map(function(f){return cc(f[0]+' ('+f[1]+')',15,GR,'000000',{size:15})}))})];
+  MZ_S.forEach(function(sv){mr.push(new D.TableRow({cantSplit:true,children:[cc(String(sv[1]),8,GR),cc(sv[0],17,GR,'000000',{size:16})].concat(MZ_F.map(function(f){var v=sv[1]*f[1],c=mzCor(v);return cc(String(v),15,c[0],c[1])}))}))});
+  var lg2=[new D.TableRow({cantSplit:true,children:MZ_LEG.map(function(l){var c=mzCor(l[1]);return cc(l[0],20,c[0],c[1],{size:15})})})];
+  out.push(P('MATRIZ DE RISCOS (frequência × severidade)',{b:true,after:40,kn:true}),tbl(mr,[8,17,15,15,15,15,15]),gap(40),tbl(lg2,[20,20,20,20,20]),P('Fonte: INS-0037 - Análise e Gerenciamento de Risco',{size:16,color:'444444',before:40}),gap());
   /* registros fotográficos */
   out.push(new D.Paragraph({keepNext:true,spacing:{before:120,after:80},children:[R('REGISTROS FOTOGRÁFICOS E APONTAMENTOS',{b:true,size:22})]}));
   function fotosCel(list){
