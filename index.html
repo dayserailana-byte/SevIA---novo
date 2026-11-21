@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-21-1640 foto-grande --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-21-1700 pdf-diretoria --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -1128,7 +1128,7 @@ async function preencherIA(){
     if(!riscos.length&&!obs.length){out.innerHTML='<p><b>A IA não identificou riscos visíveis nas '+lidas+' fotos analisadas.</b> Preencha os campos manualmente se necessário.</p>';return}
     out.textContent='Reunindo os riscos de maior gravidade…';
     var chaves=CAMPOS.filter(function(c){return ['execNome','execCnpj','representante','equipe','codigoLocal','endereco','regProf','respNome','respFuncao'].indexOf(c[0])<0}).map(function(c){return '"'+c[0]+'": '+(c[2]==='ta'?'["item", "item"]':'"texto"')+'  // '+c[1]});
-    var prompt='Você é engenheiro de segurança do trabalho no Brasil e vai preencher o RELATÓRIO DE CAMPO de uma inspeção. Cada foto já foi analisada separadamente; os achados estão abaixo (JSON).\n\nAchados (riscos):\n'+JSON.stringify(riscos)+'\n\nObservações e perigos prováveis por foto:\n'+JSON.stringify(obs)+'\n\nContexto: empresa '+(empNomeDe(rt.draft.empresaId)||'não informada')+', setor '+(rt.draft.setor||'não informado')+'.\n\nRegras obrigatórias:\n- Campos de riscos (rFis, rQuim, rBio, rErgo, rAcid): preencha cada um com TODOS os riscos identificados na categoria, desde o menor até o maior, a partir dos achados e dos perigos prováveis por foto, sem omitir os de gravidade Baixa; ordene do mais grave para o menos grave e junte os repetidos. Se não houver evidência para a categoria, escreva "Não identificado nas fotos analisadas."\n- Ruído: se aparecer ferramenta elétrica ou motorizada (furadeira, esmerilhadeira, serra, roçadeira, compressor etc.), registre em rFis o risco de ruído (e vibração, quando couber) e que a medição quantitativa (dosimetria ou decibelímetro) deve confirmar.\n- EPI, isolamento e sinalização, condições de ferramentas, atividades, serviços e local de trabalho: descreva o que as observações mostram (EPI em uso ou ausentes; isolamento e sinalização presentes ou ausentes). Se nada aparecer, escreva o que não foi possível verificar.\n- APR / procedimentos, ordem de serviço, exames ocupacionais e capacitações / treinamentos são documentos e não aparecem em fotos: escreva "Não verificável pelas fotos; conferir no local."\n- Junte achados repetidos em um só e não invente nada além do que as fotos e os achados indicam.\n- Não identifique pessoas.\n- Riscos: categorias físicos, químicos, biológicos, ergonômicos e acidentes, só com evidência.\n- Português do Brasil, frases curtas.\n- Em "verificar", liste o que precisa ser confirmado presencialmente.\n\n- Grupos de fotos: respeite cada grupo. Para cada grupo da lista abaixo, escreva "atividade" (o que alguém está executando nas fotos do grupo, em 1 frase; se ninguém está executando atividade, escreva exatamente "Não se aplica"), "apontamento" (a condição observada, usando SOMENTE os achados e observações cujo "gn" é o número desse grupo; 1 a 3 frases) e "orientacao" (lista de recomendações para corrigir o que foi apontado nesse mesmo grupo). Não misture achados de grupos diferentes. Se o grupo não mostra irregularidade, apontamento = "Sem irregularidades aparentes nas fotos." e orientacao = ["Manter as condições observadas."].\nGrupos: '+JSON.stringify(gl)+'\n- Atividades especiais (esp): para cada NR de 1 a 6 (1 NR-35 altura abaixo de 2 m; 2 NR-10 eletricidade; 3 NR-33 espaço confinado; 4 NR-11 içamento de cargas; 5 NR-18/NR-34 trabalho a quente; 6 outras NRs), use "s" = "A" somente se as fotos mostram a atividade; "N" somente se for claramente inaplicável ao que aparece; caso contrário "". Em "obs" escreva uma frase curta (se "s" for vazio, "Conferir no local.").\n- EPI (epi): uma linha por EPI visível nas fotos, com "epi" (nome), "ca" = "" (o CA não aparece em foto), "cond" (condições de uso observadas) e "obs" (curta).\n\nResponda somente com JSON neste formato:\n{"campos":{\n'+chaves.join(',\n')+'\n},"grupos":[{"n":1,"atividade":"...","apontamento":"...","orientacao":["..."]}],"esp":{"1":{"s":"","obs":""},"2":{"s":"","obs":""},"3":{"s":"","obs":""},"4":{"s":"","obs":""},"5":{"s":"","obs":""},"6":{"s":"","obs":""}},"epi":[{"epi":"","ca":"","cond":"","obs":""}],"verificar":["..."]}';
+    var prompt='Você é engenheiro de segurança do trabalho no Brasil e vai preencher o RELATÓRIO DE CAMPO de uma inspeção. Cada foto já foi analisada separadamente; os achados estão abaixo (JSON).\n\nAchados (riscos):\n'+JSON.stringify(riscos)+'\n\nObservações e perigos prováveis por foto:\n'+JSON.stringify(obs)+'\n\nContexto: empresa '+(empNomeDe(rt.draft.empresaId)||'não informada')+', setor '+(rt.draft.setor||'não informado')+'.\n\nRegras obrigatórias:\n- Campos de riscos (rFis, rQuim, rBio, rErgo, rAcid): preencha cada um com TODOS os riscos identificados na categoria, desde o menor até o maior, a partir dos achados e dos perigos prováveis por foto, sem omitir os de gravidade Baixa; ordene do mais grave para o menos grave e junte os repetidos. Se não houver evidência para a categoria, escreva "Não identificado nas fotos analisadas."\n- Ruído: se aparecer ferramenta elétrica ou motorizada (furadeira, esmerilhadeira, serra, roçadeira, compressor etc.), registre em rFis o risco de ruído (e vibração, quando couber) e que a medição quantitativa (dosimetria ou decibelímetro) deve confirmar.\n- EPI, isolamento e sinalização, condições de ferramentas, atividades, serviços e local de trabalho: descreva o que as observações mostram (EPI em uso ou ausentes; isolamento e sinalização presentes ou ausentes). Se nada aparecer, escreva o que não foi possível verificar.\n- APR / procedimentos, ordem de serviço, exames ocupacionais e capacitações / treinamentos são documentos e não aparecem em fotos: escreva "Não verificável pelas fotos; conferir no local."\n- Junte achados repetidos em um só e não invente nada além do que as fotos e os achados indicam.\n- Não identifique pessoas.\n- Riscos: categorias físicos, químicos, biológicos, ergonômicos e acidentes, só com evidência.\n- Português do Brasil, frases curtas.\n- Em "verificar", liste o que precisa ser confirmado presencialmente.\n\n- Grupos de fotos: respeite cada grupo. Para cada grupo da lista abaixo, escreva "atividade" (o que alguém está executando nas fotos do grupo, em 1 frase; se ninguém está executando atividade, escreva exatamente "Não se aplica"), "apontamento" (a condição observada, usando SOMENTE os achados e observações cujo "gn" é o número desse grupo; no máximo 2 frases curtas, até 250 caracteres) e "orientacao" (lista de no máximo 4 recomendações curtas, de uma linha cada, para corrigir o que foi apontado nesse mesmo grupo). Não misture achados de grupos diferentes. Se o grupo não mostra irregularidade, apontamento = "Sem irregularidades aparentes nas fotos." e orientacao = ["Manter as condições observadas."].\nGrupos: '+JSON.stringify(gl)+'\n- Atividades especiais (esp): para cada NR de 1 a 6 (1 NR-35 altura abaixo de 2 m; 2 NR-10 eletricidade; 3 NR-33 espaço confinado; 4 NR-11 içamento de cargas; 5 NR-18/NR-34 trabalho a quente; 6 outras NRs), use "s" = "A" somente se as fotos mostram a atividade; "N" somente se for claramente inaplicável ao que aparece; caso contrário "". Em "obs" escreva uma frase curta (se "s" for vazio, "Conferir no local.").\n- EPI (epi): uma linha por EPI visível nas fotos, com "epi" (nome), "ca" = "" (o CA não aparece em foto), "cond" (condições de uso observadas) e "obs" (curta).\n\nResponda somente com JSON neste formato:\n{"campos":{\n'+chaves.join(',\n')+'\n},"grupos":[{"n":1,"atividade":"...","apontamento":"...","orientacao":["..."]}],"esp":{"1":{"s":"","obs":""},"2":{"s":"","obs":""},"3":{"s":"","obs":""},"4":{"s":"","obs":""},"5":{"s":"","obs":""},"6":{"s":"","obs":""}},"epi":[{"epi":"","ca":"","cond":"","obs":""}],"verificar":["..."]}';
     var r=await S.sample.json(prompt,{signal:auCtl.signal});
     if(S.route!==rt)return;
     var c=(r&&r.campos&&typeof r.campos==='object')?r.campos:{},n2=0,el=f.elements;
@@ -1228,7 +1228,7 @@ async function iaUmGrupo(gi){
     var ats=r.res.map(function(x){return String(x&&x.ativ||'').trim()}).filter(function(x){return x&&!/^n[ãa]o se aplica\.?$/i.test(x)}),at=ats.length?ats.filter(function(x,j,a){return a.indexOf(x)===j}).join('; '):'Não se aplica';
     var ap=obs.join(' '),or=rec.join('\n');
     try{
-      var r2=await S.sample.json('Você é engenheiro de segurança do trabalho no Brasil. Junte as anotações abaixo, de várias fotos do grupo "'+tit+'", em um único apontamento (1 a 3 frases, a condição observada) e uma lista de orientações / recomendações sem repetição. Se nenhuma foto mostra irregularidade, apontamento = "Sem irregularidades aparentes nas fotos." e orientacao = ["Manter as condições observadas."]. Não invente nada.\n\nObservações:\n'+JSON.stringify(obs)+'\nRecomendações:\n'+JSON.stringify(rec)+'\n\nResponda somente com JSON: {"apontamento":"...","orientacao":["..."]}');
+      var r2=await S.sample.json('Você é engenheiro de segurança do trabalho no Brasil. Junte as anotações abaixo, de várias fotos do grupo "'+tit+'", em um único apontamento (no máximo 2 frases curtas, até 250 caracteres, a condição observada) e uma lista de no máximo 4 orientações / recomendações curtas, de uma linha cada, sem repetição. Se nenhuma foto mostra irregularidade, apontamento = "Sem irregularidades aparentes nas fotos." e orientacao = ["Manter as condições observadas."]. Não invente nada.\n\nObservações:\n'+JSON.stringify(obs)+'\nRecomendações:\n'+JSON.stringify(rec)+'\n\nResponda somente com JSON: {"apontamento":"...","orientacao":["..."]}');
       var a2=String(r2&&r2.apontamento||'').trim(),o2=juntaTxt(r2&&r2.orientacao);if(a2)ap=a2;if(o2)or=o2;
     }catch(e2){if(e2&&e2.code==='cancelled')throw e2;console.error(e2)}
     if(S.route!==rt)return;
@@ -1864,10 +1864,13 @@ async function gerarPDFCampo(insp){
   /* tabela: ws em %, cabeçalho hd, linhas de células (array de linhas {t,x,pre} ou {chk}) */
   function tabela(hd,ws,rows){
     var W=ws.map(function(p){return CW*p/100});
-    function cab(){need(8);var x=M;doc.setFillColor(GRY[0],GRY[1],GRY[2]);hd.forEach(function(t,k){doc.rect(x,y,W[k],6.5,'FD');font(1,8);var tw=doc.getTextWidth(t);doc.text(t,x+W[k]/2-Math.min(tw,W[k]-2)/2,y+4.3);x+=W[k]});y+=6.5}
+    function cab(){need(8);var x=M;hd.forEach(function(t,k){doc.setFillColor(GRY[0],GRY[1],GRY[2]);doc.rect(x,y,W[k],6.5,'FD');font(1,8);var tw=doc.getTextWidth(t);doc.text(t,x+W[k]/2-Math.min(tw,W[k]-2)/2,y+4.3);x+=W[k]});y+=6.5}
+    var ML=Math.floor((BOT-TOP-12)/LH);rows=rows.map(function(r){return r.map(function(c){return (c.chk===undefined&&c.length>ML)?c.slice(0,ML-1).concat([{t:'(texto completo na tela do relatório)',x:0}]):c})});
+    function altura(r){return Math.max(7,Math.max.apply(null,r.map(function(c){return c.chk!==undefined?7:c.length*LH+1.5})))}
+    if(rows.length)need(6.5+altura(rows[0])+1);
     cab();
     rows.forEach(function(r){
-      var h=Math.max.apply(null,r.map(function(c){return c.chk!==undefined?7:c.length*LH+1.5}));h=Math.max(h,7);
+      var h=altura(r);
       if(y+h>BOT){page();cab()}
       var x=M;r.forEach(function(c,k){
         doc.rect(x,y,W[k],h,'S');
@@ -1909,7 +1912,7 @@ async function gerarPDFCampo(insp){
   box('OBSERVAÇÕES GERAIS',linhasTxt(insp.observacoes,tw));
   if(mx){var f=fit(mx,CW,60);need(f.h+2);doc.addImage(mx.d,'PNG',M+(CW-f.w)/2,y,f.w,f.h);y+=f.h+4}
   /* registros fotográficos */
-  page();titulo('REGISTROS FOTOGRÁFICOS E APONTAMENTOS');
+  need(90);titulo('REGISTROS FOTOGRÁFICOS E APONTAMENTOS');
   var cw=CW/2,iw=(cw-6)/2;
   function medir(b){
     var h=2+cabBloco(b).reduce(function(a,t,j){return a+wrap(t,cw-4,!j).length*LH},0)+LH+2;
@@ -1934,10 +1937,31 @@ async function gerarPDFCampo(insp){
       linhasLista(b.or,cw-4,false).forEach(function(l){font(0);if(l.pre)doc.text(l.pre,x+2,yy+LH-1);doc.text(l.t,x+2+l.x,yy+LH-1);yy+=LH});
     }
   }
+  function pintaLargo(b){
+    var W=CW,cb=cabBloco(b),fs=(b.fotos||[]).filter(function(i){return cache[i]});
+    var pc=Math.min(4,Math.max(1,fs.length)),pw=(W-6)/pc;if(fs.length===1)pw=Math.min(W-6,130);var ph=pw*0.75;
+    var hh=2+cb.reduce(function(a,t,j){return a+wrap(t,W-4,!j).length*LH},0)+LH+2+(fs.length?Math.ceil(fs.length/pc)*(ph+2):LH)+2;
+    need(Math.min(hh,BOT-TOP));
+    var y0=y,yy=y+2;
+    cb.forEach(function(t0,j){wrap(t0,W-4,!j).forEach(function(t){font(!j);doc.text(t,M+2,yy+LH-1);yy+=LH})});
+    font(1,8);doc.text('FOTO / EVIDÊNCIA',M+2,yy+LH-1);yy+=LH+2;
+    if(!fs.length){font(0);doc.text('Sem foto',M+2,yy+LH-1);yy+=LH}
+    fs.forEach(function(i,k){var im=cache[i],f=fit(im,pw,ph),col=k%pc;
+      doc.addImage(im.d,'JPEG',M+3+col*pw+(pw-f.w)/2,yy+(ph-f.h)/2,f.w,f.h);if(col===pc-1||k===fs.length-1)yy+=ph+2});
+    yy+=2;doc.rect(M,y0,W,yy-y0,'S');y=yy;
+    if(!b.n){y+=4;return}
+    var L=[{t:'APONTAMENTO:',x:0,b:1}].concat(wrap(b.ap||'NA',W-4).map(function(t){return {t:t,x:0}}),[{t:'ORIENTAÇÃO / RECOMENDAÇÃO:',x:0,b:1}],linhasLista(b.or,W-4,false));
+    var seg=y;
+    L.forEach(function(l){
+      if(y+LH+1.5>BOT){doc.rect(M,seg,W,y-seg+1,'S');page();seg=y}
+      font(l.b);if(l.pre)doc.text(l.pre,M+2,y+LH-1);doc.text(l.t,M+2+l.x,y+LH-1);y+=LH});
+    y+=1.5;doc.rect(M,seg,W,y-seg,'S');y+=4;
+  }
   var todos=B.gerais.concat(B.ativ);
   if(!todos.length){font(0);doc.text('Sem registros fotográficos.',M,y+LH);y+=LH+3}
   for(var q=0;q<todos.length;q+=2){
     var a=todos[q],c=todos[q+1],h=Math.max(medir(a),c?medir(c):0);
+    if(h>BOT-TOP-2){pintaLargo(a);if(c)pintaLargo(c);continue}
     if(y+h>BOT)page();
     pinta(a,M,y,h);if(c)pinta(c,M+cw,y,h);else doc.rect(M+cw,y,cw,h,'S');
     y+=h;
