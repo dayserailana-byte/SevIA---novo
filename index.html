@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-21-2100 obs-lista --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-21-2200 escola-atendida --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -365,7 +365,7 @@ var CLASSES=['Não conformidade','Condição insegura','Ato inseguro','Observaç
 var PRIOS=['Alta','Média','Baixa'];
 var PENDENTE='Referência normativa pendente de validação';
 var CAMPOS=[
- ['execNome','Empresa executante','in'],['execCnpj','CNPJ da executante','in'],['representante','Representante da empresa','in'],['equipe','Equipe','ta'],['codigoLocal','Código do local (INEP ou outro)','in'],['endereco','Endereço','in'],
+ ['execNome','Empresa executante','in'],['execCnpj','CNPJ da executante','in'],['representante','Representante da empresa','in'],['equipe','Equipe','ta'],['codigoLocal','Código do local (INEP ou outro)','in'],['escolaUnidade','Escola / unidade atendida','in'],['endereco','Endereço','in'],
  ['servicos','Descrição dos serviços executados','ta'],['atividades','Atividades realizadas','ta'],['localTrabalho','Local de trabalho','ta'],
  ['apr','Análise preliminar de riscos – APR / procedimentos','ta'],['condFerramentas','Condições de ferramentas e equipamentos','ta'],['isolamento','Isolamento e sinalização nos locais de trabalho','ta'],
  ['atividadeEspecial','Avaliação das atividades especiais aplicáveis','ta'],['epi','Equipamentos de proteção individual – EPI (observações gerais)','ta'],['ordemServico','Ordem de serviço / orientações de SST','ta'],['exames','Aptidão / exames ocupacionais','ta'],['capacitacoes','Capacitações / treinamentos','ta'],
@@ -375,7 +375,7 @@ var CAMPOS=[
 var CD={};CAMPOS.forEach(function(c){CD[c[0]]=c});
 /* responsável técnico: o que está no relatório e, se vazio, o cadastro do usuário */
 function respTec(i){var eu=window.SEVIA_EU||{};return {nome:i.respNome||eu.nome||i.responsavel||'',funcao:i.respFuncao||eu.funcao||'',reg:i.regProf||eu.registro||''}}
-var GRP=[['Empresa executante',['execNome','execCnpj','representante','equipe','codigoLocal','endereco']],['Serviços e local de trabalho',['servicos','atividades','localTrabalho']],['Segurança no trabalho',['apr','condFerramentas','isolamento','atividadeEspecial','epi','ordemServico','exames','capacitacoes']],['Riscos ocupacionais',['rFis','rQuim','rBio','rErgo','rAcid','rOutros','rNota']],['Considerações finais e referências',['consideracoes','referencias']],['Responsável técnico',['respNome','respFuncao','regProf']]];
+var GRP=[['Empresa executante',['execNome','execCnpj','representante','equipe','codigoLocal','escolaUnidade','endereco']],['Serviços e local de trabalho',['servicos','atividades','localTrabalho']],['Segurança no trabalho',['apr','condFerramentas','isolamento','atividadeEspecial','epi','ordemServico','exames','capacitacoes']],['Riscos ocupacionais',['rFis','rQuim','rBio','rErgo','rAcid','rOutros','rNota']],['Considerações finais e referências',['consideracoes','referencias']],['Responsável técnico',['respNome','respFuncao','regProf']]];
 var S={marca:null,db:null,assets:null,downloads:null,sample:null,dbFail:false,insp:[],ncs:[],acoes:[],empresas:[],contratos:[],cad:null,user:null,me:{id:'',name:''},perfil:'Administradora',canWrite:true,acessos:null,mig:false,skipHash:false,
   R:{insp:[],ncs:[],acoes:[],empresas:[],contratos:[],usuarios:[]},
   loaded:{i:false,n:false,a:false,e:false,c:false,k:false,x:false,p:false},view:'painel',route:null,hist:[],
@@ -1128,7 +1128,7 @@ async function preencherIA(){
     var riscos=achados.filter(function(a){return !a.verificar}),verif=achados.filter(function(a){return a.verificar}).map(function(a){return a.verificar});
     if(!riscos.length&&!obs.length){out.innerHTML='<p><b>A IA não identificou riscos visíveis nas '+lidas+' fotos analisadas.</b> Preencha os campos manualmente se necessário.</p>';return}
     out.textContent='Reunindo os riscos de maior gravidade…';
-    var chaves=CAMPOS.filter(function(c){return ['execNome','execCnpj','representante','equipe','codigoLocal','endereco','regProf','respNome','respFuncao'].indexOf(c[0])<0}).map(function(c){return '"'+c[0]+'": '+(c[2]==='ta'?'["item", "item"]':'"texto"')+'  // '+c[1]});
+    var chaves=CAMPOS.filter(function(c){return ['execNome','execCnpj','representante','equipe','codigoLocal','escolaUnidade','endereco','regProf','respNome','respFuncao'].indexOf(c[0])<0}).map(function(c){return '"'+c[0]+'": '+(c[2]==='ta'?'["item", "item"]':'"texto"')+'  // '+c[1]});
     var prompt='Você é engenheiro de segurança do trabalho no Brasil e vai preencher o RELATÓRIO DE CAMPO de uma inspeção. Cada foto já foi analisada separadamente; os achados estão abaixo (JSON).\n\nAchados (riscos):\n'+JSON.stringify(riscos)+'\n\nObservações e perigos prováveis por foto:\n'+JSON.stringify(obs)+'\n\nContexto: empresa '+(empNomeDe(rt.draft.empresaId)||'não informada')+', setor '+(rt.draft.setor||'não informado')+'.\n\nRegras obrigatórias:\n- Campos de riscos (rFis, rQuim, rBio, rErgo, rAcid): preencha cada um com TODOS os riscos identificados na categoria, desde o menor até o maior, a partir dos achados e dos perigos prováveis por foto, sem omitir os de gravidade Baixa; ordene do mais grave para o menos grave e junte os repetidos. Se não houver evidência para a categoria, escreva "Não identificado nas fotos analisadas."\n- Ruído: se aparecer ferramenta elétrica ou motorizada (furadeira, esmerilhadeira, serra, roçadeira, compressor etc.), registre em rFis o risco de ruído (e vibração, quando couber) e que a medição quantitativa (dosimetria ou decibelímetro) deve confirmar.\n- EPI, isolamento e sinalização, condições de ferramentas, atividades, serviços e local de trabalho: descreva o que as observações mostram (EPI em uso ou ausentes; isolamento e sinalização presentes ou ausentes). Se nada aparecer, escreva o que não foi possível verificar.\n- APR / procedimentos, ordem de serviço, exames ocupacionais e capacitações / treinamentos são documentos e não aparecem em fotos: escreva "Não verificável pelas fotos; conferir no local."\n- Junte achados repetidos em um só e não invente nada além do que as fotos e os achados indicam.\n- Não identifique pessoas.\n- Riscos: categorias físicos, químicos, biológicos, ergonômicos e acidentes, só com evidência.\n- Português do Brasil, frases curtas.\n- Em "verificar", liste o que precisa ser confirmado presencialmente.\n\n- Grupos de fotos: respeite cada grupo. Para cada grupo da lista abaixo, escreva "atividade" (o que alguém está executando nas fotos do grupo, em 1 frase; se ninguém está executando atividade, escreva exatamente "Não se aplica"), "apontamento" (a condição observada, usando SOMENTE os achados e observações cujo "gn" é o número desse grupo; no máximo 2 frases curtas, até 250 caracteres) e "orientacao" (lista de no máximo 4 recomendações curtas, de uma linha cada, para corrigir o que foi apontado nesse mesmo grupo). Não misture achados de grupos diferentes. Se o grupo não mostra irregularidade, apontamento = "Sem irregularidades aparentes nas fotos." e orientacao = ["Manter as condições observadas."].\nGrupos: '+JSON.stringify(gl)+'\n- Atividades especiais (esp): para cada NR de 1 a 6 (1 NR-35 altura abaixo de 2 m; 2 NR-10 eletricidade; 3 NR-33 espaço confinado; 4 NR-11 içamento de cargas; 5 NR-18/NR-34 trabalho a quente; 6 outras NRs), use "s" = "A" somente se as fotos mostram a atividade; "N" somente se for claramente inaplicável ao que aparece; caso contrário "". Em "obs" escreva uma frase curta (se "s" for vazio, "Conferir no local.").\n- EPI (epi): uma linha por EPI visível nas fotos, com "epi" (nome), "ca" = "" (o CA não aparece em foto), "cond" (condições de uso observadas) e "obs" (curta).\n\nResponda somente com JSON neste formato:\n{"campos":{\n'+chaves.join(',\n')+'\n},"grupos":[{"n":1,"atividade":"...","apontamento":"...","orientacao":["..."]}],"esp":{"1":{"s":"","obs":""},"2":{"s":"","obs":""},"3":{"s":"","obs":""},"4":{"s":"","obs":""},"5":{"s":"","obs":""},"6":{"s":"","obs":""}},"epi":[{"epi":"","ca":"","cond":"","obs":""}],"verificar":["..."]}';
     var r=await S.sample.json(prompt,{signal:auCtl.signal});
     if(S.route!==rt)return;
@@ -1287,7 +1287,7 @@ function campoIn(d,k){var c=CD[k],ta=c[2]==='ta';
   if(k==='epi')return campoIn2(d,k)+epiHtml(d);
   return campoIn2(d,k);
 }
-var SEM_IA=['execNome','execCnpj','representante','equipe','codigoLocal','endereco','regProf','respNome','respFuncao'];
+var SEM_IA=['execNome','execCnpj','representante','equipe','codigoLocal','escolaUnidade','endereco','regProf','respNome','respFuncao'];
 function iaUmHtml(k){return S.sample&&SEM_IA.indexOf(k)<0?'<button type="button" class="btn btn-ghost ia-um" data-act="ia-um" data-k="'+k+'">&#10024; Analisar com IA</button><p class="muted small" id="iam-'+k+'" aria-live="polite">A IA lê as fotos e sugere este campo. Você revisa antes de salvar.</p>':''}
 function campoIn2(d,k){var c=CD[k],ta=c[2]==='ta';
   return field(c[1],'i-'+k,ta?'<textarea id="i-'+k+'" name="'+k+'" placeholder="Um item por linha">'+esc(d[k])+'</textarea>'+iaUmHtml(k):'<input id="i-'+k+'" name="'+k+'" value="'+esc(d[k])+'"'+(k==='execCnpj'?' inputmode="numeric" maxlength="18" placeholder="00.000.000/0000-00"':'')+'>'+iaUmHtml(k),ta?'full':'')}
@@ -1931,10 +1931,10 @@ async function gerarPDFCampo(insp){
   }
   var tw=CW-4,rt=respTec(insp);
   box('DATA',linhasTxt(fmt(insp.data),tw));
-  box2('EMPRESA EXECUTANTE',linhasTxt(insp.execNome||empNome(insp),CW/2-4),'CNPJ EXECUTANTE',linhasTxt(insp.execCnpj,CW/2-4));
+  box2('EMPRESA EXECUTANTE',linhasTxt(insp.execNome,CW/2-4),'CNPJ EXECUTANTE',linhasTxt(insp.execCnpj,CW/2-4));
   box('REPRESENTANTE DA EMPRESA',linhasTxt(insp.representante,tw));
   box('EQUIPE',linhasLista(insp.equipe,tw,true));
-  box2('INEP / IDENTIFICAÇÃO DA UNIDADE',linhasTxt(insp.codigoLocal,CW/2-4),'ESCOLA / UNIDADE',linhasTxt(insp.unidade,CW/2-4));
+  box2('INEP / IDENTIFICAÇÃO DA UNIDADE',linhasTxt(insp.codigoLocal,CW/2-4),'ESCOLA / UNIDADE',linhasTxt(insp.escolaUnidade,CW/2-4));
   box('ENDEREÇO',linhasTxt(insp.endereco,tw));
   box('DESCRIÇÃO DOS SERVIÇOS / ATIVIDADES ACOMPANHADAS',linhasTxt(insp.servicos,tw).concat([{t:'Atividades realizadas:',x:0,b:1}],linhasLista(insp.atividades,tw,false)));
   box('LOCAL DE TRABALHO / ÁREA AUDITADA',linhasLista(insp.localTrabalho,tw,false));
@@ -2303,10 +2303,10 @@ async function gerarWordCampo(insp){
   }
   var rt=respTec(insp);
   sec('DATA',[P(fmt(insp.data))]);
-  sec2('EMPRESA EXECUTANTE',[P(insp.execNome||empNome(insp)||'NA')],'CNPJ EXECUTANTE',[P(insp.execCnpj||'NA')]);
+  sec2('EMPRESA EXECUTANTE',[P(insp.execNome||'NA')],'CNPJ EXECUTANTE',[P(insp.execCnpj||'NA')]);
   sec('REPRESENTANTE DA EMPRESA',[P(insp.representante||'NA')]);
   sec('EQUIPE',lista(insp.equipe,true));
-  sec2('INEP / IDENTIFICAÇÃO DA UNIDADE',[P(insp.codigoLocal||'NA')],'ESCOLA / UNIDADE',[P(insp.unidade||'NA')]);
+  sec2('INEP / IDENTIFICAÇÃO DA UNIDADE',[P(insp.codigoLocal||'NA')],'ESCOLA / UNIDADE',[P(insp.escolaUnidade||'NA')]);
   sec('ENDEREÇO',[P(insp.endereco||'NA')]);
   sec('DESCRIÇÃO DOS SERVIÇOS / ATIVIDADES ACOMPANHADAS',texto(insp.servicos).concat([P('Atividades realizadas:',{b:true,before:60})],lista(insp.atividades,false)));
   sec('LOCAL DE TRABALHO / ÁREA AUDITADA',lista(insp.localTrabalho,false));
