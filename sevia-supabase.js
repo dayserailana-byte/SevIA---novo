@@ -23,13 +23,76 @@
   function wrapDoc(id, d) { return { id: id, exists: d != null, data: function () { return clone(d); } }; }
 
   /* ---------- sessão e perfil ---------- */
+  /* ---------- modo sem internet (etapa 1: abrir e consultar) ---------- */
+  var CK = "sevia.perfil", semSinal = false;
+  function semRede(e) {
+    var m = String((e && (e.message || e.name)) || e || "");
+    return !navigator.onLine || /fetch|network|load failed|timeout|offline/i.test(m);
+  }
+  function temSessaoLocal() {
+    try { for (var i = 0; i < localStorage.length; i++) { if (/^sb-.*-auth-token$/.test(localStorage.key(i))) return true; } } catch (e) {}
+    return false;
+  }
+  function perfilGuardado() { try { return JSON.parse(localStorage.getItem(CK) || "null"); } catch (e) { return null; } }
+  var IDB = (function () {
+    var p = null;
+    function abre() {
+      if (p) return p;
+      p = new Promise(function (res, rej) {
+        var q = indexedDB.open("sevia", 1);
+        q.onupgradeneeded = function () { q.result.createObjectStore("kv"); };
+        q.onsuccess = function () { res(q.result); };
+        q.onerror = function () { rej(q.error); };
+      });
+      return p;
+    }
+    function tx(modo, fn) {
+      return abre().then(function (db) {
+        return new Promise(function (res, rej) {
+          var t = db.transaction("kv", modo), r = fn(t.objectStore("kv"));
+          t.oncomplete = function () { res(r && r.result); };
+          t.onerror = t.onabort = function () { rej(t.error); };
+        });
+      });
+    }
+    return {
+      get: function (k) { return tx("readonly", function (s) { return s.get(k); }).catch(function () { return undefined; }); },
+      set: function (k, v) { return tx("readwrite", function (s) { return s.put(v, k); }).catch(function () {}); }
+    };
+  })();
+  function faixa() {
+    var el = document.getElementById("sevia-offline");
+    if (!navigator.onLine || semSinal) {
+      if (!el) {
+        el = document.createElement("div"); el.id = "sevia-offline"; el.setAttribute("role", "status");
+        el.style.cssText = "position:fixed;left:0;right:0;bottom:0;z-index:99998;background:#7a1f12;color:#fff;font:14px/1.35 system-ui,sans-serif;padding:8px 14px;text-align:center";
+        el.textContent = "Sem internet: você pode consultar o que já foi aberto. Salvar, enviar fotos e a IA precisam de sinal.";
+        (document.body || document.documentElement).appendChild(el);
+      }
+    } else if (el) { el.remove(); }
+  }
+  window.addEventListener("online", function () { semSinal = false; faixa(); listeners.slice().forEach(function (f) { f(); }); });
+  window.addEventListener("offline", faixa);
+  document.addEventListener("DOMContentLoaded", faixa);
   var ready = (async function () {
-    var s = await sb.auth.getSession();
-    if (!s.data.session) return toLogin();
+    var s;
+    try { s = await sb.auth.getSession(); } catch (e) { s = { data: { session: null }, error: e }; }
+    var g = perfilGuardado();
+    if (!s.data.session) {
+      if (g && temSessaoLocal() && (semRede(s.error) || !navigator.onLine)) {
+        perfil = g; semSinal = true; faixa();
+        window.SEVIA_PERFIL = perfil.perfil;
+        window.SEVIA_EU = { nome: perfil.nome || "", funcao: perfil.funcao || "", registro: perfil.registro_prof || "" };
+        return true;
+      }
+      return toLogin();
+    }
     var uid = s.data.session.user.id;
     var r = await sb.from("sevia_perfis").select("*").eq("id", uid).maybeSingle();
-    if (!r.data || !r.data.ativo || r.data.trocar_senha) { await sb.auth.signOut(); return toLogin(); }
+    if (!r.data && r.error && g && g.id === uid && semRede(r.error)) { r = { data: g }; semSinal = true; faixa(); }
+    if (!r.data || !r.data.ativo || r.data.trocar_senha) { await sb.auth.signOut(); try { localStorage.removeItem(CK); } catch (e) {} return toLogin(); }
     perfil = r.data;
+    try { localStorage.setItem(CK, JSON.stringify(perfil)); } catch (e) {}
     window.SEVIA_PERFIL = perfil.perfil;
     window.SEVIA_EU = { nome: perfil.nome || "", funcao: perfil.funcao || "", registro: perfil.registro_prof || "" };
     return true;
@@ -79,9 +142,17 @@
       if (u.error) throw u.error;
       return u.data.map(function (r) { return { id: r.id, d: usuarioDe(r) }; });
     }
-    var r = await sb.from("sevia_documentos").select("path,dados").eq("colecao", col);
-    if (r.error) throw r.error;
-    return r.data.map(function (x) { return { id: x.path.slice(col.length + 1), d: x.dados }; });
+    var r;
+    try { r = await sb.from("sevia_documentos").select("path,dados").eq("colecao", col); }
+    catch (e) { r = { error: e }; }
+    if (r.error) {
+      var c = semRede(r.error) ? await IDB.get("c:" + col) : undefined;
+      if (c) { semSinal = true; faixa(); return c; }
+      throw r.error;
+    }
+    var L = r.data.map(function (x) { return { id: x.path.slice(col.length + 1), d: x.dados }; });
+    IDB.set("c:" + col, L);
+    return L;
   }
   async function lerDoc(path) {
     if (path === "config/acessos") {
@@ -89,8 +160,15 @@
       if (perfil && perfil.perfil === "Cliente") us[perfil.id] = { nome: perfil.nome, empresaId: perfil.empresa_id || "" };
       return { usuarios: us };
     }
-    var r = await sb.from("sevia_documentos").select("dados").eq("path", path).maybeSingle();
-    if (r.error) throw r.error;
+    var r;
+    try { r = await sb.from("sevia_documentos").select("dados").eq("path", path).maybeSingle(); }
+    catch (e) { r = { error: e }; }
+    if (r.error) {
+      var c = semRede(r.error) ? await IDB.get("d:" + path) : undefined;
+      if (c !== undefined) { semSinal = true; faixa(); return c; }
+      throw r.error;
+    }
+    IDB.set("d:" + path, r.data ? r.data.dados : null);
     return r.data ? r.data.dados : null;
   }
   function podeEscrever(col) { if (col === "usuarios") return false; return ehEditor(); }
@@ -102,8 +180,9 @@
       get: async function () { return wrapDoc(id, await lerDoc(path)); },
       set: async function (v) {
         if (!podeEscrever(col)) throw { code: "not_granted", message: "Sem permissão para gravar." };
+        if (!navigator.onLine) throw { code: "offline", message: "Sem internet. Para salvar é preciso ter sinal." };
         var r = await sb.from("sevia_documentos").upsert({ path: path, colecao: col, dados: clone(v), atualizado_em: new Date().toISOString() });
-        if (r.error) throw r.error; notificar();
+        if (r.error) throw semRede(r.error) ? { code: "offline", message: "Sem internet. Para salvar é preciso ter sinal." } : r.error; notificar();
       },
       update: async function (v) {
         var atual = (await lerDoc(path)) || {};
@@ -155,6 +234,7 @@
       var tipo = (o && o.type) || blob.type || "image/jpeg";
       var ext = ({ "image/png": "png", "image/webp": "webp" })[tipo] || "jpg";
       var id = uuid() + "." + ext;
+      if (!navigator.onLine) throw { code: "offline", message: "Sem internet. Para enviar fotos é preciso ter sinal." };
       var r = await sb.storage.from(BUCKET).upload(id, blob, { contentType: tipo, upsert: false });
       if (r.error) throw { code: "upload_failed", message: r.error.message };
       return { id: id, url: window.SEVIA_BLOB + id, sizeBytes: blob.size, contentType: tipo };
@@ -227,5 +307,9 @@
       return null;
     }
   };
-  window.SEVIA_SAIR = async function () { await sb.auth.signOut(); location.replace("login.html"); };
+  window.SEVIA_SAIR = async function () {
+    try { localStorage.removeItem(CK); } catch (e) {}
+    try { await sb.auth.signOut(); } catch (e) {}
+    location.replace("login.html");
+  };
 })();
