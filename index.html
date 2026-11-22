@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-22-1545 tres-status --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-22-1600 filtro-plano --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -400,7 +400,7 @@ var GRP=[['Empresa executante',['execNome','execCnpj','representante','equipe','
 var S={marca:null,db:null,assets:null,downloads:null,sample:null,dbFail:false,insp:[],ncs:[],acoes:[],empresas:[],contratos:[],cad:null,user:null,me:{id:'',name:''},perfil:'Administradora',canWrite:true,acessos:null,mig:false,skipHash:false,
   R:{insp:[],ncs:[],acoes:[],empresas:[],contratos:[],usuarios:[]},
   loaded:{i:false,n:false,a:false,e:false,c:false,k:false,x:false,p:false},view:'painel',route:null,hist:[],
-  f:{insp:'todas',nc:'todas',acoes:'todas',q:''},pf:{empresa:'todas',unidade:'todas',periodo:'12m',tipo:'todos'},modalOk:null,saving:false};
+  f:{insp:'todas',nc:'todas',acoes:'todas',acEmp:'todas',acUn:'todas',q:''},pf:{empresa:'todas',unidade:'todas',periodo:'12m',tipo:'todos'},modalOk:null,saving:false};
 
 /* ---------- utilidades ---------- */
 function isoDate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
@@ -1583,11 +1583,14 @@ function rowAcao(a,showNc){
 }
 function viewAcoes(){
   return head('Plano de ação','Medidas corretivas, responsáveis e prazos.',S.downloads&&S.acoes.length?btn('Exportar tudo em Excel','excel','','btn-primary'):'')+
-  '<div class="filters">'+field('Situação','f-acoes','<select id="f-acoes" data-chg="f-acoes">'+opts([['todas','Todos'],['Em andamento','Em andamento'],['Vencida','Vencido'],['Concluída','Concluído']],S.f.acoes)+'</select>')+'</div>'+
+  '<div class="filters">'+field('Empresa','f-acemp','<select id="f-acemp" data-chg="f-acemp">'+opts([['todas','Todas']].concat(S.empresas.map(function(e){return [e.id,e.nome]})),S.f.acEmp)+'</select>')+field('Unidade','f-acun','<select id="f-acun" data-chg="f-acun">'+opts([['todas','Todas']].concat(unidadesDe(S.f.acEmp).map(function(u){return [u,u]})),S.f.acUn)+'</select>')+field('Situação','f-acoes','<select id="f-acoes" data-chg="f-acoes">'+opts([['todas','Todos'],['Em andamento','Em andamento'],['Vencida','Vencido'],['Concluída','Concluído']],S.f.acoes)+'</select>')+'</div>'+
   '<div class="card"><div class="list" id="lista">'+listaAcoes()+'</div></div>';
 }
 function listaAcoes(){
   var L=S.acoes.slice().sort(byPrazo).filter(function(a){
+    var n=ncDe(a.ncId),ip=n&&inspDe(n.inspId);
+    if(S.f.acEmp!=='todas'&&!(ip&&ip.empresaId===S.f.acEmp))return false;
+    if(S.f.acUn!=='todas'&&!(ip&&ip.unidade===S.f.acUn))return false;
     var f=S.f.acoes;if(f==='todas')return true;return stAcao(a)===f});
   if(!L.length)return '<p class="muted pad">'+(S.acoes.length?'Nenhuma ação com esse filtro.':'Nenhuma ação definida ainda. Abra uma não conformidade para criar o plano de ação.')+'</p>';
   return L.map(function(a){return rowAcao(a,true)}).join('');
@@ -3239,6 +3242,8 @@ document.addEventListener('change',function(e){
   switch(el.dataset.chg){
     case 'f-insp':S.f.insp=el.value;$('#lista').innerHTML=listaInsp();break;
     case 'f-nc':S.f.nc=el.value;$('#lista').innerHTML=listaNc();break;
+    case 'f-acemp':S.f.acEmp=el.value;S.f.acUn='todas';renderMain();break;
+    case 'f-acun':S.f.acUn=el.value;renderMain();break;
     case 'f-acoes':S.f.acoes=el.value;$('#lista').innerHTML=listaAcoes();break;
     case 'pf-empresa':S.pf.empresa=el.value;S.pf.unidade='todas';renderMain();break;
     case 'u-perf':var ea=$('#emp-acc');if(ea)ea.hidden=['Técnico ADM','Técnico SST'].indexOf(el.value)<0;break;
