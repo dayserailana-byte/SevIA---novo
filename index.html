@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-22-1520 cores-status --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-22-1545 tres-status --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -413,10 +413,10 @@ function slug(s){return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').to
 function toast(msg){var t=$('#toast');t.textContent=msg;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(function(){t.hidden=true},3600)}
 function ready(){var l=S.loaded;return l.i&&l.n&&l.a&&l.e&&l.c&&l.k&&l.x&&l.p}
 function vencida(a){return a.status!=='Concluída'&&!!a.prazo&&a.prazo<hoje()}
-function stAcao(a){return vencida(a)?'Vencida':a.status}
-/* nos relatórios: dentro do prazo = Em andamento (amarelo); prazo vencido = Pendente (vermelho); concluído = verde */
-function stRel(s){return s==='Concluída'?'Concluída':(s==='Vencida'?'Pendente':'Em andamento')}
-function stCor(s){return s==='Concluída'?[[46,125,50],[255,255,255]]:s==='Pendente'?[[229,35,27],[255,255,255]]:[[255,229,0],[0,0,0]]}
+function stAcao(a){return vencida(a)?'Vencida':(a.status==='Concluída'?'Concluída':'Em andamento')}
+/* nos relatórios: dentro do prazo = Em andamento (amarelo); prazo vencido = Vencido (vermelho); concluído = verde */
+function stRel(s){return s==='Concluída'?'Concluído':(s==='Vencida'?'Vencido':'Em andamento')}
+function stCor(s){return s==='Concluído'?[[46,125,50],[255,255,255]]:s==='Vencido'?[[229,35,27],[255,255,255]]:[[255,229,0],[0,0,0]]}
 function stHex(s){var c=stCor(s);return c.map(function(t){return t.map(function(v){return ('0'+v.toString(16)).slice(-2)}).join('').toUpperCase()})}
 function hex3(h){return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]}
 function grau(n){var av=n&&n.severidade?mzAval(n.severidade,n.frequencia):null;if(av)return av.grau;return {'Alta':'Alto','Média':'Médio','Baixa':'Baixo'}[n.gravidade]||n.gravidade}
@@ -430,8 +430,8 @@ function locDe(i){return [i.setor,i.unidade].filter(Boolean).join(' · ')}
 function empNome(i){var e=i.empresaId&&empDe(i.empresaId);return e?e.nome:(i.empresaNome||'')}
 function ncsDe(id){return S.ncs.filter(function(x){return x.inspId===id})}
 function acoesDe(id){return S.acoes.filter(function(x){return x.ncId===id})}
-function chip(t,k){return '<span class="chip chip-'+k+'">'+esc(t)+'</span>'}
-function sk(s){return {'Concluída':'st-ok','Em andamento':'st-amarelo','Vencida':'st-danger','Pendente':'st-danger','Aberta':'st-danger'}[s]||'neutral'}
+function chip(t,k){t={'Concluída':'Concluído','Vencida':'Vencido','Pendente':'Em andamento'}[t]||t;return '<span class="chip chip-'+k+'">'+esc(t)+'</span>'}
+function sk(s){return {'Concluída':'st-ok','Em andamento':'st-amarelo','Vencida':'st-danger','Pendente':'st-amarelo','Aberta':'st-amarelo'}[s]||'neutral'}
 function num(i){return i&&i.numero?String(i.numero).padStart(5,'0'):(i&&i._semNumero?'pendente':'-----')}
 function prioDe(n){return n.prioridade||({'Crítico':'Alta','Alto':'Alta','Médio':'Média','Baixo':'Baixa','Alta':'Alta','Média':'Média','Baixa':'Baixa'}[n.gravidade]||'Média')}
 function prio(p){return '<span class="prio"><i class="pdot p-'+slug(p)+'" aria-hidden="true"></i>'+esc(p)+'</span>'}
@@ -779,7 +779,7 @@ function viewConcluidas(){
   var t=media(tempos);
   return head('Relatórios concluídos','Acompanhe os relatórios fotográficos concluídos.')+filtrosPainel()+
   '<div class="tiles">'+tile(C.length,'Relatórios concluídos','#inspecoes')+tile(pct(C.length,fi.length)+'%','Taxa de conclusão','#inspecoes')+tile(noMes,'Concluídas neste mês','#inspecoes')+tile(t==null?'-':t+' d','Tempo médio até concluir','#inspecoes')+'</div>'+
-  '<div class="cols"><section class="card"><div class="card-h"><h2>Situação das inspeções</h2></div>'+donut([{l:'Concluídas',v:C.length,c:'var(--ok)'},{l:'Em andamento',v:abertas-venc,c:'#F5B342'},{l:'Vencidas',v:venc,c:'var(--danger)'}],fi.length,'Inspeções',fi.length+' inspeções por situação')+'</section>'+
+  '<div class="cols"><section class="card"><div class="card-h"><h2>Situação das inspeções</h2></div>'+donut([{l:'Concluído',v:C.length,c:'var(--ok)'},{l:'Em andamento',v:abertas-venc,c:'#F5B342'},{l:'Vencido',v:venc,c:'var(--danger)'}],fi.length,'Inspeções',fi.length+' inspeções por situação')+'</section>'+
   '<section class="card"><div class="card-h"><h2>Concluídas por mês</h2><span class="muted small">Últimos 12 meses</span></div>'+barrasMes(serieMes(C.map(function(c){return c.dc})),'Relatórios concluídos por mês, total '+C.length)+'</section></div>'+
   '<section class="card"><div class="card-h"><h2>Lista de concluídas</h2></div><div class="list">'+(C.length?C.slice(0,30).map(function(c){var i=c.i;
     return '<button type="button" class="row" data-act="open-insp" data-id="'+esc(i.id)+'"><span class="row-main" style="cursor:inherit"><span class="insp-num">'+tr(i)+' Nº '+num(i)+'</span><b>'+esc(locDe(i)||empNome(i)||'Relatório')+'</b><span class="muted small">'+esc(empNome(i))+' · realizada em '+fmt(i.data)+' · concluída em '+fmt(c.dc)+' · '+ncsDe(i.id).length+' itens</span></span><span class="row-side">'+chip('Concluída','st-ok')+'</span></button>'}).join(''):'<p class="muted pad">Nenhuma inspeção concluída neste filtro.</p>')+'</div></section>';
@@ -831,7 +831,7 @@ function viewIndicadores(){
     :kpi(nFot,'Relatórios fotográficos','#inspecoes')+kpi(nIns,'Inspeções de segurança','#inspecoes')+kpi(nc.length,'Não conformidades','#ncs')+kpi(atras,'Ações atrasadas','#acoes',atras>0));
   var hero='<section class="ix-hero"><svg width="92" height="92" viewBox="0 0 92 92" role="img" aria-label="Conformidade geral '+(cp==null?'sem dados':cp+' por cento')+'" style="flex:none"><circle cx="46" cy="46" r="38" fill="none" stroke="#3A3A3A" stroke-width="10"/>'+(cp?'<circle cx="46" cy="46" r="38" fill="none" stroke="#FA6905" stroke-width="10" stroke-linecap="round" stroke-dasharray="'+ring+' 239" transform="rotate(-90 46 46)"/>':'')+'<text x="46" y="53" text-anchor="middle" font-size="22" font-weight="800" fill="#fff">'+(cp==null?'-':cp+'%')+'</text></svg><div><b>Conformidade geral</b><span>Itens conformes nas inspeções do período.</span>'+(ant==null?'':'<span class="'+(ant>=0?'up':'dn')+'">'+(ant>=0?'▲ ':'▼ ')+Math.abs(ant)+' pontos sobre o período anterior</span>')+'</div></section>';
   var blocoIns=hero+ixCard('Risco das não conformidades',nc.length+' itens',GRAUS.map(function(g){return {l:g,v:gr[g],c:CG[g]}}),String(nc.length),'itens','Não conformidades por grau de risco')+
-  ixCard('Planos de ação',fa.length+' no total',[{l:'Concluídas',v:conc,c:'#1B7F3A'},{l:'Em andamento',v:andam,c:'#F5B342'},{l:'Atrasadas',v:atras,c:'#B3261E'}],fa.length?pct(conc,fa.length)+'%':'-','concluídas','Planos de ação por situação')+
+  ixCard('Planos de ação',fa.length+' no total',[{l:'Concluído',v:conc,c:'#1B7F3A'},{l:'Em andamento',v:andam,c:'#F5B342'},{l:'Vencido',v:atras,c:'#B3261E'}],fa.length?pct(conc,fa.length)+'%':'-','concluídas','Planos de ação por situação')+
   '<section class="ix-card"><div class="ix-h"><h2>Não conformidades por norma</h2></div>'+(temas.length?temas.map(function(t){return '<div class="ix-bar"><div><span>'+esc(t.l)+'</span><b>'+t.v+'</b></div><div class="t"><i style="width:'+Math.round(t.v/mx2*100)+'%"></i></div></div>'}).join(''):'<p class="muted small">Sem não conformidades neste filtro.</p>')+'</section>';
   var legM=(isI?'':'<div><i style="background:#FA6905"></i><span>Fotográficos</span></div>')+(isF?'':'<div><i style="background:#000"></i><span>Inspeções</span></div>');
   var mes='<section class="ix-card"><div class="ix-h"><h2>Por mês</h2><span class="ix-sub">Últimos 12 meses</span></div><div class="ix-mes" role="img" aria-label="Documentos por mês, total '+fi.length+'">'+mF.map(function(m,k){var f=m.v,sI=mS[k].v;return '<div title="'+m.l+': '+f+' fotográficos, '+sI+' inspeções"><div style="height:'+Math.round(sI/mxm*120)+'px;background:#000;border-radius:3px 3px 0 0"></div><div style="height:'+Math.round(f/mxm*120)+'px;background:#FA6905"></div></div>'}).join('')+'</div><div class="ix-ax"><span>'+mF[0].l+'</span><span>'+mF[6].l+'</span><span>'+mF[11].l+'</span></div>'+
@@ -851,7 +851,7 @@ function viewIndicadores(){
     kpis:kpa.map(function(k,i){return [k[0],k[1],k[0]==='Ações atrasadas'&&atras>0]}),cp:cp,ant:ant,itens:fn.length,conf:conf,ncs:nc.length,
     tipoParts:[pt('Fotográficos',nFot,'#FA6905'),pt('Inspeções',nIns,'#000000')],
     risco:GRAUS.map(function(g){return pt(g,gr[g],CG[g])}),acoes:fa.length,
-    planos:[pt('Concluídas',conc,'#1B7F3A'),pt('Em andamento',andam,'#F5B342'),pt('Atrasadas',atras,'#B3261E')],
+    planos:[pt('Concluído',conc,'#1B7F3A'),pt('Em andamento',andam,'#F5B342'),pt('Vencido',atras,'#B3261E')],
     normas:temas.map(function(t){return [t.l,t.v]}),
     meses:mF.map(function(m,k){return [m.l,m.v,mS[k].v]}),
     unid:uL.map(function(k){var o=un[k],t=o.c+o.n,sub=isF?o.f+(o.f===1?' relatório':' relatórios')+' · '+(fotosPorUn[k]||0)+' fotos':(isI?o.s+(o.s===1?' inspeção':' inspeções')+' · '+o.n+(o.n===1?' não conformidade':' não conformidades'):o.f+(o.f===1?' fotográfico':' fotográficos')+' · '+o.s+(o.s===1?' inspeção':' inspeções')+' · '+o.n+(o.n===1?' não conformidade':' não conformidades'));return [k,sub,t?pct(o.c,t):null]})};
@@ -1044,7 +1044,7 @@ function viewManual(){
     ol(['<b>Evidência fotográfica:</b> tire a foto do item ou escolha da galeria. Se quiser, toque em <b>Preencher item com IA a partir da foto</b>. A IA sugere a <b>descrição do risco, a classificação, a norma e o requisito legal</b> (só quando tem certeza), a <b>ação corretiva e o prazo</b>, e lista o que você deve <b>confirmar no local</b>. Ela não preenche o setor/local nem o responsável e não apaga o que você já escreveu. Revise tudo antes de salvar.','<b>Constatação:</b> informe o setor/local, descreva o risco observado e escolha a <b>classificação</b> (não conformidade ou conformidade).','<b>Base legal:</b> informe a <b>norma e o item</b> e o <b>requisito legal</b> que está sendo descumprido. A IA pode sugerir, mas <b>você valida a norma</b> antes de salvar. Se não souber, deixe em branco: o item fica como pendente de validação.','<b>Plano de ação:</b> o que fazer, quem responde e a data para realização. Conformidade não exige plano de ação.'])+
     '<p>Os itens com problema aparecem em <b>Não conformidades</b>, e as ações em <b>Plano de ação</b>, onde você acompanha o prazo e marca como concluída.</p>'+
     '<h3>Como sai o PDF e o Word da inspeção</h3>'+
-    li(['<b>1. Identificação:</b> empresa, CNPJ, unidade, setor/local, endereço e realizado por. O número e a data da inspeção ficam no cabeçalho.','<b>2. Itens e não conformidades identificados:</b> cada item traz <b>1. Evidência fotográfica</b>, <b>2. Não conformidade</b> (título do item e requisito legal descumprido) e <b>3. Plano de ação</b> (ação, local, responsável, prazo e situação).','<b>3. Parecer técnico e conclusão:</b> resumo da inspeção, das ações e das ações vencidas, seguido da assinatura do responsável técnico.','A <b>situação</b> da ação aparece em cores: <b>Em andamento</b> (amarelo, dentro do prazo), <b>Pendente</b> (vermelho, prazo vencido) e <b>Concluída</b> (verde).','A inspeção de segurança <b>não traz a matriz de riscos nem o nível de risco</b>. A matriz continua no relatório de campo (relatório fotográfico).'])],
+    li(['<b>1. Identificação:</b> empresa, CNPJ, unidade, setor/local, endereço e realizado por. O número e a data da inspeção ficam no cabeçalho.','<b>2. Itens e não conformidades identificados:</b> cada item traz <b>1. Evidência fotográfica</b>, <b>2. Não conformidade</b> (título do item e requisito legal descumprido) e <b>3. Plano de ação</b> (ação, local, responsável, prazo e situação).','<b>3. Parecer técnico e conclusão:</b> resumo da inspeção, das ações e das ações vencidas, seguido da assinatura do responsável técnico.','A <b>situação</b> da ação aparece em cores: <b>Em andamento</b> (amarelo, dentro do prazo), <b>Vencido</b> (vermelho, o prazo passou; muda sozinho) e <b>Concluído</b> (verde).','A inspeção de segurança <b>não traz a matriz de riscos nem o nível de risco</b>. A matriz continua no relatório de campo (relatório fotográfico).'])],
   ['Baixar o PDF e o Word',true,
     '<p>Em <b>Relatórios e inspeções</b>, abra o relatório desejado e toque em <b>PDF</b> ou <b>Word</b>. O documento sai com a logomarca, o CNPJ da empresa, as fotos e o responsável técnico. Todas as páginas trazem no rodapé <b>Gerado pelo SevIA SST 4.0</b>. O <b>PDF</b> é o documento oficial e não pode ser editado; o Word serve para ajustes.</p>'+(tec&&!tecS?'<p>Para <b>excluir</b> um relatório, abra-o, toque em <b>Excluir</b> e confirme. A exclusão não pode ser desfeita.</p>':'')+(tecS?'<p>O <b>Técnico SST não exclui</b> relatórios, inspeções, itens, ações nem rascunhos. Se precisar apagar algo, peça à Administradora ou a um Técnico ADM.</p>':'')],
   ['Indicadores',true,
@@ -1518,7 +1518,7 @@ function viewNcs(){
   return head('Não conformidades','Itens registrados nas inspeções, com prioridade e status calculado pelo plano de ação.',act)+
   (S.insp.length?'':'<div class="card"><p>Registre uma inspeção primeiro. Os itens ficam ligados a ela.</p></div>')+
   '<div class="filters">'+field('Buscar na lista','q-nc','<div class="busca"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q-nc" type="search" data-inp="q-nc" placeholder="Item, setor ou nº da inspeção" value="'+esc(S.f.q)+'"></div>')+
-  field('Status','f-nc','<select id="f-nc" data-chg="f-nc">'+opts([['todas','Todos'],['Em andamento','Em andamento'],['Vencida','Vencidas'],['Concluída','Concluídas']],S.f.nc)+'</select>')+'</div>'+
+  field('Status','f-nc','<select id="f-nc" data-chg="f-nc">'+opts([['todas','Todos'],['Em andamento','Em andamento'],['Vencida','Vencido'],['Concluída','Concluído']],S.f.nc)+'</select>')+'</div>'+
   '<div class="card"><div class="list" id="lista">'+listaNc()+'</div></div>';
 }
 function listaNc(){
@@ -1577,18 +1577,18 @@ function rowAcao(a,showNc){
   var n=ncDe(a.ncId),s=stAcao(a);
   var ip=n&&inspDe(n.inspId);
   return '<div class="row"><div class="row-main"><span class="insp-num">'+tr(ip)+' Nº '+num(ip)+'</span>'+(showNc&&n?'<span class="nc-id">'+esc(n.titulo)+'</span>':'')+'<b>'+esc(a.acao)+'</b><span class="muted small">'+esc(a.responsavel||'sem responsável')+' · prazo '+fmt(a.prazo)+'</span></div><div class="row-side">'+chip(s,sk(s))+
-    '<select class="row-select" data-chg="acao-status" data-id="'+esc(a.id)+'" aria-label="Alterar situação da ação '+esc(a.acao)+'">'+opts(['Pendente','Em andamento','Concluída'],a.status)+'</select>'+
+    '<select class="row-select" data-chg="acao-status" data-id="'+esc(a.id)+'" aria-label="Alterar situação da ação '+esc(a.acao)+'">'+opts(vencida(a)?[['Vencida','Vencido'],['Em andamento','Em andamento'],['Concluída','Concluído']]:[['Em andamento','Em andamento'],['Concluída','Concluído']],stAcao(a))+'</select>'+
     '<button type="button" class="btn btn-ghost" data-act="edit-acao" data-id="'+esc(a.id)+'">Editar</button>'+
     (showNc?'<button type="button" class="btn btn-ghost" data-act="open-nc" data-id="'+esc(a.ncId)+'">Ver NC</button>':'<button type="button" class="btn btn-danger" data-act="del-acao" data-id="'+esc(a.id)+'">Excluir</button>')+'</div></div>';
 }
 function viewAcoes(){
   return head('Plano de ação','Medidas corretivas, responsáveis e prazos.',S.downloads&&S.acoes.length?btn('Exportar tudo em Excel','excel','','btn-primary'):'')+
-  '<div class="filters">'+field('Situação','f-acoes','<select id="f-acoes" data-chg="f-acoes">'+opts([['todas','Todas'],['abertas','Em aberto'],['Vencida','Vencidas'],['Concluída','Concluídas']],S.f.acoes)+'</select>')+'</div>'+
+  '<div class="filters">'+field('Situação','f-acoes','<select id="f-acoes" data-chg="f-acoes">'+opts([['todas','Todos'],['Em andamento','Em andamento'],['Vencida','Vencido'],['Concluída','Concluído']],S.f.acoes)+'</select>')+'</div>'+
   '<div class="card"><div class="list" id="lista">'+listaAcoes()+'</div></div>';
 }
 function listaAcoes(){
   var L=S.acoes.slice().sort(byPrazo).filter(function(a){
-    var f=S.f.acoes;if(f==='todas')return true;if(f==='abertas')return a.status!=='Concluída';return stAcao(a)===f});
+    var f=S.f.acoes;if(f==='todas')return true;return stAcao(a)===f});
   if(!L.length)return '<p class="muted pad">'+(S.acoes.length?'Nenhuma ação com esse filtro.':'Nenhuma ação definida ainda. Abra uma não conformidade para criar o plano de ação.')+'</p>';
   return L.map(function(a){return rowAcao(a,true)}).join('');
 }
@@ -1600,7 +1600,7 @@ function formAcao(r){
     field('Ação corretiva','a-acao','<textarea id="a-acao" name="acao" required placeholder="Ex.: Substituir o guarda-corpo e reforçar a fixação">'+esc(d.acao)+'</textarea>','full')+
     field('Responsável','a-resp','<input id="a-resp" name="responsavel" list="dl-aresp" value="'+esc(d.responsavel)+'">'+datalist('dl-aresp',resps))+
     field('Prazo','a-prazo','<input id="a-prazo" name="prazo" type="date" required value="'+esc(d.prazo)+'">')+
-    field('Situação','a-status','<select id="a-status" name="status">'+opts(['Pendente','Em andamento','Concluída'],d.status)+'</select>')+
+    field('Situação','a-status','<select id="a-status" name="status">'+opts([['Em andamento','Em andamento'],['Concluída','Concluído']],d.status==='Concluída'?'Concluída':'Em andamento')+'</select>')+
   '</div><div class="actions"><button class="btn btn-primary" type="submit">Salvar ação</button><button type="button" class="btn btn-ghost" data-act="back">Cancelar</button></div></form>';
 }
 
@@ -1858,7 +1858,7 @@ async function salvar(form,rascunho){
         var im=itensSalvar[w];im.norma=normaFmt(im.norma);var conf=im.classificacao==='Conformidade',pend=!String(im.norma||'').trim()||!String(im.requisitoLegal||'').trim();
         var nref=S.db.collection('ncs').doc();
         await nref.set({inspId:ref.id,titulo:String(im.descricao).trim().slice(0,80),descricao:String(im.descricao).trim(),classificacao:im.classificacao,gravidade:im.gravidade,severidade:im.severidade||'',frequencia:im.frequencia||'',prioridade:({'Crítico':'Alta','Alto':'Alta','Médio':'Média','Baixo':'Baixa'})[im.gravidade]||'Média',setor:im.setor||v.setor,prazo:im.prazo||'',norma:String(im.norma||'').trim()||PENDENTE,requisitoLegal:String(im.requisitoLegal||'').trim()||PENDENTE,refValidada:!pend,recomendacao:'',origemIA:!!im.origemIA,fotos:im.fotos||[],revisadoPor:S.me.name||lsGet('sevia.resp'),revisadoEm:hoje(),criadoEm:Date.now(),atualizadoEm:Date.now()});
-        if(String(im.planoAcao||'').trim()){await S.db.collection('acoes').doc().set({ncId:nref.id,acao:String(im.planoAcao).trim(),responsavel:String(im.responsavel||'').trim(),prazo:im.prazo||'',status:'Pendente',concluidaEm:'',criadoEm:Date.now(),atualizadoEm:Date.now()})}
+        if(String(im.planoAcao||'').trim()){await S.db.collection('acoes').doc().set({ncId:nref.id,acao:String(im.planoAcao).trim(),responsavel:String(im.responsavel||'').trim(),prazo:im.prazo||'',status:'Em andamento',concluidaEm:'',criadoEm:Date.now(),atualizadoEm:Date.now()})}
         if(im.responsavel)lsSet('sevia.resp',im.responsavel);
       }
     }
@@ -1868,7 +1868,7 @@ async function salvar(form,rascunho){
     if(kind==='nc'){
       var existentes=acoesDe(ref.id);
       if(!existentes.length&&v.planoAcao){
-        await S.db.collection('acoes').doc().set({ncId:ref.id,acao:v.planoAcao,responsavel:v.responsavel||lsGet('sevia.resp'),prazo:v.prazo,status:'Pendente',concluidaEm:'',criadoEm:Date.now(),atualizadoEm:Date.now()});
+        await S.db.collection('acoes').doc().set({ncId:ref.id,acao:v.planoAcao,responsavel:v.responsavel||lsGet('sevia.resp'),prazo:v.prazo,status:'Em andamento',concluidaEm:'',criadoEm:Date.now(),atualizadoEm:Date.now()});
       }else if(old&&old.prazo&&old.prazo!==v.prazo){
         await Promise.all(existentes.filter(function(a){return a.status!=='Concluída'&&a.prazo===old.prazo}).map(function(a){return S.db.doc('acoes/'+a.id).update({prazo:v.prazo,atualizadoEm:Date.now()})}));
       }
@@ -3158,7 +3158,7 @@ document.addEventListener('click',function(e){
     case 'open-nc':go({name:'nc',id:id});break;
     case 'edit-nc':var n=ncDe(id),de=draftNc();Object.assign(de,{inspId:n.inspId,titulo:n.titulo,setor:n.setor||'',gravidade:grau(n),prioridade:prioDe(n),classificacao:n.classificacao||'Não conformidade',prazo:n.prazo||'',descricao:n.descricao||'',recomendacao:n.recomendacao||'',requisitoLegal:n.requisitoLegal||'',norma:n.norma||'',refValidada:!!n.refValidada,revisado:false,fotos:(n.fotos||[]).slice(),origemIA:!!n.origemIA});go({name:'nc-form',id:id,draft:de});break;
     case 'del-nc':var n2=acoesDe(id).length;confirmar('Excluir item','Isso também exclui as '+n2+' ações ligadas a ele. Não dá para desfazer.','Excluir',async function(){try{await delNc(id);limpaRota();toast('Item excluído.')}catch(er){console.error(er);toast('Não foi possível excluir.')}renderMain()});break;
-    case 'new-acao':go({name:'acao-form',ncId:id,draft:{acao:'',responsavel:lsGet('sevia.resp'),prazo:(ncDe(id)||{}).prazo||'',status:'Pendente'}});break;
+    case 'new-acao':go({name:'acao-form',ncId:id,draft:{acao:'',responsavel:lsGet('sevia.resp'),prazo:(ncDe(id)||{}).prazo||'',status:'Em andamento'}});break;
     case 'edit-acao':var ac=S.acoes.filter(function(x){return x.id===id})[0];go({name:'acao-form',id:id,ncId:ac.ncId,draft:{acao:ac.acao,responsavel:ac.responsavel||'',prazo:ac.prazo||'',status:ac.status}});break;
     case 'del-acao':confirmar('Excluir ação','Não dá para desfazer.','Excluir',async function(){try{await S.db.doc('acoes/'+id).delete();toast('Ação excluída.')}catch(er){console.error(er);toast('Não foi possível excluir.')}});break;
     case 'usuarios-fim':limpaRota();renderMain();window.scrollTo(0,0);break;
@@ -3264,6 +3264,7 @@ document.addEventListener('change',function(e){
     case 'foto-in':if(el.files&&el.files.length)addFotos(Array.prototype.slice.call(el.files));break;
     case 'acao-status':
       var a=S.acoes.filter(function(x){return x.id===el.dataset.id})[0];if(!a)break;
+      if(el.value==='Vencida'){toast('Vencido é automático: acontece quando o prazo passa.');break}
       S.db.doc('acoes/'+a.id).update({status:el.value,concluidaEm:el.value==='Concluída'?hoje():'',atualizadoEm:Date.now()}).catch(function(er){console.error(er);toast('Não foi possível alterar a situação.')});
       break;
   }
