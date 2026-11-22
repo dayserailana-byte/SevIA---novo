@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-22-0100 matriz-modelo --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-22-1440 espaco-assinatura --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -392,7 +392,12 @@ function toast(msg){var t=$('#toast');t.textContent=msg;t.hidden=false;clearTime
 function ready(){var l=S.loaded;return l.i&&l.n&&l.a&&l.e&&l.c&&l.k&&l.x&&l.p}
 function vencida(a){return a.status!=='Concluída'&&!!a.prazo&&a.prazo<hoje()}
 function stAcao(a){return vencida(a)?'Vencida':a.status}
-function grau(n){return {'Alta':'Alto','Média':'Médio','Baixa':'Baixo'}[n.gravidade]||n.gravidade}
+/* nos relatórios: dentro do prazo = Em andamento (amarelo); prazo vencido = Pendente (vermelho); concluído = verde */
+function stRel(s){return s==='Concluída'?'Concluída':(s==='Vencida'?'Pendente':'Em andamento')}
+function stCor(s){return s==='Concluída'?[[46,125,50],[255,255,255]]:s==='Pendente'?[[229,35,27],[255,255,255]]:[[255,229,0],[0,0,0]]}
+function stHex(s){var c=stCor(s);return c.map(function(t){return t.map(function(v){return ('0'+v.toString(16)).slice(-2)}).join('').toUpperCase()})}
+function hex3(h){return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]}
+function grau(n){var av=n&&n.severidade?mzAval(n.severidade,n.frequencia):null;if(av)return av.grau;return {'Alta':'Alto','Média':'Médio','Baixa':'Baixo'}[n.gravidade]||n.gravidade}
 function gk(g){return {'Crítico':'crit','Alto':'high','Médio':'warn','Baixo':'ok'}[g]||'neutral'}
 function inspDe(id){return S.insp.filter(function(x){return x.id===id})[0]}
 function ncDe(id){return S.ncs.filter(function(x){return x.id===id})[0]}
@@ -1064,7 +1069,8 @@ function formInsp(r){
     (d.tipo==='inspecao'?
     field('Unidade','f-unidade','<select id="f-unidade" name="unidade" required data-chg="insp-un">'+opts([['','Selecione a unidade']].concat(uns),d.unidade||'')+'</select>')+
     field('Setor','f-setor','<select id="f-setor" name="setor" required>'+opts([['','Selecione o setor']].concat(sets),d.setor||'')+'</select>')+
-    field('Realizado por','f-resp','<input id="f-resp" name="responsavel" '+(respFixo?'readonly':'required')+' value="'+esc(respFixo?S.me.name:d.responsavel)+'">')
+    field('Realizado por','f-resp','<input id="f-resp" name="responsavel" '+(respFixo?'readonly':'required')+' value="'+esc(respFixo?S.me.name:d.responsavel)+'">')+
+    field('Endereço','f-end','<input id="f-end" name="endereco" placeholder="Endereço do local inspecionado" value="'+esc(d.endereco||'')+'">')
     :field('Unidade','f-unidade','<select id="f-unidade" name="unidade"'+(uns.length?' required':'')+' data-chg="insp-un">'+opts([['','Selecione a unidade']].concat(uns),d.unidade||'')+'</select>')+'<input type="hidden" name="setor" value="'+esc(d.setor||'')+'"><input type="hidden" name="responsavel" value="'+esc(respFixo?S.me.name:(d.responsavel||lsGet('sevia.resp')))+'">')+
     '</div>',true)+
   (d.tipo==='inspecao'?
@@ -1344,7 +1350,10 @@ function itensHtml(d){
     F('Setor / local','setor','<input data-ik="setor" value="'+esc(it.setor||d.setor||'')+'" placeholder="Ex.: Almoxarifado, cobertura, sala de máquinas">',true)+
     F('Descrição do risco','descricao','<textarea data-ik="descricao" placeholder="O que foi observado, o perigo e a possível consequência">'+esc(it.descricao)+'</textarea>',true)+
     F('Classificação','classificacao','<select data-ik="classificacao" data-chg="i-cls">'+opts(CLS2,it.classificacao)+'</select>')+
+    F('Severidade (matriz de riscos)','severidade','<select data-ik="severidade" data-chg="i-mz">'+mzOptS(it.severidade)+'</select>')+
+    F('Frequência (matriz de riscos)','frequencia','<select data-ik="frequencia" data-chg="i-mz">'+mzOptF(it.frequencia)+'</select>')+
     F('Criticidade','gravidade','<select data-ik="gravidade" data-chg="i-crit">'+opts(GRAUS,it.gravidade)+'</select>')+
+    '<p class="small muted" style="grid-column:1/-1;margin:0">'+esc(mzTxtAval(it.severidade,it.frequencia))+' A criticidade é calculada por ela.</p>'+
     '</div><h4 class="stp-h">3. Base legal</h4><div class="fields">'+
     F('Item (norma / item / subitem)','norma','<input data-ik="norma" value="'+esc(it.norma)+'" placeholder="Ex.: NR-35, item 35.5.1">',true)+
     F('Requisito legal','requisitoLegal','<textarea data-ik="requisitoLegal" placeholder="Texto do requisito. Se não souber, deixe em branco: fica como pendente de validação.">'+esc(it.requisitoLegal)+'</textarea>',true)+
@@ -1386,11 +1395,12 @@ async function preencherItemIA(k){
     var n=Math.min(it.fotos.length,caps.images.maxCount||4,4);
     var ok=(await Promise.all(it.fotos.slice(0,n).map(fotoBlob))).filter(Boolean);
     if(!ok.length){out.textContent='Nenhuma foto pôde ser lida.';return}
-    var prompt='Você é engenheiro de segurança do trabalho no Brasil e vai preencher UM ITEM DE INSPEÇÃO DE SEGURANÇA a partir da(s) foto(s) anexa(s).\n\nContexto: empresa '+(empNomeDe(d.empresaId)||'não informada')+', setor '+(it.setor||d.setor||'não informado')+'.\n\nRegras:\n- Descreva SOMENTE o que é visível. Não invente fatos.\n- classificacao: "Conformidade" ou "Não conformidade".\n- criticidade: "Crítico", "Alto", "Médio" ou "Baixo".\n- item e requisitoLegal: preencha SOMENTE se tiver certeza da norma brasileira (NR e item). Se não tiver certeza, deixe vazio. Nunca invente norma, item ou texto de requisito.\n- planoAcao: ação corretiva objetiva e prazoDias (número de dias).\n- Se algo não puder ser concluído pela foto, coloque em "verificar".\n\nResponda APENAS com JSON: {"descricao":"","classificacao":"","criticidade":"","item":"","requisitoLegal":"","planoAcao":"","prazoDias":30,"verificar":["..."]}';
+    var prompt='Você é engenheiro de segurança do trabalho no Brasil e vai preencher UM ITEM DE INSPEÇÃO DE SEGURANÇA a partir da(s) foto(s) anexa(s).\n\nContexto: empresa '+(empNomeDe(d.empresaId)||'não informada')+', setor '+(it.setor||d.setor||'não informado')+'.\n\nRegras:\n- Descreva SOMENTE o que é visível. Não invente fatos.\n- classificacao: "Conformidade" ou "Não conformidade".\n- criticidade: "Crítico", "Alto", "Médio" ou "Baixo".\n- severidade: "Leve", "Moderada", "Grave", "Crítica" ou "Catastrófica" (pior consequência plausível do perigo observado).\n- frequencia: "Remota", "Pouco provável", "Ocasional", "Provável" ou "Freqüente" (chance de ocorrer, considerando a exposição visível).\n- Escreva como engenheiro de segurança especialista em gerenciamento de riscos ocupacionais: identifique o perigo, a fonte, o possível dano e quem pode ser exposto, em linguagem técnica e objetiva.\n- item e requisitoLegal: preencha SOMENTE se tiver certeza da norma brasileira (NR e item). Se não tiver certeza, deixe vazio. Nunca invente norma, item ou texto de requisito.\n- planoAcao: ação corretiva objetiva e prazoDias (número de dias).\n- Se algo não puder ser concluído pela foto, coloque em "verificar".\n\nResponda APENAS com JSON: {"descricao":"","classificacao":"","criticidade":"","severidade":"","frequencia":"","item":"","requisitoLegal":"","planoAcao":"","prazoDias":30,"verificar":["..."]}';
     var r=await S.sample.json(prompt,{signal:auCtl.signal,images:ok});
     if(S.route!==rt)return;
     syncDraft();it=d.itens[k];if(!it)return;
     var cr=GRAUS.indexOf(r&&r.criticidade)>-1?r.criticidade:it.gravidade;
+    var avI=mzAval(r&&r.severidade,r&&r.frequencia);if(avI){cr=avI.grau;if(!it.severidade)it.severidade=avI.s;if(!it.frequencia)it.frequencia=avI.f}
     var antes=it.gravidade;
     function put(key,val,max){val=String(val==null?'':val).trim();if(val&&!String(it[key]||'').trim())it[key]=val.slice(0,max||1000)}
     put('descricao',r&&r.descricao);put('norma',r&&r.item,200);put('requisitoLegal',r&&r.requisitoLegal);put('planoAcao',r&&r.planoAcao);
@@ -1493,7 +1503,10 @@ function formNc(r){
     field('Identificação do item inspecionado','n-titulo','<input id="n-titulo" name="titulo" required value="'+esc(d.titulo)+'" placeholder="Ex.: Guarda-corpo da plataforma 2">','full')+
     field('Classificação da ocorrência','n-cls','<select id="n-cls" name="classificacao" required>'+opts(CLASSES,d.classificacao)+'</select>')+
     field('Local ou setor','n-setor','<input id="n-setor" name="setor" value="'+esc(d.setor)+'">')+
+    field('Severidade (matriz de riscos)','n-sev','<select id="n-sev" name="severidade" data-chg="n-mz">'+mzOptS(d.severidade)+'</select>')+
+    field('Frequência (matriz de riscos)','n-freq','<select id="n-freq" name="frequencia" data-chg="n-mz">'+mzOptF(d.frequencia)+'</select>')+
     field('Grau de risco','n-grav','<select id="n-grav" name="gravidade">'+opts(GRAUS,d.gravidade)+'</select>')+
+    '<p class="small muted" id="n-mz-out" style="grid-column:1/-1;margin:0">'+esc(mzTxtAval(d.severidade,d.frequencia))+' O grau de risco é calculado por ela.</p>'+
     field('Prioridade','n-prio','<select id="n-prio" name="prioridade" required>'+opts(PRIOS,d.prioridade)+'</select>')+
     field('Prazo para execução','n-prazo','<input id="n-prazo" name="prazo" type="date" required value="'+esc(d.prazo)+'">')+
     field('Descrição da condição identificada','n-desc','<textarea id="n-desc" name="descricao" required placeholder="O que foi encontrado e qual o risco">'+esc(d.descricao)+'</textarea>','full')+
@@ -1762,7 +1775,8 @@ async function salvar(form,rascunho){
       if(!v.norma||!v.requisitoLegal){nao('Informe a norma e o requisito legal, ou marque a referência como pendente de validação.');return}
       var jaTem=!!r.id&&acoesDe(r.id).length>0;
       if(!jaTem&&!v.planoAcao){nao('Informe o plano de ação.');return}
-      data={inspId:v.inspId,titulo:v.titulo,setor:v.setor,gravidade:v.gravidade,prioridade:v.prioridade,classificacao:v.classificacao,prazo:v.prazo,descricao:v.descricao,recomendacao:v.recomendacao,requisitoLegal:v.requisitoLegal,norma:v.norma,refValidada:v.refValidada==='1',origemIA:!!r.draft.origemIA||!!(old&&old.origemIA),fotos:r.draft.fotos,revisadoPor:S.me.name||lsGet('sevia.resp'),revisadoEm:hoje()};
+      var avN=mzAval(v.severidade,v.frequencia);
+      data={inspId:v.inspId,titulo:v.titulo,setor:v.setor,gravidade:avN?avN.grau:v.gravidade,severidade:v.severidade||'',frequencia:v.frequencia||'',prioridade:v.prioridade,classificacao:v.classificacao,prazo:v.prazo,descricao:v.descricao,recomendacao:v.recomendacao,requisitoLegal:v.requisitoLegal,norma:v.norma,refValidada:v.refValidada==='1',origemIA:!!r.draft.origemIA||!!(old&&old.origemIA),fotos:r.draft.fotos,revisadoPor:S.me.name||lsGet('sevia.resp'),revisadoEm:hoje()};
       if(v.responsavel)lsSet('sevia.resp',v.responsavel);
     }else if(kind==='empresa'){
       col='empresas';old=r.id?empDe(r.id):null;
@@ -1807,7 +1821,7 @@ async function salvar(form,rascunho){
       for(var w=0;w<itensSalvar.length;w++){
         var im=itensSalvar[w],conf=im.classificacao==='Conformidade',pend=!String(im.norma||'').trim()||!String(im.requisitoLegal||'').trim();
         var nref=S.db.collection('ncs').doc();
-        await nref.set({inspId:ref.id,titulo:String(im.descricao).trim().slice(0,80),descricao:String(im.descricao).trim(),classificacao:im.classificacao,gravidade:im.gravidade,prioridade:({'Crítico':'Alta','Alto':'Alta','Médio':'Média','Baixo':'Baixa'})[im.gravidade]||'Média',setor:im.setor||v.setor,prazo:im.prazo||'',norma:String(im.norma||'').trim()||PENDENTE,requisitoLegal:String(im.requisitoLegal||'').trim()||PENDENTE,refValidada:!pend,recomendacao:'',origemIA:!!im.origemIA,fotos:im.fotos||[],revisadoPor:S.me.name||lsGet('sevia.resp'),revisadoEm:hoje(),criadoEm:Date.now(),atualizadoEm:Date.now()});
+        await nref.set({inspId:ref.id,titulo:String(im.descricao).trim().slice(0,80),descricao:String(im.descricao).trim(),classificacao:im.classificacao,gravidade:im.gravidade,severidade:im.severidade||'',frequencia:im.frequencia||'',prioridade:({'Crítico':'Alta','Alto':'Alta','Médio':'Média','Baixo':'Baixa'})[im.gravidade]||'Média',setor:im.setor||v.setor,prazo:im.prazo||'',norma:String(im.norma||'').trim()||PENDENTE,requisitoLegal:String(im.requisitoLegal||'').trim()||PENDENTE,refValidada:!pend,recomendacao:'',origemIA:!!im.origemIA,fotos:im.fotos||[],revisadoPor:S.me.name||lsGet('sevia.resp'),revisadoEm:hoje(),criadoEm:Date.now(),atualizadoEm:Date.now()});
         if(String(im.planoAcao||'').trim()){await S.db.collection('acoes').doc().set({ncId:nref.id,acao:String(im.planoAcao).trim(),responsavel:String(im.responsavel||'').trim(),prazo:im.prazo||'',status:'Pendente',concluidaEm:'',criadoEm:Date.now(),atualizadoEm:Date.now()})}
         if(im.responsavel)lsSet('sevia.resp',im.responsavel);
       }
@@ -1873,6 +1887,42 @@ function imgData(id){
   });
 }
 /* ---------- Relatório de campo (modelo do cliente) — PDF ---------- */
+/* matriz de riscos desenhada (vetor): usada no relatório de campo e na inspeção */
+function mzPdf(doc,M,CW,y,font,marks){
+  function hx(h){return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]}
+  doc.setTextColor(0,0,0);
+  var y0=y;y+=1.5;
+  var X=M+2,AW=(CW-4)*.74,c0=AW*.05,c1=AW*.07,c2=AW*.18,cf=(AW-c0-c1-c2)/5,H1=6,H2=5,H3=7,HR=5.2,HT=H1+H2+H3+5*HR;
+  doc.setLineWidth(.3);doc.setDrawColor(0,0,0);
+  function cz(t,x,yy,w,h,fill,col,sz,b){var f=fill?hx(fill):[255,255,255];doc.setFillColor(f[0],f[1],f[2]);doc.rect(x,yy,w,h,'FD');if(t==null||t==='')return;var c=hx(col||'000000');doc.setTextColor(c[0],c[1],c[2]);font(b===0?0:1,sz);doc.text(String(t),x+w/2,yy+h/2+sz*0.12,{align:'center'});doc.setTextColor(0,0,0)}
+  function ajusta(t,w,sz){font(1,sz);while(sz>4&&doc.getTextWidth(t)>w-2.4){sz-=.2;font(1,sz)}return sz}
+  function vert(t,x,yy,w,h,sz){doc.setFillColor(255,255,255);doc.rect(x,yy,w,h,'FD');font(1,sz);var tw=doc.getTextWidth(t);doc.text(t,x+w/2+sz*0.17,yy+h/2+tw/2,{angle:90})}
+  var yt=y;
+  doc.setFillColor(255,255,255);doc.rect(X,yt,c0+c1,H1+H2,'FD');font(1,6.5);doc.text('MATRIZ DE',X+(c0+c1)/2,yt+4.3,{align:'center'});doc.text('RISCOS',X+(c0+c1)/2,yt+8.3,{align:'center'});
+  cz('FREQÜÊNCIA',X+c0+c1,yt,AW-c0-c1,H1,null,'000000',8);
+  cz('PESOS',X+c0+c1,yt+H1,c2,H2,null,'000000',6.5);
+  MZ_F.forEach(function(f,k){cz(String(f[1]),X+c0+c1+c2+k*cf,yt+H1,cf,H2,null,'000000',7.5)});
+  var y3=yt+H1+H2;
+  vert('SEVERIDADE',X,y3,c0,H3+5*HR,8);
+  vert('PESOS',X+c0,y3,c1,H3,4.3);
+  cz('',X+c0+c1,y3,c2,H3,'BFBFBF');
+  MZ_F.forEach(function(f,k){var sz=ajusta(f[0],cf,5.6);cz(f[0],X+c0+c1+c2+k*cf,y3,cf,H3,null,'000000',sz)});
+  MZ_S.forEach(function(sv,r){var yy=y3+H3+r*HR;
+    cz(String(sv[1]),X+c0,yy,c1,HR,null,'000000',7.5);
+    cz(sv[0],X+c0+c1,yy,c2,HR,null,'000000',ajusta(sv[0],c2,7));
+    MZ_F.forEach(function(f,k){var v=sv[1]*f[1],c=mzCor(v);cz(String(v),X+c0+c1+c2+k*cf,yy,cf,HR,c[0],c[1],8.5)})});
+  if(marks)Object.keys(marks).forEach(function(key){var pp=key.split(','),r=+pp[0],kk=+pp[1],cx=X+c0+c1+c2+kk*cf,cy=y3+H3+r*HR;
+    marks[key].forEach(function(nn,i){var px=cx+2.7+i*4.2,py=cy+HR/2;doc.setFillColor(17,17,17);doc.circle(px,py,1.7,'F');font(1,5.5);doc.setTextColor(255,255,255);doc.text(String(nn),px,py+0.75,{align:'center'})});doc.setTextColor(0,0,0)});
+  /* legenda */
+  var lx=X+AW+(CW-4)*.05,lw=(CW-4)*.21;
+  cz('Nível de Risco',lx,yt,lw,6,'595959','FFFFFF',7);
+  MZ_LEG.forEach(function(l,k){var c=mzCor(l[1]);cz(l[0],lx,yt+7+k*6.8,lw,6,c[0],c[1],ajusta(l[0],lw,6.4))});
+  y=yt+HT+2;
+  font(0,7.5);doc.setTextColor(68,68,68);doc.text('Fonte: INS-0037 - Análise e Gerenciamento de Risco',X,y+3.5);doc.setTextColor(0,0,0);y+=5.5;
+  doc.setDrawColor(84,130,53);doc.setLineWidth(.4);doc.setLineDashPattern([1.2,1.2],0);doc.rect(M,y0,CW,y-y0,'S');doc.setLineDashPattern([],0);
+  doc.setDrawColor(0,0,0);doc.setLineWidth(.25);y+=4;
+  return y;
+}
 async function gerarPDFCampo(insp){
   var J=window.jspdf&&window.jspdf.jsPDF;
   if(!J||!S.downloads){toast('A geração de PDF não está disponível agora.');return}
@@ -1973,34 +2023,7 @@ async function gerarPDFCampo(insp){
   function hx(h){return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]}
   function cm(t,x,w,h,fill,col,sz){var f=hx(fill);doc.setFillColor(f[0],f[1],f[2]);doc.rect(x,y,w,h,'FD');var c=hx(col);doc.setTextColor(c[0],c[1],c[2]);font(1,sz);doc.text(t,x+w/2,y+h/2+sz*0.12,{align:'center'});doc.setTextColor(0,0,0)}
   /* layout idêntico ao modelo: título e FREQÜÊNCIA no topo, pesos, SEVERIDADE na vertical e legenda "Nível de Risco" ao lado */
-  var y0=y;y+=1.5;
-  var X=M+2,AW=(CW-4)*.74,c0=AW*.05,c1=AW*.07,c2=AW*.18,cf=(AW-c0-c1-c2)/5,H1=6,H2=5,H3=7,HR=5.2,HT=H1+H2+H3+5*HR;
-  doc.setLineWidth(.3);doc.setDrawColor(0,0,0);
-  function cz(t,x,yy,w,h,fill,col,sz,b){var f=fill?hx(fill):[255,255,255];doc.setFillColor(f[0],f[1],f[2]);doc.rect(x,yy,w,h,'FD');if(t==null||t==='')return;var c=hx(col||'000000');doc.setTextColor(c[0],c[1],c[2]);font(b===0?0:1,sz);doc.text(String(t),x+w/2,yy+h/2+sz*0.12,{align:'center'});doc.setTextColor(0,0,0)}
-  function ajusta(t,w,sz){font(1,sz);while(sz>4&&doc.getTextWidth(t)>w-2.4){sz-=.2;font(1,sz)}return sz}
-  function vert(t,x,yy,w,h,sz){doc.setFillColor(255,255,255);doc.rect(x,yy,w,h,'FD');font(1,sz);var tw=doc.getTextWidth(t);doc.text(t,x+w/2+sz*0.17,yy+h/2+tw/2,{angle:90})}
-  var yt=y;
-  doc.setFillColor(255,255,255);doc.rect(X,yt,c0+c1,H1+H2,'FD');font(1,6.5);doc.text('MATRIZ DE',X+(c0+c1)/2,yt+4.3,{align:'center'});doc.text('RISCOS',X+(c0+c1)/2,yt+8.3,{align:'center'});
-  cz('FREQÜÊNCIA',X+c0+c1,yt,AW-c0-c1,H1,null,'000000',8);
-  cz('PESOS',X+c0+c1,yt+H1,c2,H2,null,'000000',6.5);
-  MZ_F.forEach(function(f,k){cz(String(f[1]),X+c0+c1+c2+k*cf,yt+H1,cf,H2,null,'000000',7.5)});
-  var y3=yt+H1+H2;
-  vert('SEVERIDADE',X,y3,c0,H3+5*HR,8);
-  vert('PESOS',X+c0,y3,c1,H3,4.3);
-  cz('',X+c0+c1,y3,c2,H3,'BFBFBF');
-  MZ_F.forEach(function(f,k){var sz=ajusta(f[0],cf,5.6);cz(f[0],X+c0+c1+c2+k*cf,y3,cf,H3,null,'000000',sz)});
-  MZ_S.forEach(function(sv,r){var yy=y3+H3+r*HR;
-    cz(String(sv[1]),X+c0,yy,c1,HR,null,'000000',7.5);
-    cz(sv[0],X+c0+c1,yy,c2,HR,null,'000000',ajusta(sv[0],c2,7));
-    MZ_F.forEach(function(f,k){var v=sv[1]*f[1],c=mzCor(v);cz(String(v),X+c0+c1+c2+k*cf,yy,cf,HR,c[0],c[1],8.5)})});
-  /* legenda */
-  var lx=X+AW+(CW-4)*.05,lw=(CW-4)*.21;
-  cz('Nível de Risco',lx,yt,lw,6,'595959','FFFFFF',7);
-  MZ_LEG.forEach(function(l,k){var c=mzCor(l[1]);cz(l[0],lx,yt+7+k*6.8,lw,6,c[0],c[1],ajusta(l[0],lw,6.4))});
-  y=yt+HT+2;
-  font(0,7.5);doc.setTextColor(68,68,68);doc.text('Fonte: INS-0037 - Análise e Gerenciamento de Risco',X,y+3.5);doc.setTextColor(0,0,0);y+=5.5;
-  doc.setDrawColor(84,130,53);doc.setLineWidth(.4);doc.setLineDashPattern([1.2,1.2],0);doc.rect(M,y0,CW,y-y0,'S');doc.setLineDashPattern([],0);
-  doc.setDrawColor(0,0,0);doc.setLineWidth(.25);y+=4;
+  y=mzPdf(doc,M,CW,y,font);
   /* registros fotográficos */
   function tituloReg(){doc.rect(M,y,CW,7,'S');font(1,10);doc.text('REGISTROS FOTOGRÁFICOS E APONTAMENTOS:',M+2,y+4.9);y+=7}
   var cw=CW/2,iw=(cw-6)/2;
@@ -2120,7 +2143,7 @@ async function gerarPDF(id){
   var fn=0;
   function fotos(list){
     var items=(list||[]).map(function(i){return cache[i]}).filter(Boolean);if(!items.length)return;
-    var gap=5,cw=(CW-gap)/2,ch=62;
+    var gap=5,cw=(CW-gap)/2,ch=56;
     for(var k=0;k<items.length;k+=2){
       need(ch+10);
       for(var j=0;j<2&&k+j<items.length;j++){
@@ -2159,10 +2182,24 @@ async function gerarPDF(id){
   }
   var cont={'Crítico':0,'Alto':0,'Médio':0,'Baixo':0};ncs.forEach(function(n){if(cont[grau(n)]!=null)cont[grau(n)]++});
   var acs=[];ncs.forEach(function(n){acs=acs.concat(acoesDe(n.id))});
+  var R=mzResumo(ncs),marks={};R.L.forEach(function(x){var kk=x.a.si+','+x.a.fi;(marks[kk]=marks[kk]||[]).push(x.k)});
   section('1. Identificação');
-  var idr=[['Nº do relatório',num(insp)],['Data',fmt(insp.data)],['Empresa (contratante)',empNome(insp)],['CNPJ',empCnpj(insp)||'Não informado']].concat(insp.unidade?[['Unidade',insp.unidade]]:[],insp.setor?[['Setor / local',insp.setor]]:[],[['Realizado por',insp.responsavel]]);
-  if(ncs.length){idr.push(['Situação',stInsp(insp)]);idr.push(['Itens registrados',ncs.length+' (crítico '+cont['Crítico']+', alto '+cont['Alto']+', médio '+cont['Médio']+', baixo '+cont['Baixo']+')']);idr.push(['Ações no plano',acs.length+' (vencidas: '+acs.filter(vencida).length+')'])}
-  kv(idr);
+  var GC={'Crítico':[179,38,30],'Alto':[224,104,12],'Médio':[196,148,0],'Baixo':[46,125,50]};
+  function corG(g){return GC[g]||MU}
+  var idr=[['Empresa (contratante)',empNome(insp)],['CNPJ',empCnpj(insp)||'Não informado']].concat(insp.unidade?[['Unidade',insp.unidade]]:[],insp.setor?[['Setor / local',insp.setor]]:[],insp.endereco?[['Endereço',insp.endereco]]:[],insp.responsavel?[['Realizado por',insp.responsavel]]:[]);
+  /* identificação em duas colunas */
+  var gw=(CW-3)/2;
+  for(var q=0;q<idr.length;q+=2){
+    var par=[idr[q],idr[q+1]].filter(Boolean),ps=par.map(function(r){doc.setFont('helvetica','bold');doc.setFontSize(9.5);return doc.splitTextToSize(String(r[1]||'-').replace(/\s+/g,' '),gw-6)});
+    var gh=Math.max.apply(null,ps.map(function(l){return l.length}))*4.4+8.4;need(gh);
+    par.forEach(function(r,k){var x=M+k*(gw+3);
+      doc.setFillColor(250,250,250);doc.setDrawColor(221,221,221);doc.setLineWidth(0.2);doc.rect(x,y,gw,gh,'FD');
+      doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor.apply(doc,MU);doc.text(r[0],x+3,y+4.2);
+      if(r[0]==='Situação'){var sr2=stRel(r[1]),sc2=stCor(sr2);doc.setFillColor.apply(doc,sc2[0]);doc.roundedRect(x+3,y+5.6,30,5.4,1,1,'F');doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor.apply(doc,sc2[1]);doc.text(sr2,x+3+15,y+9.4,{align:'center'})}
+      else{doc.setFont('helvetica','bold');doc.setFontSize(9.5);doc.setTextColor.apply(doc,TX);ps[k].forEach(function(l,i){doc.text(l,x+3,y+8.6+i*4.4)})}});
+    y+=gh+2;
+  }
+  y+=4;
   var gn=1;
   function lista(k){var v=String(insp[k]||'');return CD[k][2]==='ta'&&k!=='rNota'?v.split(/\r?\n/).map(function(l){return l.replace(/[\t\u00a0]+/g,' ').replace(/^[\s•·●▪\-–—*]+/,'').trim()}).filter(Boolean).map(function(l,j){return (k==='equipe'?(j+1)+'. ':'• ')+l}).join('\n'):v.replace(/\t/g,' ')}
   function secGrp(g){
@@ -2179,41 +2216,113 @@ async function gerarPDF(id){
   /* ordem do preenchimento: identificação, empresa executante, fotos e, abaixo delas, a análise e os campos preenchidos */
   secGrp(GRP[0]);secFotos();GRP.slice(1).forEach(secGrp);
   if(insp.observacoes){gn++;section(gn+'. Observações');txt(obsEsp(insp.observacoes),{gap:4})}
-  if(ncs.length){gn++;section(gn+'. Itens e não conformidades identificados')}
-  ncs.forEach(function(n,idx){
-    need(30);
-    txt((idx+1)+'. '+n.titulo,{size:12,bold:true,color:BR,gap:1});
-    txt((n.classificacao||'Não conformidade')+'   |   Prioridade: '+prioDe(n)+'   |   Grau de risco: '+grau(n)+'   |   Status: '+stNc(n)+'   |   Prazo: '+fmt(n.prazo)+'   |   Local: '+(n.setor||'-'),{size:9,color:MU,gap:2});
-    if(n.descricao){txt('Descrição',{size:9,bold:true,gap:0.5});txt(n.descricao,{gap:2})}
-    if(n.norma){txt('Norma / item / subitem: '+n.norma,{size:9,color:MU,gap:2})}
-    if(n.requisitoLegal){txt('Requisito legal',{size:9,bold:true,gap:0.5});txt(n.requisitoLegal,{gap:2})}
-    if(!n.refValidada&&n.requisitoLegal!==PENDENTE)txt(PENDENTE,{size:9,bold:true,color:[154,91,0],gap:2});
-    if(n.revisadoEm)txt('Revisão: conferido por '+(n.revisadoPor||'-')+' em '+fmt(n.revisadoEm),{size:8,color:MU,gap:2});
-    if(n.recomendacao){txt('Recomendação técnica',{size:9,bold:true,gap:0.5});txt(n.recomendacao,{gap:2})}
-    fotos(n.fotos);
-    var L=acoesDe(n.id).sort(byPrazo);
-    txt('Plano de ação',{size:9,bold:true,gap:1});
-    if(!L.length){txt('Nenhuma ação definida.',{size:9,color:MU,gap:4})}
-    else{
-      var cols=[{w:78,t:'Ação'},{w:38,t:'Responsável'},{w:24,t:'Prazo'},{w:40,t:'Situação'}];
-      need(10);var x=M;doc.setFillColor(232,240,234);doc.rect(M,y,CW,6,'F');doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor.apply(doc,TX);
-      cols.forEach(function(c){doc.text(c.t,x+2,y+4.2);x+=c.w});y+=6;
-      L.forEach(function(a){
-        var cells=[a.acao,a.responsavel||'-',fmt(a.prazo),stAcao(a)];
-        doc.setFont('helvetica','normal');doc.setFontSize(8);
-        var wr=cells.map(function(c,k){return doc.splitTextToSize(String(c),cols[k].w-4)});
-        var h=Math.max.apply(null,wr.map(function(l){return l.length}))*3.6+3;need(h);
-        var xx=M;doc.setDrawColor(213,224,216);doc.setLineWidth(0.2);
-        wr.forEach(function(l,k){doc.rect(xx,y,cols[k].w,h);
-          if(k===3&&stAcao(a)==='Vencida')doc.setTextColor(179,38,30);else doc.setTextColor.apply(doc,TX);
-          doc.text(l,xx+2,y+4);xx+=cols[k].w});
+  if(ncs.length){if(MZ_NA_INSP){gn++;need(80);section(gn+'. Matriz de riscos');y=mzPdf(doc,M,CW,y,function(b,z){doc.setFont('helvetica',b?'bold':'normal');doc.setFontSize(z||9)},R.L.length?marks:null);
+    if(R.L.length){
+      doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor.apply(doc,MU);doc.text('Os círculos pretos na matriz indicam o número do item avaliado.',M,y);y+=4;
+      doc.setFontSize(7.5);var nl=doc.splitTextToSize('Critério de priorização desta inspeção: valor do risco = severidade × frequência. Severidade: Leve (2), Moderada (4), Grave (8), Crítica (16) e Catastrófica (32). Frequência: Remota (2), Pouco provável (3), Ocasional (5), Provável (8) e Freqüente (13). Níveis: muito baixo (4 a 8), baixo (10 a 24), médio (26 a 64), alto (80 a 128) e muito alto (160 ou mais).',CW);need(nl.length*3.4+3);doc.text(nl,M,y+2);y+=nl.length*3.4+3;
+      function hxp(h){return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]}
+      var AC=[{w:12,t:'Item'},{w:74,t:'Identificação'},{w:28,t:'Severidade'},{w:28,t:'Frequência'},{w:16,t:'Valor'},{w:22,t:'Nível'}];
+      need(24);var ax=M;doc.setFillColor(68,68,68);doc.rect(M,y,CW,6.4,'F');doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(255,255,255);
+      AC.forEach(function(c){doc.text(c.t,ax+2.5,y+4.4);ax+=c.w});y+=6.4;
+      R.L.forEach(function(x,ri){
+        var tt=String(x.n.titulo||'');doc.setFont('helvetica','normal');doc.setFontSize(8.5);var tl=doc.splitTextToSize(tt,AC[1].w-5).slice(0,2),h=Math.max(tl.length*3.9+3.6,7);need(h);
+        doc.setFillColor(ri%2?255:248,ri%2?255:248,ri%2?255:248);doc.rect(M,y,CW,h,'F');doc.setDrawColor(221,221,221);doc.setLineWidth(0.2);doc.rect(M,y,CW,h);
+        var cc=mzCor(x.a.v),xx=M;
+        doc.setTextColor.apply(doc,TX);doc.text(String(x.k),xx+2.5,y+4.4);xx+=AC[0].w;
+        doc.text(tl,xx+2.5,y+4.4);xx+=AC[1].w;
+        doc.text(mzCap(x.a.s)+' ('+MZ_S[x.a.si][1]+')',xx+2.5,y+4.4);xx+=AC[2].w;
+        doc.text(mzCap(x.a.f)+' ('+MZ_F[x.a.fi][1]+')',xx+2.5,y+4.4);xx+=AC[3].w;
+        doc.setFont('helvetica','bold');doc.text(String(x.a.v),xx+2.5,y+4.4);xx+=AC[4].w;
+        var fl=hxp(cc[0]),fc=hxp(cc[1]);doc.setFillColor(fl[0],fl[1],fl[2]);doc.rect(xx,y,AC[5].w,h,'FD');doc.setTextColor(fc[0],fc[1],fc[2]);doc.text(mzCap(x.a.nivel),xx+2.5,y+4.4);doc.setTextColor.apply(doc,TX);
         y+=h;
       });
-      y+=5;
+      y+=4;
     }
+    }
+    gn++;need(100);section(gn+'. Itens e não conformidades identificados')}
+  ncs.forEach(function(n,idx){
+    var g=grau(n),av0=mzAval(n.severidade,n.frequencia),gc=!RISCO_NA_INSP?[255,229,0]:av0?hex3(mzCor(av0.v)[0]):corG(g),gt=av0?hex3(mzCor(av0.v)[1]):[255,255,255],desc=String(n.descricao||'').trim(),tit=String(n.titulo||'');
+    if(tit.length>95&&desc&&desc.indexOf(tit.replace(/…$/,'').slice(0,40))===0)tit=tit.slice(0,95).replace(/\s+\S*$/,'')+'…';
+    var fl=n.fotos||[],fi=-1;fl.forEach(function(i,k){if(fi<0&&cache[i])fi=k});
+    var ph=null,PH=56,pw=0,TXW=CW;
+    /* texto do item */
+    var ops=[],th=0;
+    function blk(label,text,o){o=o||{};doc.setFont('helvetica','normal');doc.setFontSize(9.5);var ls=doc.splitTextToSize(String(text),TXW-(o.box?7:0));var h=ls.length*4.3+(label?4.4:0)+(o.box?4.5:0)+2.4;ops.push({label:label,ls:ls,h:h,o:o});th+=h}
+    var base=[n.norma,n.requisitoLegal].filter(Boolean),dg=function(v){return String(v).replace(/\D/g,'').replace(/^0+/,'')};
+    if(base.length===2&&dg(base[0])===dg(base[1]))base=[n.requisitoLegal];
+    if(base.length)blk('Requisito legal',base.join('  –  '));
+    if(!n.refValidada&&n.requisitoLegal!==PENDENTE)blk('',PENDENTE,{warn:true});
+    if(n.recomendacao)blk('Recomendação técnica',n.recomendacao,{box:true});
+    /* cabeçalho do cartão */
+    doc.setFont('helvetica','bold');doc.setFontSize(11.5);
+    var tl=doc.splitTextToSize('Item '+(idx+1)+' – '+tit,RISCO_NA_INSP?CW-36:CW-10),hh=Math.max(9.5,tl.length*5.2+3.8);
+    need(hh+17+(fl.some(function(i){return cache[i]})?84:36));
+    var sn=0;
+    /* 1. evidência fotográfica, 2. não conformidade, 3. plano de ação */
+    function sub(t){need(14);doc.setFont('helvetica','bold');doc.setFontSize(9.5);doc.setTextColor.apply(doc,BR);doc.text(t,M,y+3.6);doc.setDrawColor(221,221,221);doc.setLineWidth(0.2);doc.line(M,y+5.2,M+CW,y+5.2);y+=8.5}
+    if(fl.some(function(i){return cache[i]})){sub((++sn)+'. Evidência fotográfica');fotos(fl)}
+    sub((++sn)+'. '+(n.classificacao||'Não conformidade'));
+    need(hh+16);
+    doc.setFillColor(242,242,242);doc.rect(M,y,CW,hh,'F');doc.setFillColor.apply(doc,gc);doc.rect(M,y,1.8,hh,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(11.5);doc.setTextColor.apply(doc,BR);tl.forEach(function(l,i){doc.text(l,M+5,y+6+i*5.2)});
+    if(RISCO_NA_INSP){var cw2=26,cy=y+(hh-6.4)/2;doc.setFillColor.apply(doc,gc);doc.roundedRect(PW-M-cw2-2,cy,cw2,6.4,1.2,1.2,'F');
+    doc.setFontSize(7.5);doc.setTextColor.apply(doc,gt);var avB=mzAval(n.severidade,n.frequencia);doc.text('Risco '+(avB?avB.nivel:String(g||'-').toLowerCase()),PW-M-2-cw2/2,cy+4.4,{align:'center'})}
+    y+=hh+2.5;
+    y+=1.5;
+    var y1=y,yy=y,tx=M+(ph?pw+6:0),quebrou=false;
+    if(ph){var r=Math.min(pw/ph.w,PH/ph.h),w=ph.w*r,h=ph.h*r;
+      doc.setFillColor(246,246,246);doc.setDrawColor(201,201,201);doc.setLineWidth(0.2);doc.rect(M,y,pw,PH,'FD');
+      doc.addImage(ph.d,'JPEG',M+(pw-w)/2,y+(PH-h)/2,w,h);fn++;
+      doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor.apply(doc,MU);doc.text('Foto '+fn,M,y+PH+4)}
+    ops.forEach(function(op){
+      if(yy+op.h>282){doc.addPage();yy=M;tx=M;quebrou=true}
+      if(op.label){doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor.apply(doc,MU);doc.text(op.label,tx,yy+3);yy+=4.4}
+      var bx=op.o.box?4:0;
+      if(op.o.box){var bh=op.ls.length*4.3+4.5;doc.setFillColor(234,244,237);doc.rect(tx,yy,TXW,bh,'F');doc.setFillColor(46,125,50);doc.rect(tx,yy,1.2,bh,'F');yy+=1.8}
+      doc.setFont('helvetica',op.o.warn?'bold':'normal');doc.setFontSize(9.5);if(op.o.warn)doc.setTextColor(154,91,0);else doc.setTextColor.apply(doc,TX);
+      op.ls.forEach(function(l,i){doc.text(l,tx+bx+(op.o.box?1.5:0),yy+3.4+i*4.3)});
+      yy+=op.ls.length*4.3+(op.o.box?2.7:0)+2.4;
+    });
+    y=quebrou?yy:Math.max(yy,ph?y1+PH+7:yy);
+    var L=acoesDe(n.id).sort(byPrazo);
+    var h0=0;if(L.length){doc.setFont('helvetica','normal');doc.setFontSize(8.5);var a0=L[0];h0=Math.max.apply(null,[a0.acao,n.setor||'-',a0.responsavel||'-',fmt(a0.prazo),stAcao(a0)].map(function(c,k){return doc.splitTextToSize(String(c),[62,28,32,24,34][k]-5).length}))*3.9+3.6}
+    need(L.length?8.5+6.4+h0+1:20);sub((++sn)+'. Plano de ação');
+    if(!L.length){txt('Nenhuma ação definida.',{size:9,color:MU,gap:4})}
+    else{
+      var cols=[{w:62,t:'Ação'},{w:28,t:'Local'},{w:32,t:'Responsável'},{w:24,t:'Prazo'},{w:34,t:'Situação'}];
+      var x=M;doc.setFillColor(68,68,68);doc.rect(M,y,CW,6.4,'F');doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(255,255,255);
+      cols.forEach(function(c){doc.text(c.t,x+2.5,y+4.4);x+=c.w});y+=6.4;
+      L.forEach(function(a,ri){
+        var st=stAcao(a),cells=[a.acao,n.setor||'-',a.responsavel||'-',fmt(a.prazo),st];
+        doc.setFont('helvetica','normal');doc.setFontSize(8.5);
+        var wr=cells.map(function(c,k){return doc.splitTextToSize(String(c),cols[k].w-5)});
+        var h=Math.max.apply(null,wr.map(function(l){return l.length}))*3.9+3.6;need(h);
+        var xx=M;doc.setFillColor(ri%2?255:248,ri%2?255:248,ri%2?255:248);doc.rect(M,y,CW,h,'F');
+        doc.setDrawColor(221,221,221);doc.setLineWidth(0.2);doc.rect(M,y,CW,h);
+        wr.forEach(function(l,k){
+          if(k===4){var sr=stRel(st),sc=stCor(sr),cy2=y+(h-5.2)/2;doc.setFillColor.apply(doc,sc[0]);doc.roundedRect(xx+2.5,cy2,27,5.2,1,1,'F');doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor.apply(doc,sc[1]);doc.text(sr,xx+2.5+13.5,cy2+3.7,{align:'center'})}
+          else{doc.setFont('helvetica','normal');doc.setTextColor.apply(doc,TX);doc.text(l,xx+2.5,y+4.4)}
+          xx+=cols[k].w});
+        y+=h;
+      });
+      y+=4;
+    }
+    if(idx<ncs.length-1){y+=2;need(8)}
   });
+  if(ncs.length){
+    gn++;var PT=parecerTec(insp,ncs,acs);doc.setFont('helvetica','normal');doc.setFontSize(10);var PH2=PT.reduce(function(t,x){return t+doc.splitTextToSize(x,CW).length*4.9+3},0);need(14+(RISCO_NA_INSP&&R.L.length?19:0)+PH2+36);section(gn+'. Parecer técnico e conclusão');
+    if(RISCO_NA_INSP&&R.L.length){
+      function hxq(h){return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]}
+      var cw3=(CW-3)/2,KC=[['Risco médio da inspeção',R.media,R.nivelMedia],['Maior risco identificado',R.max.a.v,R.max.a.nivel]];
+      KC.forEach(function(kc,k){var c=mzCor(kc[1]),f=hxq(c[0]),t=hxq(c[1]),x=M+k*(cw3+3);doc.setFillColor(f[0],f[1],f[2]);doc.setDrawColor(221,221,221);doc.rect(x,y,cw3,15,'FD');
+        doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(t[0],t[1],t[2]);doc.text(kc[0],x+4,y+5);
+        doc.setFont('helvetica','bold');doc.setFontSize(14);doc.text(kc[1]+'  ·  '+mzCap(kc[2]),x+4,y+11.6)});
+      y+=19;
+    }
+    PT.forEach(function(pp){txt(pp,{size:10,gap:3})});
+  }
   var rt=respTec(insp);
-  need(34);y+=14;doc.setDrawColor.apply(doc,TX);doc.setLineWidth(0.3);doc.line(PW/2-38,y,PW/2+38,y);y+=5;
+  need(46);y+=26;doc.setDrawColor.apply(doc,TX);doc.setLineWidth(0.3);doc.line(PW/2-38,y,PW/2+38,y);y+=5;
   doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor.apply(doc,TX);doc.text(rt.nome||'-',PW/2,y,{align:'center'});y+=4.8;
   doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor.apply(doc,TX);doc.text(rt.funcao||'-',PW/2,y,{align:'center'});y+=4.5;
   doc.text('Registro MTE: '+(rt.reg||'-'),PW/2,y,{align:'center'});y+=7;
@@ -2241,6 +2350,8 @@ function imgBytes(id){
 /* ---------- Relatório de campo (modelo do cliente) — Word ---------- */
 function obsEsp(t){return String(t==null?'':t).replace(/([^\n])\n(EPI: )/g,'$1\n\n$2')}
 function linhasDe(t){return String(t==null?'':t).split(/\r?\n/).map(function(s){return s.replace(/^\s*(?:[-•*–]|\d+[.)])\s*/,'').trim()}).filter(Boolean)}
+var RISCO_NA_INSP=false; /* true = mostra nível de risco (selo e quadros) na inspeção */
+var MZ_NA_INSP=false; /* true = mostra matriz de riscos no relatório de inspeção */
 var MZ_F=[['REMOTA',2],['POUCO PROVÁVEL',3],['OCASIONAL',5],['PROVÁVEL',8],['FREQÜENTE',13]],MZ_S=[['CATASTRÓFICA',32],['CRÍTICA',16],['GRAVE',8],['MODERADA',4],['LEVE',2]];
 var MZ_LEG=[['MUITO ALTO (160 ou mais)',160],['ALTO (80 a 128)',80],['MÉDIO (26 a 64)',26],['BAIXO (10 a 24)',10],['MUITO BAIXO (4 a 8)',0]];
 function mzNorm(t){return String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/freq\w*ente/,'frequente').trim()}
@@ -2270,6 +2381,49 @@ function mzTexto(items,epis,alts){
   if(a.length)out.push('Trabalho em altura: '+a[0]);
   return out.join('\n');
 }
+/* avaliação pela matriz: severidade × frequência -> valor, nível e grau de risco do SevIA */
+var MZ2G={'muito alto':'Crítico','alto':'Alto','médio':'Médio','baixo':'Baixo','muito baixo':'Baixo'};
+function mzCap(t){t=String(t||'').toLowerCase().replace('freqüente','frequente');return t.charAt(0).toUpperCase()+t.slice(1)}
+function mzAval(sev,freq){
+  var si=-1,fi=-1;MZ_S.forEach(function(x,k){if(mzNorm(x[0])===mzNorm(sev))si=k});MZ_F.forEach(function(x,k){if(mzNorm(x[0])===mzNorm(freq))fi=k});
+  if(si<0||fi<0)return null;
+  var v=MZ_S[si][1]*MZ_F[fi][1],nv=mzNivel(v);
+  return {v:v,nivel:nv,grau:MZ2G[nv],s:MZ_S[si][0],f:MZ_F[fi][0],si:si,fi:fi};
+}
+function mzOptS(sel){return '<option value="">Selecione</option>'+opts(MZ_S.slice().reverse().map(function(x){return [x[0],mzCap(x[0])+' ('+x[1]+')']}),sel)}
+function mzOptF(sel){return '<option value="">Selecione</option>'+opts(MZ_F.map(function(x){return [x[0],mzCap(x[0])+' ('+x[1]+')']}),sel)}
+function mzTxtAval(sev,freq){var a=mzAval(sev,freq);return a?'Risco pela matriz: '+a.v+' ('+a.nivel+') = severidade '+mzCap(a.s).toLowerCase()+' ('+MZ_S[a.si][1]+') × frequência '+mzCap(a.f).toLowerCase()+' ('+MZ_F[a.fi][1]+').':'Informe severidade e frequência para calcular o risco pela matriz.'}
+/* resumo da inspeção pela matriz: risco médio, maior risco, distribuição e parecer técnico */
+function mzResumo(ncs){
+  var L=[];ncs.forEach(function(n,k){var a=mzAval(n.severidade,n.frequencia);if(a&&n.classificacao!=='Conformidade')L.push({k:k+1,n:n,a:a})});
+  if(!L.length)return {L:L,media:0,max:null,dist:{}};
+  var soma=0,max=L[0];L.forEach(function(x){soma+=x.a.v;if(x.a.v>max.a.v)max=x});
+  var media=Math.round(soma/L.length),dist={};L.forEach(function(x){dist[x.a.nivel]=(dist[x.a.nivel]||0)+1});
+  return {L:L,media:media,nivelMedia:mzNivel(media),max:max,dist:dist};
+}
+function parecerTec(insp,ncs,acs){
+  var R=mzResumo(ncs),ps=[],tot=ncs.length,nc=ncs.filter(function(n){return n.classificacao!=='Conformidade'}).length;
+  var venc=acs.filter(vencida).length;
+  ps.push('Foram registrados '+tot+(tot===1?' item':' itens')+' na inspeção de segurança de '+fmt(insp.data)+(insp.setor?', no setor '+insp.setor:'')+', sendo '+nc+(nc===1?' não conformidade':' não conformidades')+'.');
+  if(!RISCO_NA_INSP){
+    if(acs.length)ps.push('Foram definidas '+acs.length+(acs.length===1?' ação':' ações')+' no plano de ação para tratar '+(nc===1?'a não conformidade identificada':'as não conformidades identificadas')+'.');
+    if(venc)ps.push('Há '+venc+(venc===1?' ação vencida':' ações vencidas')+' no plano, o que exige cobrança do responsável e revisão do prazo.');
+    ps.push('Conclusão: '+(nc?'recomenda-se acompanhar a execução das ações conforme os prazos definidos, com verificação da eficácia após a conclusão.':'não foram identificadas não conformidades nesta inspeção; recomenda-se manter as condições observadas.'));
+    return ps}
+  if(!R.L.length){ps.push('Os itens não possuem severidade e frequência informadas, portanto o risco não foi quantificado pela matriz. Recomenda-se completar a avaliação para permitir a priorização técnica das ações.');return ps}
+  var ordem=['muito alto','alto','médio','baixo','muito baixo'],dd=ordem.filter(function(k){return R.dist[k]}).map(function(k){return R.dist[k]+' de risco '+k});
+  ps.push('A avaliação de risco (severidade × frequência) abrangeu '+R.L.length+(R.L.length===1?' item':' itens')+': '+dd.join(', ')+'. O risco médio da inspeção é '+R.media+' ('+R.nivelMedia+').');
+  var t=R.max.n.titulo||'';t=t.length>80?t.slice(0,80).replace(/\s+\S*$/,'')+'…':t;
+  ps.push('O maior risco identificado é o item '+R.max.k+' ('+t+'), com valor '+R.max.a.v+' ('+R.max.a.nivel+'): severidade '+mzCap(R.max.a.s).toLowerCase()+' e frequência '+mzCap(R.max.a.f).toLowerCase()+'.');
+  var urg=R.L.filter(function(x){return x.a.v>=80});
+  if(urg.length){
+    var pz=urg.map(function(x){return x.n.prazo}).filter(Boolean).sort()[0];
+    var u1=urg.length===1;ps.push((u1?'O item ':'Os itens ')+urg.map(function(x){return x.k}).join(', ')+(u1?' apresenta risco alto ou muito alto e deve':' apresentam risco alto ou muito alto e devem')+' ser tratado'+(u1?'':'s')+' com prioridade'+(pz?', com a primeira ação prevista para '+fmt(pz):'')+'. Enquanto a condição não for controlada, recomenda-se avaliar a restrição da atividade ou do local afetado.');
+  }else ps.push('Não há itens de risco alto ou muito alto. As ações dos itens de risco médio e baixo devem ser acompanhadas conforme os prazos do plano de ação, evitando que evoluam para níveis superiores.');
+  if(venc)ps.push('Há '+venc+(venc===1?' ação vencida':' ações vencidas')+' no plano, o que exige cobrança do responsável e revisão do prazo.');
+  ps.push('Conclusão: '+(R.max.a.v>=160?'a condição geral é crítica e exige ação imediata e acompanhamento da diretoria.':R.max.a.v>=80?'a condição geral é de atenção elevada, com ações prioritárias definidas.':R.media>=26?'a condição geral é de risco moderado, com controles a reforçar.':'a condição geral é de risco baixo, mantidas as medidas de controle existentes.'));
+  return ps;
+}
 function mzCor(v){return v>=160?['E5231B','FFFFFF']:v>=80?['F59A23','000000']:v>=26?['FFE600','000000']:v>=10?['8CC63F','000000']:['2E9E6E','FFFFFF']}
 async function matrizBytes(){
   try{var r=await fetch('/matriz-riscos.png');if(!r.ok)return null;var u=new Uint8Array(await r.arrayBuffer());
@@ -2291,6 +2445,26 @@ function blocosCampo(insp){
 /* cabeçalho do bloco: "DESCRIÇÃO DA ATIVIDADE [NN]: ..." e, abaixo, o nome do grupo */
 function cabBloco(b){
   return {l:'DESCRIÇÃO DA ATIVIDADE'+(b.n?' '+b.n:'')+': ',v:String(b.at||'').trim()||((b.at===undefined&&b.n)?b.titulo:'')||'Não se aplica'};
+}
+/* matriz de riscos em tabela do Word: usada no relatório de campo e na inspeção */
+function mzWord(D,TW,borders,P,tbl,marks){
+  var AL=D.AlignmentType;
+  /* matriz no mesmo layout do modelo: FREQÜÊNCIA, pesos, SEVERIDADE vertical e legenda ao lado */
+  function mc(t,w,fill,col,o){o=o||{};var nb={style:D.BorderStyle.NONE,size:0,color:'FFFFFF'};
+    return new D.TableCell({width:{size:Math.round(TW*w/100),type:D.WidthType.DXA},borders:o.sem?{top:nb,bottom:nb,left:nb,right:nb}:borders,columnSpan:o.span,rowSpan:o.rows,textDirection:o.vert?D.TextDirection.BOTTOM_TO_TOP_LEFT_TO_RIGHT:undefined,verticalAlign:D.VerticalAlign.CENTER,
+      shading:fill?{type:D.ShadingType.CLEAR,fill:fill,color:'auto'}:undefined,margins:{top:30,bottom:30,left:50,right:50},
+      children:[P(t,{b:o.b!==false,al:AL.CENTER,after:0,size:o.size||16,color:col||'000000',kn:true})]})}
+  var LGD=MZ_LEG.map(function(l){var c=mzCor(l[1]);return {t:l[0],f:c[0],c:c[1]}});
+  function lg(k){return mc(LGD[k].t,20,LGD[k].f,LGD[k].c,{size:13})}
+  var mr=[];
+  mr.push(new D.TableRow({cantSplit:true,children:[mc('MATRIZ DE RISCOS',13,null,'000000',{span:2,rows:2,size:15}),mc('FREQÜÊNCIA',67,null,'000000',{span:6,size:17}),mc('Nível de Risco',20,'595959','FFFFFF',{size:14})]}));
+  mr.push(new D.TableRow({cantSplit:true,children:[mc('PESOS',17,null,'000000',{size:14})].concat(MZ_F.map(function(f){return mc(String(f[1]),10,null,'000000',{size:16})})).concat([lg(0)])}));
+  mr.push(new D.TableRow({cantSplit:true,children:[mc('SEVERIDADE',5,null,'000000',{rows:6,vert:true,size:16}),mc('PESOS',8,null,'000000',{size:10}),mc('',17,'BFBFBF')].concat(MZ_F.map(function(f){return mc(f[0],10,null,'000000',{size:11})})).concat([lg(1)])}));
+  MZ_S.forEach(function(sv,r){
+    var ch=[mc(String(sv[1]),8,null,'000000',{size:16}),mc(sv[0],17,null,'000000',{size:15})].concat(MZ_F.map(function(f,kk){var v=sv[1]*f[1],c=mzCor(v),mk=marks&&marks[r+','+kk];return mc(String(v)+(mk?'  ('+mk.join(',')+')':''),10,c[0],c[1],{size:18})}));
+    if(r<3)ch.push(lg(r+2)); else if(r===3)ch.push(mc('',20,null,'000000',{rows:2,sem:true}));
+    mr.push(new D.TableRow({cantSplit:true,children:ch}))});
+  return [tbl(mr,[5,8,17,10,10,10,10,10,20]),P('Fonte: INS-0037 - Análise e Gerenciamento de Risco',{size:16,color:'444444',before:40}),P('',{after:80,size:8})];
 }
 async function gerarWordCampo(insp){
   var D=window.docx;
@@ -2355,22 +2529,7 @@ async function gerarWordCampo(insp){
   sec('RISCOS OCUPACIONAIS / PERIGOS OBSERVADOS',rk.concat(insp.rNota?[P(insp.rNota,{before:40})]:[]));
   sec('OBSERVAÇÕES GERAIS',texto(obsEsp(insp.observacoes),true),true);
   /* matriz de riscos desenhada (nítida em qualquer zoom) */
-  /* matriz no mesmo layout do modelo: FREQÜÊNCIA, pesos, SEVERIDADE vertical e legenda ao lado */
-  function mc(t,w,fill,col,o){o=o||{};var nb={style:D.BorderStyle.NONE,size:0,color:'FFFFFF'};
-    return new D.TableCell({width:{size:Math.round(TW*w/100),type:D.WidthType.DXA},borders:o.sem?{top:nb,bottom:nb,left:nb,right:nb}:borders,columnSpan:o.span,rowSpan:o.rows,textDirection:o.vert?D.TextDirection.BOTTOM_TO_TOP_LEFT_TO_RIGHT:undefined,verticalAlign:D.VerticalAlign.CENTER,
-      shading:fill?{type:D.ShadingType.CLEAR,fill:fill,color:'auto'}:undefined,margins:{top:30,bottom:30,left:50,right:50},
-      children:[P(t,{b:o.b!==false,al:AL.CENTER,after:0,size:o.size||16,color:col||'000000',kn:true})]})}
-  var LGD=MZ_LEG.map(function(l){var c=mzCor(l[1]);return {t:l[0],f:c[0],c:c[1]}});
-  function lg(k){return mc(LGD[k].t,20,LGD[k].f,LGD[k].c,{size:13})}
-  var mr=[];
-  mr.push(new D.TableRow({cantSplit:true,children:[mc('MATRIZ DE RISCOS',13,null,'000000',{span:2,rows:2,size:15}),mc('FREQÜÊNCIA',67,null,'000000',{span:6,size:17}),mc('Nível de Risco',20,'595959','FFFFFF',{size:14})]}));
-  mr.push(new D.TableRow({cantSplit:true,children:[mc('PESOS',17,null,'000000',{size:14})].concat(MZ_F.map(function(f){return mc(String(f[1]),10,null,'000000',{size:16})})).concat([lg(0)])}));
-  mr.push(new D.TableRow({cantSplit:true,children:[mc('SEVERIDADE',5,null,'000000',{rows:6,vert:true,size:16}),mc('PESOS',8,null,'000000',{size:10}),mc('',17,'BFBFBF')].concat(MZ_F.map(function(f){return mc(f[0],10,null,'000000',{size:11})})).concat([lg(1)])}));
-  MZ_S.forEach(function(sv,r){
-    var ch=[mc(String(sv[1]),8,null,'000000',{size:16}),mc(sv[0],17,null,'000000',{size:15})].concat(MZ_F.map(function(f){var v=sv[1]*f[1],c=mzCor(v);return mc(String(v),10,c[0],c[1],{size:18})}));
-    if(r<3)ch.push(lg(r+2)); else if(r===3)ch.push(mc('',20,null,'000000',{rows:2,sem:true}));
-    mr.push(new D.TableRow({cantSplit:true,children:ch}))});
-  out.push(tbl(mr,[5,8,17,10,10,10,10,10,20]),P('Fonte: INS-0037 - Análise e Gerenciamento de Risco',{size:16,color:'444444',before:40}),gap());
+  mzWord(D,TW,borders,P,tbl).forEach(function(x){out.push(x)});
   /* registros fotográficos */
   function fotosCel(list){
     var it=list.map(function(i){return cache[i]}).filter(Boolean),ps=[];
@@ -2441,8 +2600,14 @@ async function gerarWord(id){
   }
   var bd={style:D.BorderStyle.SINGLE,size:4,color:'999999'},borders={top:bd,bottom:bd,left:bd,right:bd};
   var TW=9638;function cell(t,w,o){o=o||{};return new D.TableCell({width:{size:Math.round(TW*w/100),type:D.WidthType.DXA},borders:borders,shading:o.fill?{type:D.ShadingType.CLEAR,fill:o.fill,color:'auto'}:undefined,margins:{top:60,bottom:60,left:100,right:100},children:[new D.Paragraph({children:[new D.TextRun({text:String(t==null?'':t),bold:!!o.b,size:20,color:o.color||'000000'})]})]})}
-  function tab(rows,ws,head){
-    return new D.Table({width:{size:TW,type:D.WidthType.DXA},layout:D.TableLayoutType.FIXED,columnWidths:ws.map(function(w){return Math.round(TW*w/100)}),rows:rows.map(function(r,ri){return new D.TableRow({tableHeader:!!head&&ri===0,children:r.map(function(c,ci){return cell(c,ws[ci],{b:!!head&&ri===0,fill:(head&&ri===0)?'EEEEEE':undefined,color:(typeof c==='string'&&c==='Vencida')?'C62828':undefined})})})})});
+  var GCW={'Crítico':'B3261E','Alto':'E0680C','Médio':'C49400','Baixo':'2E7D32'};
+  function nb0(){var n={style:D.BorderStyle.NONE,size:0,color:'FFFFFF'};return {top:n,bottom:n,left:n,right:n}}
+  function bx(c,w,o){o=o||{};var l={style:D.BorderStyle.SINGLE,size:o.lsz||4,color:o.lc||'DDDDDD'},t={style:D.BorderStyle.SINGLE,size:o.tsz||4,color:o.tc||'DDDDDD'},n={style:D.BorderStyle.SINGLE,size:4,color:'DDDDDD'};
+    return new D.TableCell({width:{size:Math.round(TW*w/100),type:D.WidthType.DXA},verticalAlign:D.VerticalAlign.CENTER,borders:o.sem?nb0():{top:t,bottom:o.bb?{style:D.BorderStyle.SINGLE,size:6,color:'DDDDDD'}:n,left:l,right:n},shading:o.fill?{type:D.ShadingType.CLEAR,fill:o.fill,color:'auto'}:undefined,margins:{top:70,bottom:70,left:110,right:110},children:c})}
+  function tx1(t,o){o=o||{};return new D.Paragraph({alignment:o.al,spacing:{after:o.after||0},children:[new D.TextRun({text:String(t==null?'':t),bold:!!o.b,size:o.size||18,color:o.color||'000000'})]})}
+  function tabX(rows,ws){return new D.Table({width:{size:TW,type:D.WidthType.DXA},layout:D.TableLayoutType.FIXED,columnWidths:ws.map(function(w){return Math.round(TW*w/100)}),rows:rows})}
+  function tab(rows,ws,head,sc){
+    return new D.Table({width:{size:TW,type:D.WidthType.DXA},layout:D.TableLayoutType.FIXED,columnWidths:ws.map(function(w){return Math.round(TW*w/100)}),rows:rows.map(function(r,ri){return new D.TableRow({tableHeader:!!head&&ri===0,children:r.map(function(c,ci){var sit=ci===(sc==null?3:sc)&&ri>0&&typeof c==='string',sh=sit?stHex(/Conclu/.test(c)?'Concluída':(/Pendente|Venc/.test(c)?'Pendente':'Em andamento')):null;return cell(c,ws[ci],{b:(!!head&&ri===0)||sit,fill:(head&&ri===0)?'444444':(sit?sh[0]:(ri%2===0?'F8F8F8':undefined)),color:(head&&ri===0)?'FFFFFF':(sit?sh[1]:undefined)})})})})});
   }
   var cont={'Crítico':0,'Alto':0,'Médio':0,'Baixo':0};ncs.forEach(function(n){if(cont[grau(n)]!=null)cont[grau(n)]++});
   var acs=[];ncs.forEach(function(n){acs=acs.concat(acoesDe(n.id))});
@@ -2459,6 +2624,7 @@ async function gerarWord(id){
   row2([inl('Data',fmt(insp.data))],[inl(tr(insp)+' Nº',num(insp))]);
   row2([inl('Empresa',empNome(insp)||'-')],[inl('CNPJ',empCnpj(insp)||'Não informado')]);
   if(insp.unidade||insp.setor)row1([inl('Unidade / setor',(insp.unidade||'-')+' / '+(insp.setor||'-'))]);
+  if(insp.tipo==='inspecao'&&insp.responsavel)row1([inl('Realizado por',insp.responsavel)]);
   if(insp.execNome||insp.execCnpj)row2([inl('Empresa executante',insp.execNome||'-')],[inl('CNPJ executante',insp.execCnpj||'-')]);
   if(insp.representante)row1([inl('Representante da empresa',insp.representante)]);
   campo('equipe','n');
@@ -2472,30 +2638,55 @@ async function gerarWord(id){
   if(rk.length||insp.rNota){var rr=[lbl('Riscos ocupacionais')];rk.forEach(function(k){rr.push(new D.Paragraph({spacing:{after:40},children:[new D.TextRun({text:CD[k][1].replace('Riscos ','').replace(/^./,function(c){return c.toUpperCase()})+': ',bold:true,size:20}),new D.TextRun({text:insp[k],size:20})]}))});if(insp.rNota)rr.push(new D.Paragraph({spacing:{before:80,after:40},children:[new D.TextRun({text:'Nota: ',bold:true,size:20}),new D.TextRun({text:insp.rNota,size:20})]}));row1(rr)}
   if(insp.observacoes)row1([lbl('Observações')].concat(lin(obsEsp(insp.observacoes))));
   var rt=respTec(insp);
-  row1([
-    new D.Paragraph({alignment:D.AlignmentType.CENTER,spacing:{before:520},children:[new D.TextRun({text:'______________________________________',size:20})]}),
-    new D.Paragraph({alignment:D.AlignmentType.CENTER,spacing:{before:60},children:[new D.TextRun({text:rt.nome||'-',bold:true,size:21})]}),
-    new D.Paragraph({alignment:D.AlignmentType.CENTER,children:[new D.TextRun({text:rt.funcao||'-',size:20})]}),
+  var SIG=[
+    new D.Paragraph({keepNext:true,alignment:D.AlignmentType.CENTER,spacing:{before:1100},children:[new D.TextRun({text:'______________________________________',size:20})]}),
+    new D.Paragraph({keepNext:true,alignment:D.AlignmentType.CENTER,spacing:{before:60},children:[new D.TextRun({text:rt.nome||'-',bold:true,size:21})]}),
+    new D.Paragraph({keepNext:true,alignment:D.AlignmentType.CENTER,children:[new D.TextRun({text:rt.funcao||'-',size:20})]}),
     new D.Paragraph({alignment:D.AlignmentType.CENTER,spacing:{after:120},children:[new D.TextRun({text:'Registro MTE: '+(rt.reg||'-'),size:20})]})
-  ]);
-  var kids=[new D.Table({width:{size:TW,type:D.WidthType.DXA},layout:D.TableLayoutType.FIXED,columnWidths:[Math.round(TW/2),TW-Math.round(TW/2)],rows:TR})].concat(!ncs.length?[]:[
-    P('Itens registrados: '+ncs.length+' (crítico '+cont['Crítico']+', alto '+cont['Alto']+', médio '+cont['Médio']+', baixo '+cont['Baixo']+')  |  Ações no plano: '+acs.length+' (vencidas: '+acs.filter(vencida).length+')',{before:160,after:60,size:18,color:'444444'})]);
-  if(ncs.length)kids.push(P('Itens e não conformidades identificados',{b:true,size:26,h:D.HeadingLevel.HEADING_2,pb:true}));
+  ];
+  if(!ncs.length)row1(SIG);
+  var kids=[new D.Table({width:{size:TW,type:D.WidthType.DXA},layout:D.TableLayoutType.FIXED,columnWidths:[Math.round(TW/2),TW-Math.round(TW/2)],rows:TR})];
+  var R=mzResumo(ncs),marks={};R.L.forEach(function(x){var kk=x.a.si+','+x.a.fi;(marks[kk]=marks[kk]||[]).push(x.k)});
+  if(ncs.length&&MZ_NA_INSP){kids.push(P('Matriz de riscos',{b:true,size:24,before:240,after:80}));mzWord(D,TW,borders,P,tabX,R.L.length?marks:null).forEach(function(x){kids.push(x)});
+    if(R.L.length){
+      kids.push(P('Os números entre parênteses na matriz indicam o item avaliado.',{size:16,color:'444444',after:80}));
+      kids.push(P('Critério de priorização desta inspeção: valor do risco = severidade × frequência. Severidade: Leve (2), Moderada (4), Grave (8), Crítica (16) e Catastrófica (32). Frequência: Remota (2), Pouco provável (3), Ocasional (5), Provável (8) e Freqüente (13). Níveis: muito baixo (4 a 8), baixo (10 a 24), médio (26 a 64), alto (80 a 128) e muito alto (160 ou mais).',{size:15,color:'444444',after:80}));
+      var WR=[['Item','Identificação','Severidade','Frequência','Valor','Nível']].concat(R.L.map(function(x){return [String(x.k),String(x.n.titulo||'').slice(0,110),mzCap(x.a.s)+' ('+MZ_S[x.a.si][1]+')',mzCap(x.a.f)+' ('+MZ_F[x.a.fi][1]+')',String(x.a.v),mzCap(x.a.nivel)]}));
+      kids.push(new D.Table({width:{size:TW,type:D.WidthType.DXA},layout:D.TableLayoutType.FIXED,columnWidths:[7,40,17,17,8,11].map(function(w){return Math.round(TW*w/100)}),rows:WR.map(function(r,ri){return new D.TableRow({tableHeader:ri===0,cantSplit:true,children:r.map(function(c,ci){var f=ri===0?'444444':(ci===5?mzCor(R.L[ri-1].a.v)[0]:(ri%2===0?'F8F8F8':undefined)),col=ri===0?'FFFFFF':(ci===5?mzCor(R.L[ri-1].a.v)[1]:undefined);return cell(c,[7,40,17,17,8,11][ci],{b:ri===0||ci>=4,fill:f,color:col})})})})}));
+    }
+  }
+  if(ncs.length)kids.push(P('Itens e não conformidades identificados',{b:true,size:26,h:D.HeadingLevel.HEADING_2,pb:!!MZ_NA_INSP,before:MZ_NA_INSP?0:260}));
   ncs.forEach(function(n,idx){
-    kids.push(P((idx+1)+'. '+n.titulo,{b:true,size:24,h:D.HeadingLevel.HEADING_3,before:200,after:60}));
-    kids.push(P((n.classificacao||'Não conformidade')+'  |  Prioridade: '+prioDe(n)+'  |  Grau de risco: '+grau(n)+'  |  Status: '+stNc(n)+'  |  Prazo: '+fmt(n.prazo)+'  |  Local: '+(n.setor||'-'),{size:18,color:'444444'}));
-    if(n.descricao)kids.push(P('Descrição',{b:true,size:20,after:20}),P(n.descricao));
-    kids.push(P('Norma / item / subitem',{b:true,size:20,after:20}),P(n.norma||'-'));
-    kids.push(P('Requisito legal',{b:true,size:20,after:20}),P(n.requisitoLegal||'-'));
+    var g=grau(n),av0=mzAval(n.severidade,n.frequencia),gcw=!RISCO_NA_INSP?'FFE500':av0?mzCor(av0.v)[0]:(GCW[g]||'444444'),gtw=av0?mzCor(av0.v)[1]:'FFFFFF',desc=String(n.descricao||'').trim(),tit=String(n.titulo||'');
+    if(tit.length>95&&desc&&desc.indexOf(tit.replace(/…$/,'').slice(0,40))===0)tit=tit.slice(0,95).replace(/\s+\S*$/,'')+'…';
+    kids.push(P('',{after:60,size:8}));
+    var snw=0;function subh(t){return new D.Paragraph({keepNext:true,spacing:{before:160,after:70},border:{bottom:{style:D.BorderStyle.SINGLE,size:4,color:'DDDDDD',space:2}},children:[new D.TextRun({text:t,bold:true,size:20,color:'111111'})]})}
+    if((n.fotos||[]).some(function(i){return cache[i]}))kids.push(subh((++snw)+'. Evidência fotográfica'));
+    kids=kids.concat(fotos(n.fotos,2,260,190));
+    kids.push(subh((++snw)+'. '+(n.classificacao||'Não conformidade')));
+    kids.push(tabX([new D.TableRow({cantSplit:true,children:[
+      new D.TableCell({width:{size:Math.round(TW*(RISCO_NA_INSP?.82:1)),type:D.WidthType.DXA},verticalAlign:D.VerticalAlign.CENTER,shading:{type:D.ShadingType.CLEAR,fill:'F2F2F2',color:'auto'},borders:{top:{style:D.BorderStyle.NONE,size:0,color:'FFFFFF'},bottom:{style:D.BorderStyle.NONE,size:0,color:'FFFFFF'},right:{style:D.BorderStyle.NONE,size:0,color:'FFFFFF'},left:{style:D.BorderStyle.SINGLE,size:36,color:gcw}},margins:{top:90,bottom:90,left:140,right:100},children:[tx1('Item '+(idx+1)+' – '+tit,{b:true,size:23,color:'111111'})]}),
+      ].concat(RISCO_NA_INSP?[bx([tx1('RISCO '+(av0?av0.nivel:String(g||'-')).toUpperCase(),{b:true,size:16,color:gtw,al:D.AlignmentType.CENTER})],18,{fill:gcw,sem:true})]:[])})],RISCO_NA_INSP?[82,18]:[100]));
+    var base=[n.norma,n.requisitoLegal].filter(Boolean),dg=function(v){return String(v).replace(/\D/g,'').replace(/^0+/,'')};
+    if(base.length===2&&dg(base[0])===dg(base[1]))base=[n.requisitoLegal];
+    if(base.length)kids.push(P('Requisito legal',{b:true,size:18,after:20,before:80,color:'555555'}),P(base.join('  –  ')));
     if(!n.refValidada&&n.requisitoLegal!==PENDENTE)kids.push(P(PENDENTE,{b:true,size:20,color:'9A5B00'}));
-    if(n.recomendacao)kids.push(P('Recomendação técnica',{b:true,size:20,after:20}),P(n.recomendacao));
-    if(n.revisadoEm)kids.push(P('Revisão: conferido por '+(n.revisadoPor||'-')+' em '+fmt(n.revisadoEm),{size:18,color:'444444'}));
-    kids=kids.concat(fotos(n.fotos));
+    if(n.recomendacao)kids.push(P('Recomendação técnica',{b:true,size:18,after:20,color:'555555'}),tabX([new D.TableRow({cantSplit:true,children:[new D.TableCell({width:{size:TW,type:D.WidthType.DXA},shading:{type:D.ShadingType.CLEAR,fill:'EAF4ED',color:'auto'},borders:{top:{style:D.BorderStyle.NONE,size:0,color:'FFFFFF'},bottom:{style:D.BorderStyle.NONE,size:0,color:'FFFFFF'},right:{style:D.BorderStyle.NONE,size:0,color:'FFFFFF'},left:{style:D.BorderStyle.SINGLE,size:24,color:'2E7D32'}},margins:{top:80,bottom:80,left:140,right:120},children:[tx1(n.recomendacao,{size:21})]})]})],[100]),P('',{after:40,size:8}));
     var L=acoesDe(n.id).sort(byPrazo);
-    kids.push(P('Plano de ação (inspeção Nº '+num(insp)+')',{b:true,size:20,after:40}));
+    kids.push(subh((++snw)+'. Plano de ação'));
     if(!L.length)kids.push(P('Nenhuma ação definida.',{color:'444444'}));
-    else kids.push(tab([['Ação','Responsável','Prazo','Situação']].concat(L.map(function(a){return [a.acao,a.responsavel||'-',fmt(a.prazo),stAcao(a)]})),[46,22,14,18],true));
+    else kids.push(tab([['Ação','Local','Responsável','Prazo','Situação']].concat(L.map(function(a){return [a.acao,n.setor||'-',a.responsavel||'-',fmt(a.prazo),stRel(stAcao(a))]})),[36,14,20,14,16],true,4));
   });
+  if(ncs.length){
+    kids.push(P('Parecer técnico e conclusão',{b:true,size:24,before:240,after:80}));
+    if(RISCO_NA_INSP&&R.L.length){
+      var KW=[['Risco médio da inspeção',R.media,R.nivelMedia],['Maior risco identificado',R.max.a.v,R.max.a.nivel]];
+      kids.push(tabX([new D.TableRow({cantSplit:true,children:KW.map(function(kc){var c=mzCor(kc[1]);return bx([tx1(kc[0],{size:16,color:c[1]}),tx1(kc[1]+'  ·  '+mzCap(kc[2]),{b:true,size:28,color:c[1]})],50,{fill:c[0],sem:false})})})],[50,50]));
+      kids.push(P('',{after:60,size:8}));
+    }
+    parecerTec(insp,ncs,acs).forEach(function(pp,k,A){kids.push(k===A.length-1?new D.Paragraph({keepNext:true,spacing:{after:100},children:[new D.TextRun({text:pp,size:22})]}):P(pp,{after:100}))});
+  }
+  if(ncs.length)kids=kids.concat(SIG.map(function(x,k){return x}));
   var doc=new D.Document({
     creator:'SevIA SST 4.0',title:'Relatório de inspeção '+num(insp),
     styles:{default:{document:{run:{font:'Arial',size:22}}}},
@@ -2832,6 +3023,11 @@ document.addEventListener('change',function(e){
     case 'insp-emp':syncDraft();S.route.draft.unidade='';S.route.draft.setor='';renderMain();break;
     case 'insp-un':syncDraft();S.route.draft.setor='';renderMain();break;
     case 'ac-emp':acessoSet(el.dataset.id,{empresaId:el.value});break;
+    case 'n-mz':var fm=el.form,av3=fm&&mzAval(fm.severidade.value,fm.frequencia.value);if(av3)fm.gravidade.value=av3.grau;var o3=$('#n-mz-out');if(o3)o3.textContent=mzTxtAval(fm.severidade.value,fm.frequencia.value)+' O grau de risco é calculado por ela.';break;
+    case 'i-mz':
+      syncDraft();var bk2=el.closest('[data-item-blk]'),ix2=[].indexOf.call(document.querySelectorAll('[data-item-blk]'),bk2),it2=S.route.draft.itens[ix2],av=it2&&mzAval(it2.severidade,it2.frequencia);
+      if(it2&&av){var o2=it2._g||'Médio';if(it2.prazo===addDias(hoje(),PRAZO_G[o2]))it2.prazo=addDias(hoje(),PRAZO_G[av.grau]);it2.gravidade=av.grau;it2._g=av.grau}
+      renderItens();break;
     case 'i-cls':case 'i-crit':
       syncDraft();var bk=el.closest('[data-item-blk]'),ix=[].indexOf.call(document.querySelectorAll('[data-item-blk]'),bk),itm=S.route.draft.itens[ix];
       if(itm){if(el.dataset.chg==='i-crit'){var old0=itm._g||'Médio';if(itm.prazo===addDias(hoje(),PRAZO_G[old0]))itm.prazo=addDias(hoje(),PRAZO_G[itm.gravidade]);itm._g=itm.gravidade}renderItens()}break;
