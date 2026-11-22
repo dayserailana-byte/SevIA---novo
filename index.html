@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-22-1320 norma-formato --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-22-1640 indicadores-rodas --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -315,6 +315,7 @@ body:has(.savebar) .fab{display:none}
 .pend{display:inline-block;background:var(--warn-bg);color:var(--warn-fg);font-weight:600;font-size:13px;padding:2px 10px;border-radius:6px}
 .foto-h{display:flex;align-items:center;gap:10px;font-weight:600;margin-top:6px}
 .foto-h img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid var(--border)}
+.nodel [data-act^="del-"],.nodel [data-act="rm-exemplos"]{display:none!important}
 .ro [data-act^="new-"],.ro [data-act^="edit-"],.ro [data-act^="del-"],.ro [data-chg="acao-status"],.ro [data-act="rm-exemplos"]{display:none!important}
 [hidden]{display:none!important}
 
@@ -819,7 +820,22 @@ function viewIndicadores(){
   var unL=uL.map(function(k){var o=un[k],t=o.c+o.n,sub=isF?o.f+(o.f===1?' relatório':' relatórios')+' · '+(fotosPorUn[k]||0)+' fotos':(isI?o.s+(o.s===1?' inspeção':' inspeções')+' · '+o.n+(o.n===1?' não conformidade':' não conformidades'):o.f+(o.f===1?' fotográfico':' fotográficos')+' · '+o.s+(o.s===1?' inspeção':' inspeções')+' · '+o.n+(o.n===1?' não conformidade':' não conformidades'));
     return '<div class="ix-un"><div><b>'+esc(k)+'</b><small>'+sub+'</small></div>'+(isF?'':pill(t?pct(o.c,t):null))+'</div>'}).join('');
   var porUn='<section class="ix-card"><div class="ix-h"><h2>Por empresa e unidade</h2></div>'+(uL.length?unL:'<p class="muted small">Sem dados ainda neste filtro.</p>')+'</section>';
-  return head('Indicadores','Relatórios fotográficos e inspeções de segurança.')+filtrosPainel()+
+  var kpa=isF?[['Relatórios fotográficos',nFot],['Grupos de fotos',ng],['Fotos registradas',nf],['Fotos por relatório',nFR?Math.round(nf/nFR):'-']]
+    :(isI?[['Inspeções de segurança',nIns],['Itens avaliados',fn.length],['Não conformidades',nc.length],['Ações atrasadas',atras]]
+    :[['Relatórios fotográficos',nFot],['Inspeções de segurança',nIns],['Não conformidades',nc.length],['Ações atrasadas',atras]]);
+  var empSel=S.pf.empresa==='todas'?'Todas':((empDe(S.pf.empresa)||{}).nome||'-');
+  var hx2=function(h){return [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)]};
+  function pt(l,v,h){return {l:l,v:v,c:h,hex:h.slice(1),rgb:hx2(h)}}
+  S.ixExp={tipo:tp,total:fi.length,
+    filtros:[['Empresa',empSel],['Unidade',S.pf.unidade==='todas'?'Todas':S.pf.unidade],['Período',({'30d':'Últimos 30 dias','90d':'Últimos 90 dias','12m':'Últimos 12 meses','tudo':'Todo o período'})[S.pf.periodo]||'-'],['Tipo',isF?'Fotográficos':(isI?'Inspeções':'Todos')]],
+    kpis:kpa.map(function(k,i){return [k[0],k[1],k[0]==='Ações atrasadas'&&atras>0]}),cp:cp,ant:ant,itens:fn.length,conf:conf,ncs:nc.length,
+    tipoParts:[pt('Fotográficos',nFot,'#FA6905'),pt('Inspeções',nIns,'#000000')],
+    risco:GRAUS.map(function(g){return pt(g,gr[g],CG[g])}),acoes:fa.length,
+    planos:[pt('Concluídas',conc,'#1B7F3A'),pt('Em andamento',andam,'#F5B342'),pt('Atrasadas',atras,'#B3261E')],
+    normas:temas.map(function(t){return [t.l,t.v]}),
+    meses:mF.map(function(m,k){return [m.l,m.v,mS[k].v]}),
+    unid:uL.map(function(k){var o=un[k],t=o.c+o.n,sub=isF?o.f+(o.f===1?' relatório':' relatórios')+' · '+(fotosPorUn[k]||0)+' fotos':(isI?o.s+(o.s===1?' inspeção':' inspeções')+' · '+o.n+(o.n===1?' não conformidade':' não conformidades'):o.f+(o.f===1?' fotográfico':' fotográficos')+' · '+o.s+(o.s===1?' inspeção':' inspeções')+' · '+o.n+(o.n===1?' não conformidade':' não conformidades'));return [k,sub,t?pct(o.c,t):null]})};
+  return head('Indicadores','Relatórios fotográficos e inspeções de segurança.',S.downloads?btn('PDF','ind-pdf','','btn-primary')+btn('Word','ind-word','','btn-primary'):'')+filtrosPainel()+
   '<div class="ix"><div class="ix-seg" role="group" aria-label="Tipo de documento">'+seg('todos','Tudo')+seg('foto','Fotográficos')+seg('insp','Inspeções')+'</div>'+
   (isT||isI?'':'')+
   (isF?'':'')+
@@ -859,10 +875,10 @@ function formEmpresa(r){
 
 /* ---------- usuários e acessos ---------- */
 var PERFIS=[
-  ['Administradora','Administradora','Acesso total: cadastra empresas, contratos e usuários, cria e edita todos os registros e emite relatórios.'],
-  ['Técnico ADM','Técnico ADM','Cadastra empresas e contratos, cria e edita registros e emite relatórios das empresas liberadas para ele. Também cria usuários Técnico SST e Cliente dessas empresas. Não cria Administradora nem outro Técnico ADM e não exclui usuários.'],
-  ['Técnico SST','Técnico SST','Cria e edita relatórios, inspeções, fotos e planos de ação de todas as empresas e gera os relatórios finais (PDF, Word e Excel). Não gerencia usuários.'],
-  ['Cliente','Cliente / ADM','Só consulta e baixa os relatórios e indicadores da empresa vinculada. Não cria nem edita.']
+  ['Administradora','Administradora','Acesso total: cadastra empresas, contratos e usuários, libera as empresas de cada técnico, cria e edita todos os registros e gera os relatórios em PDF e Word.'],
+  ['Técnico ADM','Técnico ADM','Cadastra empresas e contratos, cria e edita relatórios e inspeções e gera os relatórios em PDF e Word das empresas liberadas para ele. Também cria usuários Técnico ADM, Técnico SST e Cliente dessas empresas. Não cria Administradora e não exclui usuários.'],
+  ['Técnico SST','Técnico SST','Cria e edita relatórios, inspeções, fotos e planos de ação das empresas liberadas para ele e gera os relatórios finais em PDF e Word. Não exclui nada, não cadastra empresas e não gerencia usuários.'],
+  ['Cliente','Cliente / ADM','Só consulta e baixa os relatórios (PDF e Word) e os indicadores da empresa vinculada. Não cria nem edita.']
 ];
 function jaInstalado(){try{return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true}catch(e){return false}}
 function instalarApp(){
@@ -882,7 +898,7 @@ function viewUsuarios(){
     var emp=u.perfil==='Cliente'?(empNomeDe(u.empresaId)||'sem empresa'):(u.perfil==='Administradora'?'todas as empresas':((u.empresasAcesso||[]).length?((u.empresasAcesso||[]).length===1?(empNomeDe(u.empresasAcesso[0])||'1 empresa'):u.empresasAcesso.length+' empresas'):'nenhuma empresa liberada'));
     var st=u.ativo===false?['Inativo','danger']:(u.status==='Ativo'?['Ativo','ok']:['Aguardando primeiro acesso','warn']);
     return '<button type="button" class="row" data-act="edit-usuario" data-id="'+esc(u.id)+'"><span class="row-main" style="cursor:inherit"><b>'+esc(u.nome)+'</b><span class="muted small">Usuário: '+esc(u.usuario||u.email||'-')+' · '+esc(perfilNome(u.perfil))+' · '+esc(emp)+'</span></span><span class="row-side">'+chip(st[0],st[1])+''+(podeEmpresa()?'<span class="btn btn-ghost" aria-hidden="true">Editar</span>':'')+'</span></button>'}).join(''):'<p class="muted pad">Nenhum usuário cadastrado. Toque em "Novo usuário".</p>')+'</div></div>'+
-  '<section class="card"><div class="card-h"><h2>O que cada perfil pode fazer</h2></div><div class="list">'+PERFIS.map(function(x){return '<div class="row"><span class="row-main"><b>'+esc(x[1])+'</b><span class="muted small">'+esc(x[2])+'</span></span></div>'}).join('')+'</div></section>'+
+  '<section class="card"><div class="card-h"><h2>O que cada perfil pode fazer</h2></div><div class="list">'+PERFIS.filter(function(x){return ehAdm()||x[0]!=='Administradora'}).map(function(x){return '<div class="row"><span class="row-main"><b>'+esc(x[1])+'</b><span class="muted small">'+esc(x[2])+'</span></span></div>'}).join('')+'</div></section>'+
   '<section class="card"><div class="card-h"><h2>Como o acesso é liberado</h2></div><p class="muted small">Você cadastra o usuário e o sistema gera uma senha provisória, que você passa à pessoa. No primeiro acesso ela é obrigada a trocar a senha. Nada é enviado por e-mail e a senha provisória não fica guardada. O login real passa a funcionar quando o sistema estiver publicado no seu domínio, ligado ao Supabase.</p></section>';
 }
 function slugU(t){return String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'')}
@@ -916,7 +932,7 @@ function formUsuario(r){
     field('Telefone (opcional)','u-tel','<input id="u-tel" name="telefone" type="tel" inputmode="tel" value="'+esc(d.telefone)+'">')+
     field('Função (aparece nos relatórios)','u-func','<input id="u-func" name="funcao" placeholder="Ex.: Técnico em Segurança do Trabalho" value="'+esc(d.funcao)+'">')+
     field('Registro profissional (REG / MTE)','u-reg','<input id="u-reg" name="registroProf" value="'+esc(d.registroProf)+'">')+
-    field('Perfil de acesso','u-perf','<select id="u-perf" name="perfil" required data-chg="u-perf">'+opts(PERFIS.filter(function(x){return ehAdm()||x[0]==='Técnico SST'||x[0]==='Cliente'}).map(function(x){return [x[0],x[1]]}),d.perfil)+'</select>')+
+    field('Perfil de acesso','u-perf','<select id="u-perf" name="perfil" required data-chg="u-perf">'+opts(PERFIS.filter(function(x){return ehAdm()||x[0]==='Técnico ADM'||x[0]==='Técnico SST'||x[0]==='Cliente'}).map(function(x){return [x[0],x[1]]}),d.perfil)+'</select>')+
     field('Empresa (obrigatória para Cliente)','u-emp','<select id="u-emp" name="empresaId">'+opts([['','Todas / não se aplica']].concat(S.empresas.map(function(e){return [e.id,e.nome]})),d.empresaId)+'</select>','full')+
     '<div class="field full" id="emp-acc"'+(['Técnico ADM','Técnico SST'].indexOf(d.perfil)>-1?'':' hidden')+'><span class="lbl">Empresas que este perfil pode acessar</span>'+
       '<div id="emp-lst">'+(S.empresas.length?S.empresas.slice().sort(function(a,b){return String(a.nome).localeCompare(String(b.nome))}).map(function(e){return '<label class="chk-row"><input type="checkbox" data-emp-acc value="'+esc(e.id)+'"'+((d.empresasAcesso||[]).indexOf(e.id)>-1?' checked':'')+'><span>'+esc(e.nome)+'</span></label>'}).join(''):'<p class="muted small">Nenhuma empresa cadastrada ainda.</p>')+'</div>'+
@@ -978,7 +994,7 @@ function viewManual(){
     '<h3>Sair e bloqueio automático</h3><p>Por segurança, depois de <b>5 minutos sem uso</b> o sistema sai da conta sozinho. No último minuto aparece o aviso &ldquo;Você ainda está aí?&rdquo; com o botão <b>Continuar conectada</b>. Para sair por conta própria, use o botão <b>Sair</b> no final do menu.</p>'+
     (tec?'<p>Se você estiver preenchendo um relatório ou inspeção quando o sistema bloquear, o rascunho fica guardado neste aparelho por <b>7 dias</b>. Ao entrar de novo, escolha <b>Continuar rascunho</b> para voltar de onde parou. Para guardar um rascunho a qualquer momento, veja <b>Salvar como rascunho</b>.</p>':'')],
   ['Perfis de acesso',podeUsuarios(),
-    li(['<b>Administradora:</b> acessa tudo, cadastra empresas, contratos e usuários e libera as empresas de cada técnico.','<b>Técnico ADM:</b> registra relatórios e inspeções, cadastra e edita empresas e contratos e cria o login de Técnico SST e de Cliente das empresas dele. Vê só as empresas liberadas pela administradora e as que ele mesmo cadastrar.','<b>Técnico SST:</b> registra e edita relatórios e inspeções das empresas liberadas para ele. Não cadastra empresas.','<b>Cliente:</b> consulta e baixa os relatórios e os indicadores da própria empresa. Não altera nada.'])+
+    li(['<b>Administradora:</b> acessa tudo, cadastra empresas, contratos e usuários, libera as empresas de cada técnico e é a única que exclui usuários.','<b>Técnico ADM:</b> registra relatórios e inspeções, cadastra e edita empresas e contratos e cria o login de Técnico ADM, Técnico SST e Cliente das empresas dele. Baixa o PDF e o Word. Vê só as empresas liberadas pela administradora e as que ele mesmo cadastrar. Não exclui usuários.','<b>Técnico SST:</b> registra e edita relatórios e inspeções das empresas liberadas para ele e baixa o PDF e o Word. Não exclui nada (relatórios, inspeções, itens, ações, rascunhos), não cadastra empresas e não gerencia usuários.','<b>Cliente:</b> consulta e baixa os relatórios e os indicadores da própria empresa. Não altera nada.'])+
     '<p>O perfil de cada pessoa é definido pela administradora. Se algo que você precisa não aparece no seu menu, fale com ela.</p>'],
   ['Conhecendo o menu',true,
     li([].concat(
@@ -998,7 +1014,7 @@ function viewManual(){
     ol(['Em <b>Atividades especiais</b>, marque Aplicável ou Não aplicável para cada NR e escreva a observação.','Na tabela de <b>EPI</b>, use <b>Adicionar EPI</b> para cada item (EPI, CA, condições de uso, observações).','Em cada grupo de fotos, preencha <b>Apontamento</b> e <b>Orientação / recomendação</b>. Os grupos preenchidos viram atividades numeradas e entram na <b>consolidação dos apontamentos</b>. Grupos sem texto saem como fotos gerais.','Preencha <b>Considerações finais</b> e <b>Referências</b> (uma norma por linha).'])+
     li(['Campos em branco saem como <b>NA</b> no documento.','Relatório criado <b>sem internet</b> aparece com o selo <b>Pendente de revisão</b> assim que o técnico recupera o sinal e o sistema envia. A Administradora e o Técnico ADM abrem o relatório, usam <b>Editar</b> (e a IA, se quiserem) e tocam em <b>Marcar como revisado</b>.','Em todas as páginas o rodapé traz <b>Gerado pelo SevIA SST 4.0</b> e o número da página. Para entregar ao cliente, use o <b>PDF</b>: o Word pode ser editado por quem abrir.','A matriz de riscos é inserida automaticamente após as observações gerais.','A inspeção de segurança continua com o modelo próprio.'])],
   ['Salvar como rascunho',tec,
-    '<p>Quando não der para finalizar na hora, guarde o trabalho como rascunho:</p>'+ol(['No relatório fotográfico ou na inspeção de segurança, toque em <b>Salvar rascunho</b>. É preciso apenas escolher a empresa.','O documento aparece em <b>Relatórios e inspeções</b> com o selo <b>Rascunho</b>.','Para continuar, abra o rascunho e toque em <b>Continuar rascunho</b>. Quando terminar, toque em <b>Finalizar e salvar</b>.'])+li(['O rascunho <b>só aparece para você</b>, mesmo que outras pessoas tenham acesso à empresa. Ele passa a ser visto pelos demais somente depois de finalizado.','Enquanto for rascunho, o PDF, o Word e o Excel não ficam disponíveis, e o número do relatório ainda não é gerado.','Para apagar um rascunho, abra-o e toque em <b>Excluir</b>.','Se você sair da tela <b>sem salvar nada</b>, o que já preencheu fica guardado <b>neste aparelho</b> por até 7 dias. Ao tocar em <b>Novo relatório fotográfico</b> (ou <b>Nova inspeção de segurança</b>) de novo, o sistema recupera o formulário e avisa. Para começar em branco, toque em <b>Começar do zero</b>. Esse guardado automático não aparece em outro aparelho: para isso, use <b>Salvar rascunho</b>.'])],
+    '<p>Quando não der para finalizar na hora, guarde o trabalho como rascunho:</p>'+ol(['No relatório fotográfico ou na inspeção de segurança, toque em <b>Salvar rascunho</b>. É preciso apenas escolher a empresa.','O documento aparece em <b>Relatórios e inspeções</b> com o selo <b>Rascunho</b>.','Para continuar, abra o rascunho e toque em <b>Continuar rascunho</b>. Quando terminar, toque em <b>Finalizar e salvar</b>.'])+li(['O rascunho <b>só aparece para você</b>, mesmo que outras pessoas tenham acesso à empresa. Ele passa a ser visto pelos demais somente depois de finalizado.','Enquanto for rascunho, o PDF e o Word não ficam disponíveis, e o número do relatório ainda não é gerado.',(tecS?'Quem exclui rascunhos e relatórios é a Administradora ou um Técnico ADM.':'Para apagar um rascunho, abra-o e toque em <b>Excluir</b>.'),'Se você sair da tela <b>sem salvar nada</b>, o que já preencheu fica guardado <b>neste aparelho</b> por até 7 dias. Ao tocar em <b>Novo relatório fotográfico</b> (ou <b>Nova inspeção de segurança</b>) de novo, o sistema recupera o formulário e avisa. Para começar em branco, toque em <b>Começar do zero</b>. Esse guardado automático não aparece em outro aparelho: para isso, use <b>Salvar rascunho</b>.'])],
   ['Preenchimento com a IA',tec,
     '<p>No grupo <b>Registros das atividades</b>, a IA analisa as fotos e sugere o preenchimento dos campos do relatório. Para usar:</p>'+
     ol(['Adicione as fotos no grupo <b>Registros das atividades</b>.','Toque em <b>Preencher a partir das fotos</b> e aguarde. A IA analisa <b>uma foto por vez</b> e mostra o andamento (por exemplo, &ldquo;Analisando a foto 3 de 8&rdquo;). Com várias fotos pode levar alguns minutos.','Revise cada campo sugerido e corrija o que for preciso.'])+
@@ -1009,10 +1025,10 @@ function viewManual(){
     '<p>Os itens com problema aparecem em <b>Não conformidades</b>, e as ações em <b>Plano de ação</b>, onde você acompanha o prazo e marca como concluída.</p>'+
     '<h3>Como sai o PDF e o Word da inspeção</h3>'+
     li(['<b>1. Identificação:</b> empresa, CNPJ, unidade, setor/local, endereço e realizado por. O número e a data da inspeção ficam no cabeçalho.','<b>2. Itens e não conformidades identificados:</b> cada item traz <b>1. Evidência fotográfica</b>, <b>2. Não conformidade</b> (título do item e requisito legal descumprido) e <b>3. Plano de ação</b> (ação, local, responsável, prazo e situação).','<b>3. Parecer técnico e conclusão:</b> resumo da inspeção, das ações e das ações vencidas, seguido da assinatura do responsável técnico.','A <b>situação</b> da ação aparece em cores: <b>Em andamento</b> (amarelo, dentro do prazo), <b>Pendente</b> (vermelho, prazo vencido) e <b>Concluída</b> (verde).','A inspeção de segurança <b>não traz a matriz de riscos nem o nível de risco</b>. A matriz continua no relatório de campo (relatório fotográfico).'])],
-  ['Baixar relatórios (PDF, Word e Excel)',true,
-    '<p>Em <b>Baixar relatórios</b>, toque em <b>PDF</b> ou <b>Word</b> no relatório desejado. Dentro da tela de cada relatório também há os botões de download, e nas inspeções de segurança há ainda o <b>Excel</b>. O documento sai com a logomarca, o CNPJ da empresa, as fotos e o responsável técnico. Todas as páginas trazem no rodapé <b>Gerado pelo SevIA SST 4.0</b>. O <b>PDF</b> é o documento oficial e não pode ser editado; o Word serve para ajustes.</p>'+(tec?'<p>Para <b>excluir</b> um relatório, toque em <b>Excluir</b> na linha dele e confirme. A exclusão não pode ser desfeita.</p>':'')],
+  ['Baixar relatórios (PDF e Word)',true,
+    '<p>Em <b>Baixar relatórios</b>, toque em <b>PDF</b> ou <b>Word</b> no relatório desejado. Dentro da tela de cada relatório também há os botões de download. O documento sai com a logomarca, o CNPJ da empresa, as fotos e o responsável técnico. Todas as páginas trazem no rodapé <b>Gerado pelo SevIA SST 4.0</b>. O <b>PDF</b> é o documento oficial e não pode ser editado; o Word serve para ajustes.</p>'+(tec&&!tecS?'<p>Para <b>excluir</b> um relatório, toque em <b>Excluir</b> na linha dele e confirme. A exclusão não pode ser desfeita.</p>':'')+(tecS?'<p>O <b>Técnico SST não exclui</b> relatórios, inspeções, itens, ações nem rascunhos. Se precisar apagar algo, peça à Administradora ou a um Técnico ADM.</p>':'')],
   ['Indicadores',true,
-    '<p>Mostram o andamento dos relatórios e das inspeções. Use os filtros por <b>empresa, unidade, período e tipo de relatório</b> (fotográfico ou inspeção de segurança). Os gráficos e números mudam conforme o filtro.</p>'],
+    '<p>Mostram o andamento dos relatórios e das inspeções. Use os filtros por <b>empresa, unidade, período e tipo de relatório</b> (fotográfico ou inspeção de segurança). Os gráficos e números mudam conforme o filtro.</p><p>Para levar os números para um documento, toque em <b>PDF</b> ou <b>Word</b> no alto da tela. O arquivo sai com os filtros que estão escolhidos naquele momento: resumo, conformidade, risco das não conformidades, planos de ação, normas, quantidade por mês e por empresa e unidade.</p>'],
   ['Cadastro de empresas',emp,
     ol(['Vá em <b>Empresa</b> e toque em <b>Nova empresa</b>.','Preencha o nome e o <b>CNPJ</b>. O CNPJ é <b>obrigatório</b> e precisa ser válido. Ele sai nos documentos.','Inclua o contato e a logomarca (opcional). Use PNG com pelo menos <b>600 px</b> de largura; imagem pequena sai embaçada e o sistema avisa.','Cadastre as <b>unidades</b> e os <b>setores</b> de cada uma.','Informe a vigência do contrato inicial e toque em <b>Salvar empresa</b>.'])+
     '<p>Para alterar, abra a empresa e toque em <b>Editar</b>. <b>Atenção:</b> ao excluir uma empresa, os contratos dela também são apagados. A exclusão não pode ser desfeita. Os relatórios e inspeções já registrados continuam, mas deixam de estar ligados à empresa.</p>'+
@@ -1021,7 +1037,7 @@ function viewManual(){
     '<p>Em <b>Contratos</b> ficam a vigência e os serviços de cada empresa. O sistema avisa os contratos <b>a vencer</b> e <b>vencidos</b>. Só é possível registrar relatórios e inspeções de empresa com contrato vigente.</p>'+
     li(['<b>Novo contrato:</b> cria um contrato para a empresa. Use para <b>renovar</b>: o contrato antigo fica no histórico e passa a constar como vencido.','<b>Editar:</b> corrige datas ou serviços do mesmo contrato, sem criar outro.'])],
   ['Usuários e acessos',podeUsuarios(),
-    (tecA?'<p>Como <b>Técnico ADM</b>, você cria e gerencia usuários <b>Técnico SST</b> e <b>Cliente</b>, e só nas <b>empresas que você acessa</b>. Você não cria Administradora nem outro Técnico ADM, e <b>só a Administradora exclui usuários</b>.</p>':'')+'<h3>Criar um usuário</h3>'+ol(['Vá em <b>Usuários e acessos</b> e toque em <b>Novo usuário</b>.','Preencha nome completo, e-mail, telefone, função e registro profissional.','Escolha o <b>perfil</b>'+(tecA?' (Técnico SST ou Cliente)':'')+'. Para Cliente, escolha também a empresa dele.','Para '+(tecA?'Técnico SST':'Técnico ADM e Técnico SST')+', marque as <b>empresas que ele pode acessar</b>.','Salve e envie ao usuário o <b>login e a senha provisória</b> mostrados na tela. Ele troca a senha no primeiro acesso.'])+
+    (tecA?'<p>Como <b>Técnico ADM</b>, você cria e gerencia usuários <b>Técnico ADM</b>, <b>Técnico SST</b> e <b>Cliente</b>, e só nas <b>empresas que você acessa</b>. Você não cria Administradora, e <b>só a Administradora exclui usuários</b>.</p>':'')+'<h3>Criar um usuário</h3>'+ol(['Vá em <b>Usuários e acessos</b> e toque em <b>Novo usuário</b>.','Preencha nome completo, e-mail, telefone, função e registro profissional.','Escolha o <b>perfil</b>'+(tecA?' (Técnico ADM, Técnico SST ou Cliente)':'')+'. Para Cliente, escolha também a empresa dele.','Para Técnico ADM e Técnico SST'+', marque as <b>empresas que ele pode acessar</b>.','Salve e envie ao usuário o <b>login e a senha provisória</b> mostrados na tela. Ele troca a senha no primeiro acesso.'])+
     '<h3>No dia a dia</h3>'+li(['Para liberar ou tirar uma empresa de um técnico: <b>Editar</b> o usuário, marque ou desmarque a empresa e salve.','Se alguém esquecer a senha, use <b>Gerar nova senha provisória</b> em Editar usuário.','Para bloquear o acesso por um tempo, <b>desative</b> o usuário em Editar. Prefira desativar em vez de excluir.',(adm?'<b>Excluir</b> apaga o login da pessoa de vez e não pode ser desfeito.':'A exclusão de usuários é feita só pela Administradora.')])],
   ['Segurança e boas práticas',true,
     li((['Não compartilhe sua senha. Cada pessoa usa o próprio usuário.','Saia do sistema em aparelhos de outras pessoas.'].concat(tec?['Confira os dados antes de salvar: o relatório é um documento da empresa.','Quando o sistema pedir confirmação para excluir ou remover algo, leia com atenção. Algumas exclusões não têm volta.']:[])))],
@@ -1465,7 +1481,7 @@ function viewInsp(id){
   var i=inspDe(id);if(!i){limpaRota();return viewTab()}
   var L=ncsDe(id).sort(byGrau),en=empNome(i),si=stInsp(i);
   return backBtn()+head(tr(i)+' Nº '+num(i),(locDe(i)?locDe(i)+' · ':'')+fmt(i.data)+(en?' · '+en:''),
-    (i.rascunho?btn('Continuar rascunho','edit-insp',id,'btn-primary'):'')+(S.downloads&&!i.rascunho?btn('Relatório em PDF','pdf',id,'btn-primary')+btn('Relatório em Word','word',id,'btn-primary')+(isIns(i)?btn('Excel','excel',id,'btn-primary'):''):'')+(i.rascunho?'':btn('Editar','edit-insp',id))+btn('Excluir','del-insp',id,'btn-danger'))+(i.revisao==='pendente'?'<div class="banner"><span><b>Criado sem internet.</b> Este relatório veio do campo e ainda não foi revisado. Use <b>Editar</b> para ajustar (a IA já pode ser usada). Quando estiver pronto, toque em <b>Marcar como revisado</b>.</span>'+((S.perfil==="Administradora"||S.perfil==="Técnico ADM")?btn('Marcar como revisado','revisado',id,'btn-primary'):'')+'</div>':'')+(i.rascunho?'<div class="banner"><span><b>Rascunho.</b> Este documento ainda não foi finalizado. Clique em "Continuar rascunho" para completar; o PDF e o Word só ficam disponíveis depois de finalizar.</span></div>':'')+
+    (i.rascunho?btn('Continuar rascunho','edit-insp',id,'btn-primary'):'')+(S.downloads&&!i.rascunho?btn('Relatório em PDF','pdf',id,'btn-primary')+btn('Relatório em Word','word',id,'btn-primary'):'')+(i.rascunho?'':btn('Editar','edit-insp',id))+btn('Excluir','del-insp',id,'btn-danger'))+(i.revisao==='pendente'?'<div class="banner"><span><b>Criado sem internet.</b> Este relatório veio do campo e ainda não foi revisado. Use <b>Editar</b> para ajustar (a IA já pode ser usada). Quando estiver pronto, toque em <b>Marcar como revisado</b>.</span>'+((S.perfil==="Administradora"||S.perfil==="Técnico ADM")?btn('Marcar como revisado','revisado',id,'btn-primary'):'')+'</div>':'')+(i.rascunho?'<div class="banner"><span><b>Rascunho.</b> Este documento ainda não foi finalizado. Clique em "Continuar rascunho" para completar; o PDF e o Word só ficam disponíveis depois de finalizar.</span></div>':'')+
   '<section class="card"><dl class="kv"><div><dt>'+(isIns(i)?'Nº da inspeção':'Nº do relatório')+'</dt><dd>'+num(i)+'</dd></div><div><dt>Data</dt><dd>'+fmt(i.data)+'</dd></div><div><dt>Empresa</dt><dd>'+esc(en||'-')+'</dd></div>'+(i.unidade?'<div><dt>Unidade</dt><dd>'+esc(i.unidade)+'</dd></div>':'')+(i.setor?'<div><dt>Setor</dt><dd>'+esc(i.setor)+'</dd></div>':'')+'<div><dt>Realizado por</dt><dd>'+esc(i.responsavel||'-')+'</dd></div><div'+(isIns(i)?'':' hidden')+'><dt>Situação</dt><dd>'+chip(si,sk(si))+'</dd></div></dl>'+
   (i.observacoes?'<h3 style="margin-top:16px">Observações</h3><p class="text-block">'+esc(i.observacoes)+'</p>':'')+
   (i.fotos&&i.fotos.length?'<h3 style="margin:16px 0 8px">Evidências fotográficas</h3>'+thumbs(i.fotos):'')+'</section>'+camposView(i)+(isIns(i)?'<section class="card"><div class="card-h"><h2>Itens e não conformidades</h2>'+btn('Registrar item','new-nc',id,'btn-primary')+'</div>'+(L.length?'<div class="list">'+L.map(rowNc).join('')+'</div>':'<p class="muted">Nenhum item registrado nesta inspeção. Toque em "Registrar item": no item, a IA sugere a não conformidade e a ação a partir da foto.</p>')+'</section>':'');
@@ -1574,7 +1590,7 @@ function viewRel(){
   return head('Relatórios','Baixe o relatório fotográfico em Word ou PDF, com os grupos de fotos e o responsável técnico.')+
   (S.downloads?'':'<div class="card"><p class="muted">O download de arquivos não está disponível nesta visualização.</p></div>')+
   '<div class="card"><div class="list">'+(L.length?L.map(function(i){var n=ncsDe(i.id).length,en=empNome(i),s=stInsp(i);
-    return '<div class="row"><div class="row-main" style="cursor:default"><span class="insp-num">'+tr(i)+' Nº '+num(i)+'</span><b>'+esc(locDe(i)||empNome(i)||'Relatório')+'</b><span class="muted small">'+fmt(i.data)+(en?' · '+esc(en):'')+'</span></div><div class="row-side">'+chip(s,sk(s))+(S.downloads?btn('PDF','pdf',i.id,'btn-primary')+btn('Word','word',i.id,'btn-primary')+(n?btn('Excel','excel',i.id,'btn-primary'):''):'')+(S.canWrite?btn('Excluir','del-insp',i.id,'btn-danger'):'')+'</div></div>'}).join(''):'<p class="muted pad">Registre uma inspeção para emitir o relatório.</p>')+'</div></div>';
+    return '<div class="row"><div class="row-main" style="cursor:default"><span class="insp-num">'+tr(i)+' Nº '+num(i)+'</span><b>'+esc(locDe(i)||empNome(i)||'Relatório')+'</b><span class="muted small">'+fmt(i.data)+(en?' · '+esc(en):'')+'</span></div><div class="row-side">'+chip(s,sk(s))+(S.downloads?btn('PDF','pdf',i.id,'btn-primary')+btn('Word','word',i.id,'btn-primary'):'')+(S.canWrite?btn('Excluir','del-insp',i.id,'btn-danger'):'')+'</div></div>'}).join(''):'<p class="muted pad">Registre uma inspeção para emitir o relatório.</p>')+'</div></div>';
 }
 
 
@@ -1790,7 +1806,7 @@ async function salvar(form,rascunho){
       data={nome:v.nome,cnpj:v.cnpj,contato:v.contato,logo:r.draft.logo||'',unidades:uns};
     }else if(kind==='usuario'){
       if(!podeUsuarios()){nao('Somente a administradora e o Técnico ADM gerenciam usuários.');return}
-      if(!ehAdm()&&['Técnico SST','Cliente'].indexOf(v.perfil)<0){nao('O Técnico ADM cria apenas usuários Técnico SST ou Cliente.');return}
+      if(!ehAdm()&&['Técnico ADM','Técnico SST','Cliente'].indexOf(v.perfil)<0){nao('O Técnico ADM cria apenas usuários Técnico ADM, Técnico SST ou Cliente.');return}
       col='usuarios';old=r.id?(S.R.usuarios.filter(function(u){return u.id===r.id})[0]||null):null;
       var em2=String(v.email||'').toLowerCase();
       if(em2&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em2)){nao('E-mail inválido. Deixe em branco se não tiver.');return}
@@ -2214,7 +2230,7 @@ async function gerarPDF(id){
     if(gr.length){gn++;section(gn+'. Registro fotográfico');gr.forEach(function(g){need(78);txt(g.titulo,{size:10,bold:true,gap:1.5});fotos(g.fotos)})}
   }
   /* ordem do preenchimento: identificação, empresa executante, fotos e, abaixo delas, a análise e os campos preenchidos */
-  secGrp(GRP[0]);secFotos();GRP.slice(1).forEach(secGrp);
+  secFotos();GRP.slice(1).forEach(secGrp);
   if(insp.observacoes){gn++;section(gn+'. Observações');txt(obsEsp(insp.observacoes),{gap:4})}
   if(ncs.length){if(MZ_NA_INSP){gn++;need(80);section(gn+'. Matriz de riscos');y=mzPdf(doc,M,CW,y,function(b,z){doc.setFont('helvetica',b?'bold':'normal');doc.setFontSize(z||9)},R.L.length?marks:null);
     if(R.L.length){
@@ -2625,10 +2641,7 @@ async function gerarWord(id){
   row2([inl('Empresa',empNome(insp)||'-')],[inl('CNPJ',empCnpj(insp)||'Não informado')]);
   if(insp.unidade||insp.setor)row1([inl('Unidade / setor',(insp.unidade||'-')+' / '+(insp.setor||'-'))]);
   if(insp.tipo==='inspecao'&&insp.responsavel)row1([inl('Realizado por',insp.responsavel)]);
-  if(insp.execNome||insp.execCnpj)row2([inl('Empresa executante',insp.execNome||'-')],[inl('CNPJ executante',insp.execCnpj||'-')]);
-  if(insp.representante)row1([inl('Representante da empresa',insp.representante)]);
-  campo('equipe','n');
-  if(insp.codigoLocal||insp.endereco)row1([insp.codigoLocal?inl('Código do local',insp.codigoLocal):null,insp.endereco?inl('Endereço',insp.endereco):null].filter(Boolean));
+  if(insp.endereco)row1([inl('Endereço',insp.endereco)]);
   var gfs=(insp.grupos||[]).filter(function(g){return (g.fotos||[]).some(function(i){return cache[i]})}),fgx=fotos(insp.fotos,2,260,190,true);
   if(gfs.length||fgx.length){var ph=[lbl('Registros fotográficos')];if(fgx.length){ph.push(new D.Paragraph({alignment:D.AlignmentType.CENTER,spacing:{before:100,after:80},children:[new D.TextRun({text:'Fotos gerais',size:20})]}));ph=ph.concat(fgx)}gfs.forEach(function(g){ph.push(new D.Paragraph({alignment:D.AlignmentType.CENTER,spacing:{before:160,after:80},children:[new D.TextRun({text:g.titulo,size:20})]}));ph=ph.concat(fotos(g.fotos,2,260,190,true))});row1(ph,true)}
   if(insp.servicos||insp.atividades){var sv=[];if(insp.servicos)sv=sv.concat([lbl(CD.servicos[1])],lin(insp.servicos,'b'));if(insp.atividades)sv=sv.concat([new D.Paragraph({spacing:{before:80,after:40},children:[new D.TextRun({text:CD.atividades[1].toUpperCase()+':',bold:true,size:20})]})],lin(insp.atividades,'b'));row1(sv)}
@@ -2701,6 +2714,194 @@ async function gerarWord(id){
     var blob=await D.Packer.toBlob(doc);
     await S.downloads.save({filename:(isIns(insp)?'inspecao-':'relatorio-fotografico-')+num(insp)+'-'+slug(insp.setor||empNome(insp))+'.docx',data:blob});
     toast('Relatório pronto.');
+  }catch(e){if(!e||e.code!=='declined'){console.error(e);toast('Não foi possível salvar o arquivo Word.')}}
+}
+
+/* ---------- Indicadores: exportação em PDF e Word (mesmo visual da tela) ---------- */
+function ixDados(){
+  var X=S.ixExp;if(!X){toast('Abra a tela de Indicadores e tente de novo.');return null}
+  return X;
+}
+function ixPng(w,h,draw){var c=document.createElement('canvas');c.width=w;c.height=h;var g=c.getContext('2d');draw(g);return c.toDataURL('image/png')}
+function ixBytes(url){var b=atob(String(url).split(',')[1]),u=new Uint8Array(b.length),i;for(i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u}
+/* roda (donut) igual à da tela: anel de fundo, fatias e número no centro */
+function ixRoda(parts,center,sub){
+  return ixPng(600,600,function(g){
+    var cx=300,cy=300,r=229,lw=87,tot=parts.reduce(function(a,x){return a+x.v},0),ang=-Math.PI/2;
+    g.lineWidth=lw;g.strokeStyle='#EEEEEA';g.beginPath();g.arc(cx,cy,r,0,Math.PI*2);g.stroke();
+    var vis=parts.filter(function(x){return x.v>0}),gap=vis.length>1?0.03:0;
+    if(tot)vis.forEach(function(x){var a2=ang+Math.PI*2*x.v/tot;g.strokeStyle=x.c;g.beginPath();g.arc(cx,cy,r,ang+gap/2,a2-gap/2);g.stroke();ang=a2});
+    g.textAlign='center';g.fillStyle='#111111';g.font='800 '+(String(center).length>2?112:132)+'px Arial,Helvetica,sans-serif';g.fillText(String(center),cx,cy+22);
+    g.fillStyle='#595959';g.font='400 56px Arial,Helvetica,sans-serif';g.fillText(String(sub||''),cx,cy+92);
+  });
+}
+/* anel de conformidade do quadro preto */
+function ixAnel(cp){
+  return ixPng(400,400,function(g){
+    var cx=200,cy=200,r=165,lw=43;
+    g.lineWidth=lw;g.strokeStyle='#3A3A3A';g.beginPath();g.arc(cx,cy,r,0,Math.PI*2);g.stroke();
+    if(cp){g.strokeStyle='#FA6905';g.lineCap='round';g.beginPath();g.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+Math.PI*2*cp/100);g.stroke()}
+    g.textAlign='center';g.fillStyle='#FFFFFF';g.font='800 96px Arial,Helvetica,sans-serif';g.fillText(cp==null?'-':cp+'%',cx,cy+34);
+  });
+}
+/* barras por mês, empilhadas por tipo */
+function ixMeses(X){
+  return ixPng(1500,420,function(g){
+    var L=60,R=10,T=30,B=60,W=1500,H=420,pw=W-L-R,ph=H-T-B,cw=pw/12,bw=cw*0.56,fo=X.tipo!=='insp',ins=X.tipo!=='foto';
+    var tot=X.meses.map(function(m){return (fo?m[1]:0)+(ins?m[2]:0)}),mx=Math.max.apply(null,tot.concat([1])),step=Math.max(1,Math.ceil(Math.max(4,mx)/4)),yMax=step*4,k;
+    g.font='400 32px Arial,Helvetica,sans-serif';g.textAlign='right';g.fillStyle='#595959';g.lineWidth=2;g.strokeStyle='#E3E3DF';
+    for(k=0;k<=4;k++){var y=T+ph-(k*step/yMax)*ph;g.beginPath();g.moveTo(L,y);g.lineTo(W-R,y);g.stroke();g.fillText(String(k*step),L-10,y+11)}
+    X.meses.forEach(function(m,i){
+      var x=L+i*cw+(cw-bw)/2,yy=T+ph,hI=ins?m[2]/yMax*ph:0,hF=fo?m[1]/yMax*ph:0;
+      if(hI){g.fillStyle='#000000';g.fillRect(x,yy-hI,bw,hI);yy-=hI}
+      if(hF){g.fillStyle='#FA6905';g.fillRect(x,yy-hF,bw,hF)}
+      if(tot[i]){g.fillStyle='#111111';g.textAlign='center';g.font='700 32px Arial,Helvetica,sans-serif';g.fillText(String(tot[i]),x+bw/2,yy-hF-8)}
+      g.fillStyle='#595959';g.textAlign='center';g.font='400 32px Arial,Helvetica,sans-serif';g.fillText(m[0],L+i*cw+cw/2,H-18);
+    });
+  });
+}
+function ixCores(p){return p>=85?[[220,240,225],[27,127,58]]:(p>=70?[[253,240,205],[138,90,0]]:[[250,224,221],[179,38,30]])}
+async function gerarPDFInd(){
+  var J=window.jspdf&&window.jspdf.jsPDF;
+  if(!J||!S.downloads){toast('A geração de PDF não está disponível agora.');return}
+  var X=ixDados();if(!X)return;
+  toast('Gerando o PDF dos indicadores…');
+  var empO=S.pf.empresa!=='todas'?empDe(S.pf.empresa):null,logoId=(empO&&empO.logo)||(S.marca&&S.marca.logo)||'';
+  var lg=null;try{lg=logoId?await imgLogoD(logoId):null}catch(e){lg=null}
+  var doc=new J({unit:'mm',format:'a4'}),PW=210,M=15,CW=PW-2*M,y=M;
+  var BR=[17,17,17],OR=[250,105,5],TX=[17,17,17],MU=[89,89,89];
+  function need(h){if(y+h>282){doc.addPage();y=M}}
+  function titulo(t,sub){need(14);doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor.apply(doc,TX);doc.text(t,M,y+4);if(sub){doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor.apply(doc,MU);doc.text(sub,PW-M,y+4,{align:'right'})}y+=8}
+  function cartao(x,y0,w,h){doc.setFillColor(255,255,255);doc.setDrawColor(227,227,223);doc.setLineWidth(0.3);doc.roundedRect(x,y0,w,h,2.5,2.5,'FD')}
+  /* cabeçalho */
+  if(lg){var r0=Math.min(60/lg.w,18/lg.h);doc.addImage(lg.d,'PNG',M,y-1,lg.w*r0,lg.h*r0)}
+  else{doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor.apply(doc,BR);doc.text('SevIA SST 4.0',M,y+8)}
+  doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor.apply(doc,BR);doc.text('INDICADORES',PW-M,y+7,{align:'right'});
+  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor.apply(doc,MU);doc.text('Gerado em '+new Date().toLocaleDateString('pt-BR'),PW-M,y+12.5,{align:'right'});
+  y+=20;doc.setDrawColor.apply(doc,OR);doc.setLineWidth(0.6);doc.line(M,y,PW-M,y);y+=6;
+  /* filtros */
+  var fw=(CW-9)/4;
+  X.filtros.forEach(function(f,k){var x=M+k*(fw+3);doc.setFillColor(250,250,250);doc.setDrawColor(221,221,221);doc.setLineWidth(0.2);doc.rect(x,y,fw,12,'FD');
+    doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor.apply(doc,MU);doc.text(f[0],x+2.5,y+4.2);
+    doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor.apply(doc,TX);doc.text(doc.splitTextToSize(String(f[1]),fw-5)[0]||'',x+2.5,y+9)});
+  y+=17;
+  /* quadro preto: conformidade geral */
+  if(X.tipo!=='foto'){
+    doc.setFillColor(0,0,0);doc.roundedRect(M,y,CW,30,4,4,'F');
+    doc.addImage(ixAnel(X.cp),'PNG',M+5,y+4,22,22);
+    doc.setFont('helvetica','bold');doc.setFontSize(12);doc.setTextColor(255,255,255);doc.text('Conformidade geral',M+33,y+11);
+    doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(201,201,201);doc.text('Itens conformes nas inspeções do período.',M+33,y+16.5);
+    if(X.ant!=null){doc.setFont('helvetica','bold');doc.setTextColor.apply(doc,X.ant>=0?[127,217,154]:[255,154,145]);doc.text((X.ant>=0?'▲ ':'▼ ')+Math.abs(X.ant)+' pontos sobre o período anterior',M+33,y+22.5)}
+    y+=35;
+  }
+  /* números principais */
+  var kw=(CW-9)/4;need(24);
+  X.kpis.forEach(function(k,i){var x=M+i*(kw+3),bad=k[2];
+    doc.setFillColor.apply(doc,bad?[255,241,230]:[255,255,255]);doc.setDrawColor.apply(doc,bad?[247,201,163]:[227,227,223]);doc.setLineWidth(0.3);doc.roundedRect(x,y,kw,21,2.5,2.5,'FD');
+    doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor.apply(doc,bad?[154,63,0]:TX);doc.text(String(k[1]),x+3.5,y+10.5);
+    doc.setFont('helvetica',bad?'bold':'normal');doc.setFontSize(8);doc.setTextColor.apply(doc,bad?[122,50,0]:MU);doc.splitTextToSize(String(k[0]),kw-6).slice(0,2).forEach(function(l,j){doc.text(l,x+3.5,y+15+j*3.6)})});
+  y+=26;
+  /* rodas */
+  function roda(x,w,t,sub,parts,center,csub){
+    cartao(x,y,w,46);doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor.apply(doc,TX);doc.text(t,x+4,y+7);
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor.apply(doc,MU);doc.text(sub,x+w-4,y+7,{align:'right'});
+    doc.addImage(ixRoda(parts,center,csub),'PNG',x+4,y+11,32,32);
+    parts.forEach(function(p,i){var yy=y+17+i*7;doc.setFillColor.apply(doc,p.rgb);doc.circle(x+41,yy-1.1,1.4,'F');
+      doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor.apply(doc,TX);doc.text(p.l,x+45,yy);doc.setFont('helvetica','bold');doc.text(String(p.v),x+w-5,yy,{align:'right'})});
+  }
+  var rw=(CW-4)/2,rodas=[];
+  if(X.tipo==='todos')rodas.push(['Relatórios por tipo',X.total+' no período',X.tipoParts,String(X.total),'relatórios']);
+  if(X.tipo!=='foto'){rodas.push(['Risco das não conformidades',X.ncs+' itens',X.risco,String(X.ncs),'itens']);rodas.push(['Planos de ação',X.acoes+' no total',X.planos,X.acoes?Math.round(X.planos[0].v/X.acoes*100)+'%':'-','concluídas'])}
+  for(var q=0;q<rodas.length;q+=2){need(50);for(var c=0;c<2&&q+c<rodas.length;c++){var d=rodas[q+c];roda(M+c*(rw+4),rw,d[0],d[1],d[2],d[3],d[4])}y+=50}
+  /* normas */
+  if(X.tipo!=='foto'){
+    var nh=14+Math.max(1,X.normas.length)*9;need(nh+4);cartao(M,y,CW,nh);
+    doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor.apply(doc,TX);doc.text('Não conformidades por norma',M+4,y+7);
+    if(!X.normas.length){doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor.apply(doc,MU);doc.text('Sem não conformidades neste filtro.',M+4,y+14)}
+    var mxn=Math.max.apply(null,X.normas.map(function(t){return t[1]}).concat([1]));
+    X.normas.forEach(function(t,i){var yy=y+13+i*9;doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor.apply(doc,TX);doc.text(t[0],M+4,yy+1.5);doc.setFont('helvetica','bold');doc.text(String(t[1]),M+CW-4,yy+1.5,{align:'right'});
+      doc.setFillColor(238,238,234);doc.roundedRect(M+4,yy+3,CW-8,2.4,1.2,1.2,'F');doc.setFillColor.apply(doc,OR);doc.roundedRect(M+4,yy+3,Math.max(2,(CW-8)*t[1]/mxn),2.4,1.2,1.2,'F')});
+    y+=nh+4;
+  }
+  /* por mês */
+  need(72);cartao(M,y,CW,X.tipo==='todos'?68:62);doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor.apply(doc,TX);doc.text('Por mês',M+4,y+7);
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor.apply(doc,MU);doc.text('Últimos 12 meses',M+CW-4,y+7,{align:'right'});
+  doc.addImage(ixMeses(X),'PNG',M+3,y+10,CW-6,(CW-6)*420/1500);
+  if(X.tipo==='todos'){var ly=y+63.5;doc.setFillColor.apply(doc,OR);doc.rect(M+4,ly-2,3,3,'F');doc.setFontSize(8.5);doc.setTextColor.apply(doc,TX);doc.text('Fotográficos',M+9,ly+0.6);doc.setFillColor(0,0,0);doc.rect(M+36,ly-2,3,3,'F');doc.text('Inspeções',M+41,ly+0.6)}
+  y+=(X.tipo==='todos'?72:66);
+  /* por empresa e unidade */
+  var rows=X.unid.length?X.unid:[],uh=14+Math.max(1,rows.length)*11;need(Math.min(uh,40)+4);
+  titulo('Por empresa e unidade');
+  if(!rows.length){doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor.apply(doc,MU);doc.text('Sem dados ainda neste filtro.',M,y+3);y+=8}
+  rows.forEach(function(u){need(12);doc.setFillColor(255,255,255);doc.setDrawColor(227,227,223);doc.setLineWidth(0.3);doc.roundedRect(M,y,CW,10.5,2,2,'FD');
+    doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor.apply(doc,TX);doc.text(doc.splitTextToSize(String(u[0]),CW-30)[0]||'',M+3,y+4.4);
+    doc.setFont('helvetica','normal');doc.setFontSize(7.8);doc.setTextColor.apply(doc,MU);doc.text(doc.splitTextToSize(String(u[1]),CW-30)[0]||'',M+3,y+8.4);
+    if(X.tipo!=='foto'&&u[2]!=null){var cc=ixCores(u[2]);doc.setFillColor.apply(doc,cc[0]);doc.roundedRect(M+CW-20,y+2.4,17,5.8,2.9,2.9,'F');doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor.apply(doc,cc[1]);doc.text(u[2]+'%',M+CW-11.5,y+6.5,{align:'center'})}
+    y+=12.5});
+  var np=doc.internal.getNumberOfPages(),gen=new Date().toLocaleDateString('pt-BR');
+  for(var p=1;p<=np;p++){doc.setPage(p);doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor.apply(doc,MU);
+    doc.setDrawColor(201,201,201);doc.setLineWidth(0.2);doc.line(M,287,PW-M,287);doc.text('SevIA SST 4.0  |  Indicadores  |  Gerado em '+gen,M,291);doc.text('Página '+p+' de '+np,PW-M,291,{align:'right'})}
+  try{
+    await S.downloads.save({filename:'indicadores-'+slug(X.filtros[0][1])+'-'+new Date().toISOString().slice(0,10)+'.pdf',data:doc.output('arraybuffer')});
+    toast('Indicadores prontos.');
+  }catch(e){if(!e||e.code!=='declined'){console.error(e);toast('Não foi possível salvar o PDF.')}}
+}
+async function gerarWordInd(){
+  var D=window.docx;
+  if(!D||!S.downloads){toast('A geração de Word não está disponível agora.');return}
+  var X=ixDados();if(!X)return;
+  toast('Gerando o Word dos indicadores…');
+  var empO=S.pf.empresa!=='todas'?empDe(S.pf.empresa):null,logoId=(empO&&empO.logo)||(S.marca&&S.marca.logo)||'';
+  var logo=null;try{logo=logoId?await imgLogoB(logoId):null}catch(e){logo=null}
+  var TW=9638,NB={style:D.BorderStyle.NONE,size:0,color:'FFFFFF'},nob={top:NB,bottom:NB,left:NB,right:NB};
+  var gb={style:D.BorderStyle.SINGLE,size:6,color:'E3E3DF'},gbord={top:gb,bottom:gb,left:gb,right:gb};
+  function R(t,o){o=o||{};return new D.TextRun({text:String(t==null?'':t),bold:!!o.b,size:o.size||20,color:o.color||'111111'})}
+  function P(runs,o){o=o||{};return new D.Paragraph({alignment:o.al,spacing:{after:o.after==null?40:o.after,before:o.before||0},keepNext:!!o.kn,children:[].concat(runs)})}
+  function img(url,w,h,al){return new D.Paragraph({alignment:al,spacing:{after:0},children:[new D.ImageRun({type:'png',data:ixBytes(url),transformation:{width:w,height:h}})]})}
+  function cel(ch,w,o){o=o||{};return new D.TableCell({width:{size:Math.round(TW*w/100),type:D.WidthType.DXA},borders:o.borders||gbord,verticalAlign:o.top?D.VerticalAlign.TOP:D.VerticalAlign.CENTER,shading:o.fill?{type:D.ShadingType.CLEAR,fill:o.fill,color:'auto'}:undefined,margins:{top:o.mt==null?100:o.mt,bottom:o.mt==null?100:o.mt,left:140,right:140},children:[].concat(ch)})}
+  function tab(rows,ws,cant){return new D.Table({width:{size:TW,type:D.WidthType.DXA},layout:D.TableLayoutType.FIXED,columnWidths:ws.map(function(w){return Math.round(TW*w/100)}),rows:rows.map(function(r){return new D.TableRow({cantSplit:true,children:r})})})}
+  function gap(n){return P('',{after:n||100})}
+  var kids=[];
+  /* filtros */
+  kids.push(tab([X.filtros.map(function(f){return cel([P(R(f[0],{size:15,color:'595959'}),{after:0}),P(R(f[1],{b:true,size:18}),{after:0})],25,{fill:'FAFAFA',mt:60})})],[25,25,25,25]));kids.push(gap(160));
+  if(X.tipo!=='foto'){
+    kids.push(tab([[cel(img(ixAnel(X.cp),84,84),20,{fill:'000000',borders:nob}),cel([P(R('Conformidade geral',{b:true,size:26,color:'FFFFFF'}),{after:40}),P(R('Itens conformes nas inspeções do período.',{size:19,color:'C9C9C9'}),{after:40})].concat(X.ant==null?[]:[P(R((X.ant>=0?'▲ ':'▼ ')+Math.abs(X.ant)+' pontos sobre o período anterior',{b:true,size:19,color:X.ant>=0?'7FD99A':'FF9A91'}),{after:0})]),80,{fill:'000000',borders:nob})]],[20,80]));
+    kids.push(gap(160));
+  }
+  kids.push(tab([X.kpis.map(function(k){var bad=k[2];return cel([P(R(k[1],{b:true,size:40,color:bad?'9A3F00':'111111'}),{after:20}),P(R(k[0],{size:17,b:!!bad,color:bad?'7A3200':'595959'}),{after:0})],25,{fill:bad?'FFF1E6':'FFFFFF',borders:bad?{top:{style:D.BorderStyle.SINGLE,size:6,color:'F7C9A3'},bottom:{style:D.BorderStyle.SINGLE,size:6,color:'F7C9A3'},left:{style:D.BorderStyle.SINGLE,size:6,color:'F7C9A3'},right:{style:D.BorderStyle.SINGLE,size:6,color:'F7C9A3'}}:gbord})})],[25,25,25,25]));kids.push(gap(160));
+  function rodaCel(t,sub,parts,center,csub){
+    var leg=parts.map(function(p){return P([R('■ ',{color:p.hex,size:22}),R(p.l+'   ',{size:19}),R(String(p.v),{b:true,size:19})],{after:50})});
+    return cel([P([R(t,{b:true,size:22})],{after:0}),P(R(sub,{size:16,color:'595959'}),{after:80}),img(ixRoda(parts,center,csub),110,110)].concat(leg),50,{top:true});
+  }
+  var rodas=[];
+  if(X.tipo==='todos')rodas.push(rodaCel('Relatórios por tipo',X.total+' no período',X.tipoParts,String(X.total),'relatórios'));
+  if(X.tipo!=='foto'){rodas.push(rodaCel('Risco das não conformidades',X.ncs+' itens',X.risco,String(X.ncs),'itens'));rodas.push(rodaCel('Planos de ação',X.acoes+' no total',X.planos,X.acoes?Math.round(X.planos[0].v/X.acoes*100)+'%':'-','concluídas'))}
+  for(var q=0;q<rodas.length;q+=2){var par=rodas.slice(q,q+2);if(par.length===1)par.push(cel(P(''),50,{borders:nob}));kids.push(tab([par],[50,50]));kids.push(gap(120))}
+  if(X.tipo!=='foto'){
+    var mxn=Math.max.apply(null,X.normas.map(function(t){return t[1]}).concat([1]));
+    var nr=[[cel(P(R('Não conformidades por norma',{b:true,size:22}),{after:0}),100)]];
+    if(!X.normas.length)nr.push([cel(P(R('Sem não conformidades neste filtro.',{size:19,color:'595959'}),{after:0}),100)]);
+    X.normas.forEach(function(t){nr.push([cel([P([R(t[0]+'   ',{size:19}),R(String(t[1]),{b:true,size:19})],{after:20}),P(R('█'.repeat(Math.max(1,Math.round(t[1]/mxn*40))),{size:14,color:'FA6905'}),{after:0})],100,{mt:50})])});
+    kids.push(tab(nr,[100]));kids.push(gap(120));
+  }
+  kids.push(tab([[cel([P([R('Por mês',{b:true,size:22}),R('     Últimos 12 meses',{size:16,color:'595959'})],{after:60}),img(ixMeses(X),600,168)].concat(X.tipo==='todos'?[P([R('■ ',{color:'FA6905',size:20}),R('Fotográficos     ',{size:18}),R('■ ',{color:'000000',size:20}),R('Inspeções',{size:18})],{before:40,after:0})]:[]),100)]],[100]));kids.push(gap(160));
+  kids.push(P(R('Por empresa e unidade',{b:true,size:22}),{after:80,kn:true}));
+  if(!X.unid.length)kids.push(P(R('Sem dados ainda neste filtro.',{size:19,color:'595959'})));
+  else kids.push(tab(X.unid.map(function(u){var hx=u[2]==null?'595959':(u[2]>=85?'1B7F3A':(u[2]>=70?'8A5A00':'B3261E'));return [cel([P(R(u[0],{b:true,size:19}),{after:10}),P(R(u[1],{size:16,color:'595959'}),{after:0})],X.tipo==='foto'?100:84,{mt:70})].concat(X.tipo==='foto'?[]:[cel(P(R(u[2]==null?'-':u[2]+'%',{b:true,size:20,color:hx}),{al:D.AlignmentType.RIGHT,after:0}),16,{mt:70})])}),X.tipo==='foto'?[100]:[84,16]));
+  var doc=new D.Document({
+    creator:'SevIA SST 4.0',title:'Indicadores',
+    styles:{default:{document:{run:{font:'Arial',size:22}}}},
+    sections:[{
+      properties:{page:{size:{width:11906,height:16838},margin:{top:1134,bottom:1134,left:1134,right:1134}}},
+      headers:{default:new D.Header({children:[new D.Paragraph({children:[new D.TextRun({text:'INDICADORES',bold:true,size:28}),new D.TextRun({text:'     '})].concat(logo?[new D.ImageRun({type:'png',data:logo.d,transformation:{width:Math.round(logo.w*Math.min(120/logo.w,40/logo.h)),height:Math.round(logo.h*Math.min(120/logo.w,40/logo.h))}})]:[])})]})},
+      footers:{default:new D.Footer({children:[new D.Paragraph({alignment:D.AlignmentType.CENTER,children:[new D.TextRun({text:'SevIA SST 4.0  |  Gerado em '+new Date().toLocaleDateString('pt-BR')+'  |  Página ',size:16,color:'444444'}),new D.TextRun({children:[D.PageNumber.CURRENT],size:16,color:'444444'}),new D.TextRun({text:' de ',size:16,color:'444444'}),new D.TextRun({children:[D.PageNumber.TOTAL_PAGES],size:16,color:'444444'})]})]})},
+      children:kids
+    }]
+  });
+  try{
+    var blob=await D.Packer.toBlob(doc);
+    await S.downloads.save({filename:'indicadores-'+slug(X.filtros[0][1])+'-'+new Date().toISOString().slice(0,10)+'.docx',data:blob});
+    toast('Indicadores prontos.');
   }catch(e){if(!e||e.code!=='declined'){console.error(e);toast('Não foi possível salvar o arquivo Word.')}}
 }
 
@@ -2925,6 +3126,7 @@ document.addEventListener('click',function(e){
   var el=e.target.closest('[data-act]');if(!el)return;
   var a=el.dataset.act,id=el.dataset.id;
   if(el.closest('.search')){bs.hidden=true;$('#busca').value=''}
+  if((a.indexOf('del-')===0||a==='rm-exemplos')&&S.perfil==='Técnico SST'){toast('O Técnico SST não exclui registros. Peça à Administradora ou a um Técnico ADM.');return}
   switch(a){
     case 'new-insp':var ni=novaInsp();if(el.dataset.tipo==='inspecao'){ni.draft.tipo='inspecao';ni.draft.itens=[itemVazio(ni.draft)]}var au=autoLer(el.dataset.tipo==='inspecao');if(au){ni.draft=au.draft;ni._recuperado=true;ni._sujo=true}go(ni);break;
     case 'auto-descartar':autoLimpa();var nz=novaInsp();if(S.route&&S.route.draft&&S.route.draft.tipo==='inspecao'){nz.draft.tipo='inspecao';nz.draft.itens=[itemVazio(nz.draft)]}go(nz,{replace:true});toast('Formulário em branco.');break;
@@ -2998,6 +3200,8 @@ document.addEventListener('click',function(e){
     case 'zoom':var lb=$('#lightbox');lb.innerHTML='<img src="'+BLOB(esc(id))+'" alt="Foto ampliada"><button type="button" class="btn btn-primary" data-act="zoom-close">Fechar</button>';lb.hidden=false;lb.querySelector('button').focus();break;
     case 'zoom-close':$('#lightbox').hidden=true;break;
     case 'photo-rm':var pI=+el.dataset.i;confirmar('Remover foto','A foto será retirada deste relatório. Deseja remover?','Remover',function(){S.route.draft.fotos.splice(pI,1);$('#fotos').innerHTML=thumbs(S.route.draft.fotos,true)});break;
+    case 'ind-pdf':gerarPDFInd();break;
+    case 'ind-word':gerarWordInd();break;
     case 'pdf':gerarPDF(id);break;
     case 'word':gerarWord(id);break;
     case 'excel':gerarExcel(id||null);break;
@@ -3144,7 +3348,7 @@ var espera=setInterval(function(){
       S.user=r.u;S.me={id:r.me&&r.me.id||'',name:r.me&&r.me.name||''};
       S.perfil=r.ow?(window.SEVIA_PERFIL==='Técnico ADM'?'Técnico ADM':'Administradora'):(r.ed?'Técnico SST':'Cliente/ADM');S.canWrite=r.ow||r.ed;
     }
-    $('#app').classList.toggle('ro',!S.canWrite);
+    $('#app').classList.toggle('ro',!S.canWrite);$('#app').classList.toggle('nodel',S.perfil==='Técnico SST');
     S.loaded.p=true;escopo();refresh();setTimeout(restauraRascunho,800);
   });
 })();

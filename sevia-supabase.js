@@ -200,7 +200,7 @@
   }
   async function lerColecao(col) {
     if (col === "usuarios") {
-      if (!perfil || perfil.perfil !== "Administradora") return [];
+      if (!perfil || (perfil.perfil !== "Administradora" && perfil.perfil !== "Técnico ADM")) return [];
       var u;
       try { u = await sb.from("sevia_perfis").select("*").order("nome"); } catch (e) { u = { error: e }; }
       if (u.error) {
@@ -335,7 +335,7 @@
         return this.set(Object.assign({}, atual, clone(v)));
       },
       delete: async function () {
-        if (!podeEscrever(col)) throw { code: "not_granted", message: "Sem permissão para excluir." };
+        if (!podeEscrever(col) || !ehAdmin()) throw { code: "not_granted", message: "Sem permissão para excluir." };
         if (!navigator.onLine) return guardaDoc(path, col, null, true);
         var r;
         try { r = await sb.from("sevia_documentos").delete().eq("path", path); } catch (e) { r = { error: e }; }
