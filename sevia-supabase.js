@@ -114,7 +114,7 @@
   function usaGuardado(g) {
     perfil = g; semSinal = true; faixa();
     window.SEVIA_PERFIL = perfil.perfil;
-    window.SEVIA_EU = { nome: perfil.nome || "", funcao: perfil.funcao || "", registro: perfil.registro_prof || "" };
+    window.SEVIA_EU = { nome: perfil.nome || "", funcao: perfil.funcao || "", registro: perfil.registro_prof || "", foto: perfil.foto || "" };
     return true;
   }
   var ready0 = (async function () {
@@ -134,7 +134,7 @@
     perfil = r.data;
     try { localStorage.setItem(CK, JSON.stringify(perfil)); } catch (e) {}
     window.SEVIA_PERFIL = perfil.perfil;
-    window.SEVIA_EU = { nome: perfil.nome || "", funcao: perfil.funcao || "", registro: perfil.registro_prof || "" };
+    window.SEVIA_EU = { nome: perfil.nome || "", funcao: perfil.funcao || "", registro: perfil.registro_prof || "", foto: perfil.foto || "" };
     return true;
   })();
   async function carregaPendentes() {
@@ -154,7 +154,7 @@
   /* ---------- perfis -> "usuarios" do app ---------- */
   function usuarioDe(r) {
     return { id: r.id, nome: r.nome, usuario: r.usuario, email: r.email || "", telefone: r.telefone || "",
-      perfil: r.perfil, funcao: r.funcao || "", registroProf: r.registro_prof || "", empresaId: r.empresa_id || "", empresasAcesso: r.empresas_acesso || [], ativo: r.ativo,
+      perfil: r.perfil, foto: r.foto || "", funcao: r.funcao || "", registroProf: r.registro_prof || "", empresaId: r.empresa_id || "", empresasAcesso: r.empresas_acesso || [], ativo: r.ativo,
       status: r.trocar_senha ? "Aguardando primeiro acesso" : "Ativo", trocarSenha: r.trocar_senha,
       atualizadoEm: new Date(r.criado_em).getTime() };
   }
@@ -179,6 +179,13 @@
     resetarUsuario: async function (id) {
       var d = await chamar("admin-usuarios", { acao: "resetar", id: id });
       return { senha: d.senha_provisoria };
+    },
+    definirFoto: async function (dataUrl) {
+      var r = await sb.rpc("sevia_definir_minha_foto", { p_foto: dataUrl || null });
+      if (r.error) throw r.error;
+      perfil.foto = dataUrl || "";
+      try { localStorage.setItem(CK, JSON.stringify(perfil)); } catch (e) {}
+      if (window.SEVIA_EU) window.SEVIA_EU.foto = perfil.foto;
     },
     excluirUsuario: function (id) { return chamar("admin-usuarios", { acao: "excluir", id: id }); }
   };

@@ -1,6 +1,7 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-22-1920 manual-sem-adm2 --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-22-2120 foto-perfil-icones --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
+<script>(function(){function t(){var m='auto';try{m=localStorage.getItem('sevia-tema')||'auto'}catch(e){}return m==='escuro'||(m==='auto'&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'escuro':'claro'}window.__aplicaTema=function(){var x=t(),d=document.documentElement;d.setAttribute('data-tema',x);var c=document.querySelector('meta[name="theme-color"]');if(c)c.setAttribute('content',x==='escuro'?'#000000':'#000000')};window.__aplicaTema();try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',window.__aplicaTema)}catch(e){}})()</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
 <style>
@@ -360,6 +361,55 @@ body:has(.savebar) .fab{display:none}
 .esp{display:grid;gap:0;border:1px solid var(--border);border-radius:10px;overflow:hidden}.esp-row{display:grid;gap:6px;padding:10px 12px;border-bottom:1px solid var(--border)}.esp-row:last-child{border-bottom:0}.esp-in{display:grid;grid-template-columns:minmax(120px,170px) 1fr;gap:8px}
 .epi-row{display:grid;grid-template-columns:1fr 90px;gap:6px;margin-bottom:10px;padding:10px;border:1px solid var(--border);border-radius:10px}.epi-row input[data-ep=epi]{grid-column:1/2}.epi-row input[data-ep=ca]{grid-column:2/3}.epi-row input[data-ep=cond],.epi-row input[data-ep=obs]{grid-column:1/3}.epi-row button{grid-column:1/3}
 @media(min-width:720px){.epi-row{grid-template-columns:2fr 110px 2fr 2fr 44px;padding:0;border:0}.epi-row input[data-ep],.epi-row button{grid-column:auto!important}}
+
+.side{position:relative!important}
+.side-av{position:absolute;top:50%;right:max(16px,env(safe-area-inset-right,0px));transform:translateY(-50%);border-radius:50%;border:2px solid var(--side-fg);display:block;line-height:0;text-decoration:none}
+.av{display:inline-grid;place-items:center;border-radius:50%;overflow:hidden;color:#fff;flex:none;font-weight:600;font-family:Inter,sans-serif;user-select:none}
+.av img{width:100%;height:100%;object-fit:cover;display:block}
+.perfil-box{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+/* ---------- modo escuro ---------- */
+html[data-tema="escuro"]{color-scheme:dark;
+  --bg:#121212;--surface:#1C1C1C;--surface2:#262626;--fg:#F2F2F2;--muted:#B8B8B8;--border:#3D3D3D;
+  --brand:#F2F2F2;--accent:#FA6905;--on-accent:#000000;--accent-text:#FF9A52;--focus:#7DB2FF;
+  --danger:#FF6B63;--danger-bg:#3A1815;--danger-fg:#FFB4AD;
+  --warn-bg:#3A2B08;--warn-fg:#F5C56B;--mid:#E0A100;
+  --info:#7DB2FF;--info-bg:#14263F;--info-fg:#9CC3FF;
+  --ok:#4CC27A;--ok-bg:#0F2E1B;--ok-fg:#7FD99A;
+  --neutral-bg:#2A2A2A;--neutral-fg:#E0E0E0;
+  --high-bg:#3A2208;--high-fg:#FFB874;--crit-bg:#B3261E;--crit-fg:#FFFFFF;
+  --side-bg:#000000;--side-fg:#FFFFFF;--shadow:0 8px 24px rgba(0,0,0,.6)}
+html[data-tema="escuro"] .nav a:hover{background:rgba(255,255,255,.12)}
+html[data-tema="escuro"] .nav a[aria-current="page"]{background:#FFFFFF;color:#000}
+html[data-tema="escuro"] .badge{background:#3A3A3A;color:#fff}
+html[data-tema="escuro"] .req{color:#FF6B63}
+html[data-tema="escuro"] .ix-card,html[data-tema="escuro"] .ix-k{background:var(--surface);border-color:var(--border)}
+html[data-tema="escuro"] .ix-sub,html[data-tema="escuro"] .ix-ax,html[data-tema="escuro"] .ix-k .l,html[data-tema="escuro"] .ix-un small{color:var(--muted)}
+html[data-tema="escuro"] .ix-seg{background:var(--surface2)}
+html[data-tema="escuro"] .ix-seg button{color:var(--fg)}
+html[data-tema="escuro"] .ix-seg button[aria-pressed="true"]{background:#FFFFFF;color:#000}
+html[data-tema="escuro"] .ix-hero{background:var(--surface2);border:1px solid var(--border)}
+html[data-tema="escuro"] .ix-k.bad{background:#3A2208;border-color:#7A4410}
+html[data-tema="escuro"] .ix-k.bad .n,html[data-tema="escuro"] .ix-k.bad .l{color:#FFB874}
+html[data-tema="escuro"] .ix-bar .t{background:var(--surface2)}
+html[data-tema="escuro"] .ix-mes{border-bottom-color:var(--border)}
+html[data-tema="escuro"] .ix-un{border-top-color:var(--border)}
+html[data-tema="escuro"] .ix-pill.ok{background:var(--ok-bg);color:var(--ok-fg)}
+html[data-tema="escuro"] .ix-pill.wn{background:var(--warn-bg);color:var(--warn-fg)}
+html[data-tema="escuro"] .ix-pill.bd{background:var(--danger-bg);color:var(--danger-fg)}
+html[data-tema="escuro"] .ix-pill.na{background:var(--neutral-bg);color:var(--neutral-fg)}
+html[data-tema="escuro"] .ia-aviso-etapa{background:var(--info-bg);border-color:var(--info);color:var(--fg)}
+html[data-tema="escuro"] .qa-i{background:#3A2208}
+html[data-tema="escuro"] .pt li.done .sn{color:#000}
+html[data-tema="escuro"] .menu-bg{background:rgba(0,0,0,.6)}
+html[data-tema="escuro"] svg circle[stroke="#EEEEEA"]{stroke:#3D3D3D}
+html[data-tema="escuro"] svg text[fill="#111"],html[data-tema="escuro"] svg text[fill="#fff"]{fill:#F2F2F2}
+html[data-tema="escuro"] svg text[fill="#595959"]{fill:#B8B8B8}
+html[data-tema="escuro"] svg circle[fill="#fff"]{fill:#1C1C1C}
+html[data-tema="escuro"] svg circle[stroke="#3A3A3A"]{stroke:#6A6A6A}
+.tema-op{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.tema-ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.tema-op .btn{gap:8px}
+.tema-op .btn[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
 </style></head><body>
 
 <div id="app"></div>
@@ -381,7 +431,7 @@ var SETORES=['Produção','Manutenção','Almoxarifado','Área externa','Adminis
 var GRAUS=['Crítico','Alto','Médio','Baixo'];
 var GO={'Crítico':0,'Alto':1,'Médio':2,'Baixo':3};
 var MESES=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-var VIEWS=['manual','usuarios','teste','painel','concluidas','indicadores','empresas','contratos','cadastros','inspecoes','ncs','acoes','relatorios'];
+var VIEWS=['manual','usuarios','teste','painel','concluidas','indicadores','empresas','contratos','cadastros','config','inspecoes','ncs','acoes','relatorios'];
 var CLASSES=['Não conformidade','Condição insegura','Ato inseguro','Observação'];
 var PRIOS=['Alta','Média','Baixa'];
 var PENDENTE='Referência normativa pendente de validação';
@@ -490,6 +540,7 @@ var ICONES={
   inspecoes:['#1B7F3B','<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9zM9 13l2 2 4-4"/>'],
   ncs:['#C62828','<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>'],
   acoes:['#FA6905','<path d="M5 21V4M5 4h12l-2 4 2 4H5"/>'],
+  config:['#555555','<circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M18.7 5.3l-2.1 2.1M7.4 16.6l-2.1 2.1"/>'],
   manual:['#1D5FBF','<path d="M5 4h10a3 3 0 013 3v13H8a3 3 0 01-3-3z"/><path d="M5 17a3 3 0 013-3h10M9 8h5"/>'],
   relatorios:['#C2185B','<path d="M5 20V10M12 20V4M19 20v-7"/>']
 };
@@ -613,10 +664,11 @@ function onHash(){
 
 /* ---------- estrutura ---------- */
 function shell(){
-  $('#app').innerHTML='<div class="app"><aside class="side"><a class="logo" href="#painel" aria-label="SevIA SST 4.0, ir para o início"><b>Sev<i>IA</i></b><span>SST 4.0</span></a><nav class="nav" id="nav" aria-label="Principal"></nav><p class="side-note"></p></aside>'+
+  $('#app').innerHTML='<div class="app"><aside class="side"><a class="logo" href="#painel" aria-label="SevIA SST 4.0, ir para o início"><b>Sev<i>IA</i></b><span>SST 4.0</span></a><a class="side-av" id="side-av" href="#config" aria-label="Meu perfil"></a><nav class="nav" id="nav" aria-label="Principal"></nav><p class="side-note"></p></aside>'+
   '<main class="main"><div class="main-in"><div class="search"><input id="busca" type="search" placeholder="Buscar relatórios, empresas, setores…" aria-label="Buscar" autocomplete="off" data-inp="busca"><div id="busca-res" class="busca-res" hidden></div></div><div class="wrap" id="wrap"></div></div></main><div class="menu-bg" id="menu-bg" hidden></div><button type="button" class="fab" id="fab" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div>';
 }
 function renderNav(){
+  renderAv();
   var ncAb=S.ncs.filter(function(n){return stNc(n)!=='Concluída'}).length;
   var venc=S.acoes.filter(vencida).length;
   var temIns=S.insp.some(isIns);
@@ -625,12 +677,12 @@ function renderNav(){
     ['Registrar',[['inspecoes','Relatórios e inspeções',0,0]]],
     ['Acompanhar',(temIns?[['ncs','Não conformidades',ncAb,0],['acoes','Plano de ação',venc,1]]:[]).concat([['concluidas','Relatórios concluídos',0,0],['indicadores','Indicadores',0,0]])],
     ['Cadastros',[['empresas','Empresa',0,0],['contratos','Contratos',0,0]].concat(podeUsuarios()?[['usuarios','Usuários e acessos',0,0]]:[])],
-    ['Ajuda',[['manual','Manual do usuário',0,0]]]
+    ['Ajuda',[['manual','Manual do usuário',0,0],['config','Configurações',0,0]]]
   ];
   $('#nav').innerHTML=grupos.map(function(g){
     return (g[0]?'<p class="nav-g">'+g[0]+'</p>':'')+g[1].map(function(it){
     return '<a href="#'+it[0]+'"'+(S.view===it[0]?' aria-current="page"':'')+'><span class="nl">'+ico(it[0])+'<span>'+it[1]+'</span></span>'+(it[2]?'<span class="badge'+(it[3]?' bad':'')+'" aria-label="'+it[2]+(it[3]?' vencidas':' abertas')+'">'+it[2]+'</span>':'')+'</a>'}).join('')}).join('');
-  $('#nav').insertAdjacentHTML('beforeend',(S.me.name?'<p class="menu-perfil">Usuário: <b>'+esc(S.me.name)+'</b></p>':'')+(jaInstalado()?'':'<p class="menu-perfil"><button type="button" class="btn btn-ghost" data-act="instalar">Instalar app no telefone</button></p>')+(window.SEVIA_SAIR?'<p class="menu-perfil"><button type="button" class="btn btn-ghost" data-act="sair">Sair</button></p>':''));
+  $('#nav').insertAdjacentHTML('beforeend',(S.me.name?'<p class="menu-perfil" style="display:flex;align-items:center;gap:10px">'+avatar(minhaFoto(),S.me.name,36)+'<span>Usuário: <b>'+esc(S.me.name)+'</b></span></p>':'')+(jaInstalado()?'':'<p class="menu-perfil"><button type="button" class="btn btn-ghost" data-act="instalar">Instalar app no telefone</button></p>')+(window.SEVIA_SAIR?'<p class="menu-perfil"><button type="button" class="btn btn-ghost" data-act="sair">Sair</button></p>':''));
 }
 function banner(){
   var h='',n=S.insp.concat(S.ncs,S.acoes,S.empresas).filter(function(x){return x.exemplo}).length;
@@ -665,6 +717,7 @@ function viewTab(){
     case 'indicadores':return viewIndicadores();
     case 'contratos':return viewContratos();
     case 'cadastros':return viewCadastros();
+    case 'config':return viewConfig();
     case 'teste':return viewTeste();
     case 'inspecoes':return viewInsps();
     case 'ncs':return viewNcs();
@@ -913,7 +966,7 @@ function formEmpresa(r){
 /* ---------- usuários e acessos ---------- */
 var PERFIS=[
   ['Administradora','Administradora','Acesso total: cadastra empresas, contratos e usuários, libera as empresas de cada técnico, cria e edita todos os registros e gera os relatórios em PDF e Word.'],
-  ['Técnico ADM','Técnico ADM','Cadastra empresas e contratos, cria e edita relatórios e inspeções e gera os relatórios em PDF e Word. Também cria usuários Técnico ADM, Técnico SST e Cliente.'],
+  ['Técnico ADM','Técnico ADM','Cadastra empresas e contratos, cria e edita relatórios e inspeções e gera os relatórios em PDF e Word. Também cria usuários Técnico ADM, Técnico SST e Cliente e pode excluir os que criou.'],
   ['Técnico SST','Técnico SST','Cria e edita relatórios, inspeções, fotos e planos de ação das empresas liberadas para ele e gera os relatórios finais em PDF e Word. Não exclui nada, não cadastra empresas e não gerencia usuários.'],
   ['Cliente','Cliente / ADM','Só consulta e baixa os relatórios (PDF e Word) e os indicadores da empresa vinculada. Não cria nem edita.']
 ];
@@ -934,7 +987,7 @@ function viewUsuarios(){
   '<div class="card"><div class="list">'+(L.length?L.map(function(u){
     var emp=u.perfil==='Cliente'?(empNomeDe(u.empresaId)||'sem empresa'):(u.perfil==='Administradora'?'todas as empresas':((u.empresasAcesso||[]).length?((u.empresasAcesso||[]).length===1?(empNomeDe(u.empresasAcesso[0])||'1 empresa'):u.empresasAcesso.length+' empresas'):'nenhuma empresa liberada'));
     var st=u.ativo===false?['Inativo','danger']:(u.status==='Ativo'?['Ativo','ok']:['Aguardando primeiro acesso','warn']);
-    return '<button type="button" class="row" data-act="edit-usuario" data-id="'+esc(u.id)+'"><span class="row-main" style="cursor:inherit"><b>'+esc(u.nome)+'</b><span class="muted small">Usuário: '+esc(u.usuario||u.email||'-')+' · '+esc(perfilNome(u.perfil))+' · '+esc(emp)+'</span></span><span class="row-side">'+chip(st[0],st[1])+''+(podeEmpresa()?'<span class="btn btn-ghost" aria-hidden="true">Editar</span>':'')+'</span></button>'}).join(''):'<p class="muted pad">Nenhum usuário cadastrado. Toque em "Novo usuário".</p>')+'</div></div>'+
+    return '<button type="button" class="row" data-act="edit-usuario" data-id="'+esc(u.id)+'"><span style="display:flex;align-items:center;gap:12px;min-width:0;flex:1">'+avatar(u.foto,u.nome,44)+'<span class="row-main" style="cursor:inherit"><b>'+esc(u.nome)+'</b><span class="muted small">Usuário: '+esc(u.usuario||u.email||'-')+' · '+esc(perfilNome(u.perfil))+' · '+esc(emp)+'</span></span></span><span class="row-side">'+chip(st[0],st[1])+''+(podeEmpresa()?'<span class="btn btn-ghost" aria-hidden="true">Editar</span>':'')+'</span></button>'}).join(''):'<p class="muted pad">Nenhum usuário cadastrado. Toque em "Novo usuário".</p>')+'</div></div>'+
   '<section class="card"><div class="card-h"><h2>O que cada perfil pode fazer</h2></div><div class="list">'+PERFIS.filter(function(x){return ehAdm()||x[0]!=='Administradora'}).map(function(x){return '<div class="row"><span class="row-main"><b>'+esc(x[1])+'</b><span class="muted small">'+esc(x[2])+'</span></span></div>'}).join('')+'</div></section>'+
   (ehAdm()?'<section class="card"><div class="card-h"><h2>Como o acesso é liberado</h2></div><p class="muted small">Você cadastra o usuário e o sistema gera uma senha provisória, que você passa à pessoa. No primeiro acesso ela é obrigada a trocar a senha. Nada é enviado por e-mail e a senha provisória não fica guardada. O login real passa a funcionar quando o sistema estiver publicado no seu domínio, ligado ao Supabase.</p></section>':'');
 }
@@ -976,7 +1029,7 @@ function formUsuario(r){
       '<p class="muted small">Marque as empresas que este usuário pode ver e editar. Sem nenhuma marcada, ele não vê empresa alguma. Empresas novas criadas por você ficam bloqueadas até você marcá-las aqui; as que o Técnico ADM criar entram automaticamente na lista dele.</p></div>'+
     (r.id?field('Situação','u-at','<select id="u-at" name="ativo">'+opts([['sim','Ativo'],['nao','Inativo']],d.ativo===false?'nao':'sim')+'</select>'):'')+
   '</div><p class="muted small">Ativo consegue entrar no sistema; Inativo fica bloqueado. A Administradora vê todas as empresas. Técnico ADM e Técnico SST veem só as empresas marcadas acima. Cliente vê somente a empresa escolhida.'+(r.id?'':' Ao salvar, o sistema gera a senha provisória.')+'</p>'+
-  '<div class="actions"><button class="btn btn-primary" type="submit">'+(r.id?'Salvar usuário':'Criar acesso')+'</button><button type="button" class="btn btn-ghost" data-act="back">Cancelar</button>'+(r.id?btn('Gerar nova senha provisória','reset-usuario',r.id,'btn-ghost')+(ehAdm()?btn('Excluir','del-usuario',r.id,'btn-danger'):''):'')+'</div></form>';
+  '<div class="actions"><button class="btn btn-primary" type="submit">'+(r.id?'Salvar usuário':'Criar acesso')+'</button><button type="button" class="btn btn-ghost" data-act="back">Cancelar</button>'+(r.id?btn('Gerar nova senha provisória','reset-usuario',r.id,'btn-ghost')+((ehAdm()||(S.perfil==='Técnico ADM'&&!(S.me&&S.me.id===r.id)))?btn('Excluir','del-usuario',r.id,'btn-danger'):''):'')+'</div></form>';
 }
 
 /* ---------- contratos ---------- */
@@ -1012,6 +1065,39 @@ function cardAcessos(){
     '<div class="inline-add"><input id="ac-q" type="search" data-inp="ac-q" placeholder="Buscar pessoa pelo nome" aria-label="Buscar pessoa"></div><div id="ac-hits" class="list"></div>'+
     '<div class="list">'+(ids.length?ids.map(function(id){return '<div class="row"><span><b>'+esc(us[id].nome||'Pessoa')+'</b></span><span class="row-side"><select class="row-select" data-chg="ac-emp" data-id="'+esc(id)+'" aria-label="Empresa de '+esc(us[id].nome||'cliente')+'">'+opts(emp,us[id].empresaId||'')+'</select><button type="button" class="btn btn-ghost" data-act="ac-rm" data-id="'+esc(id)+'">Remover</button></span></div>'}).join(''):'<p class="muted pad">Nenhum cliente vinculado.</p>')+'</div></section>';
 }
+var AVCOR=['#1D5FBF','#7A3FB0','#1B7F3B','#B45309','#0E7490','#9D174D'];
+function avatar(foto,nome,sz){
+  var n=String(nome||'').trim(),h=0;for(var i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))>>>0;
+  var ini=n?(n.split(/\s+/)[0][0]+(n.split(/\s+/).length>1?n.split(/\s+/).pop()[0]:'')).toUpperCase():'?';
+  return '<span class="av" style="width:'+sz+'px;height:'+sz+'px;background:'+AVCOR[h%AVCOR.length]+';font-size:'+Math.round(sz*.4)+'px">'+(foto?'<img src="'+esc(foto)+'" alt="">':esc(ini))+'</span>';
+}
+function minhaFoto(){return (window.SEVIA_EU&&window.SEVIA_EU.foto)||''}
+function renderAv(){
+  var a=$('#side-av');if(!a)return;
+  a.innerHTML=avatar(minhaFoto(),S.me.name,40);
+}
+async function prepararAvatar(file){
+  var url=URL.createObjectURL(file);
+  try{
+    var im=await loadImg(url),w=im.naturalWidth,h=im.naturalHeight,l=Math.min(w,h),sx=(w-l)/2,sy=(h-l)/2,T=192;
+    var c=document.createElement('canvas');c.width=T;c.height=T;var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,T,T);x.drawImage(im,sx,sy,l,l,0,0,T,T);
+    var d=c.toDataURL('image/jpeg',0.82);if(d.length>70000)d=c.toDataURL('image/jpeg',0.6);
+    return d;
+  }finally{URL.revokeObjectURL(url)}
+}
+function cardPerfil(){
+  var f=minhaFoto(),nm=S.me.name||'';
+  return '<section class="card"><div class="card-h"><h2>Meu perfil</h2></div><div class="perfil-box">'+avatar(f,nm,84)+'<div><b style="font-size:18px">'+esc(nm||'Usuário')+'</b><p class="muted small">'+esc(perfilNome(window.SEVIA_PERFIL||S.perfil))+'</p></div></div>'+
+  '<div class="actions" style="margin-top:14px"><label class="btn btn-primary file-btn"><input class="sr-only" type="file" accept="image/*" data-chg="perfil-foto-in">'+(f?'Trocar foto':'Escolher foto')+'</label><label class="btn btn-ghost file-btn"><input class="sr-only" type="file" accept="image/*" capture="user" data-chg="perfil-foto-in">Tirar foto</label>'+(f?btn('Remover foto','perfil-foto-rm'):'')+'</div>'+
+  '<p class="muted small" style="margin-top:10px" id="perfil-st" aria-live="polite">A foto aparece no topo, no menu e na lista de usuários.</p></section>';
+}
+function cardTema(){
+  var m='auto';try{m=localStorage.getItem('sevia-tema')||'auto'}catch(e){}
+  var IT={claro:'<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M18.7 5.3l-1.8 1.8M7.1 16.9l-1.8 1.8"/>',escuro:'<path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z"/>',auto:'<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17" /><path d="M12 3.5a8.5 8.5 0 010 17z" fill="currentColor"/>'};
+  var o=[['claro','Claro'],['escuro','Escuro'],['auto','Automático']];
+  return '<section class="card"><div class="card-h"><h2>Aparência</h2></div><p class="muted small">Escolha como o sistema aparece neste aparelho. Automático segue o modo claro ou escuro do celular ou do computador. Os relatórios em PDF e Word não mudam.</p><div class="tema-op" role="group" aria-label="Tema do sistema">'+o.map(function(x){return '<button type="button" class="btn btn-ghost" data-act="tema" data-id="'+x[0]+'" aria-pressed="'+(m===x[0])+'"><svg class="tema-ic" viewBox="0 0 24 24" aria-hidden="true">'+IT[x[0]]+'</svg>'+x[1]+'</button>'}).join('')+'</div></section>';
+}
+function viewConfig(){return head('Configurações','Ajustes deste aparelho.')+'<div class="cols">'+cardPerfil()+cardTema()+'</div>'}
 function viewCadastros(){
   var c=cadAtual();
   return head('Cadastros','Responsáveis e acessos. Empresas, unidades e setores ficam em Empresa.')+
@@ -1030,8 +1116,8 @@ function viewManual(){
     '<h3>Instalar no celular ou no tablet</h3><p>A instalação é feita <b>pelo navegador do telefone ou do tablet</b>, e não por uma loja de aplicativos.</p>'+ol(['No celular ou no tablet, abra o navegador (<b>Chrome</b> no Android ou <b>Safari</b> no iPhone e no iPad) e entre em <b>seviasst.com.br</b>.','Faça o login normalmente.','No <b>Android (Chrome)</b>: toque nos três pontinhos no canto da tela e escolha <b>Instalar app</b> (ou <b>Adicionar à tela inicial</b>). Se preferir, toque em <b>Instalar app no telefone</b> no menu do SevIA.','No <b>iPhone ou iPad (Safari)</b>: toque no botão <b>Compartilhar</b> e escolha <b>Adicionar à Tela de Início</b>.','Confirme o nome <b>SevIA</b>. O ícone passa a ficar na tela do aparelho, como um aplicativo.'])+
     '<h3>Sair e bloqueio automático</h3><p>Por segurança, depois de <b>5 minutos sem uso</b> o sistema sai da conta sozinho. No último minuto aparece o aviso &ldquo;Você ainda está aí?&rdquo; com o botão <b>Continuar conectada</b>. Para sair por conta própria, use o botão <b>Sair</b> no final do menu.</p>'+
     (tec?'<p>Se você estiver preenchendo um relatório ou inspeção quando o sistema bloquear, o rascunho fica guardado neste aparelho por <b>7 dias</b>. Ao entrar de novo, escolha <b>Continuar rascunho</b> para voltar de onde parou. Para guardar um rascunho a qualquer momento, veja <b>Salvar como rascunho</b>.</p>':'')],
-  ['Perfis de acesso',podeUsuarios(),
-    li((adm?['<b>Administradora:</b> acessa tudo, cadastra empresas, contratos e usuários, libera as empresas de cada técnico e é a única que exclui usuários.']:[]).concat(['<b>Técnico ADM:</b> registra relatórios e inspeções, cadastra e edita empresas e contratos e cria o login de Técnico ADM, Técnico SST e Cliente das empresas dele. Baixa o PDF e o Word. Vê só as empresas liberadas para ele e as que ele mesmo cadastrar. Não exclui usuários.','<b>Técnico SST:</b> registra e edita relatórios e inspeções das empresas liberadas para ele e baixa o PDF e o Word. Não exclui nada (relatórios, inspeções, itens, ações, rascunhos), não cadastra empresas e não gerencia usuários.','<b>Cliente:</b> consulta e baixa os relatórios e os indicadores da própria empresa. Não altera nada.']))+
+  ['Perfis de acesso',adm,
+    li((adm?['<b>Administradora:</b> acessa tudo, cadastra empresas, contratos e usuários, libera as empresas de cada técnico e exclui usuários.']:[]).concat(['<b>Técnico ADM:</b> registra relatórios e inspeções, cadastra e edita empresas e contratos e cria o login de Técnico ADM, Técnico SST e Cliente das empresas dele. Baixa o PDF e o Word. Vê só as empresas liberadas para ele e as que ele mesmo cadastrar. Exclui apenas os usuários que ele criou.','<b>Técnico SST:</b> registra e edita relatórios e inspeções das empresas liberadas para ele e baixa o PDF e o Word. Não exclui nada (relatórios, inspeções, itens, ações, rascunhos), não cadastra empresas e não gerencia usuários.','<b>Cliente:</b> consulta e baixa os relatórios e os indicadores da própria empresa. Não altera nada.']))+
     '<p>O perfil de cada pessoa é definido na criação do usuário. Se algo que você precisa não aparece no seu menu, fale com quem criou o seu acesso.</p>'],
   ['Conhecendo o menu',true,
     li([].concat(
@@ -1073,9 +1159,9 @@ function viewManual(){
   ['Contratos e vigência',emp,
     '<p>Em <b>Contratos</b> ficam a vigência e os serviços de cada empresa. O sistema avisa os contratos <b>a vencer</b> e <b>vencidos</b>. Só é possível registrar relatórios e inspeções de empresa com contrato vigente.</p>'+
     li(['<b>Novo contrato:</b> cria um contrato para a empresa. Use para <b>renovar</b>: o contrato antigo fica no histórico e passa a constar como vencido.','<b>Editar:</b> corrige datas ou serviços do mesmo contrato, sem criar outro.'])],
-  ['Usuários e acessos',podeUsuarios(),
+  ['Usuários e acessos',adm,
     (tecA?'<p>Como <b>Técnico ADM</b>, você cria e gerencia usuários <b>Técnico ADM</b>, <b>Técnico SST</b> e <b>Cliente</b>, e só nas <b>empresas que você acessa</b>. Nesta tela você vê <b>apenas o seu login e os que você mesmo criou</b>.</p>':'')+'<h3>Criar um usuário</h3>'+ol(['Vá em <b>Usuários e acessos</b> e toque em <b>Novo usuário</b>.','Preencha nome completo, e-mail, telefone, função e registro profissional.','Escolha o <b>perfil</b>'+(tecA?' (Técnico ADM, Técnico SST ou Cliente)':'')+'. Para Cliente, escolha também a empresa dele.','Para Técnico ADM e Técnico SST'+', marque as <b>empresas que ele pode acessar</b>.','Salve e envie ao usuário o <b>login e a senha provisória</b> mostrados na tela. Ele troca a senha no primeiro acesso.'])+
-    '<h3>No dia a dia</h3>'+li(['Para liberar ou tirar uma empresa de um técnico: <b>Editar</b> o usuário, marque ou desmarque a empresa e salve.','Se alguém esquecer a senha, use <b>Gerar nova senha provisória</b> em Editar usuário.','Para bloquear o acesso por um tempo, <b>desative</b> o usuário em Editar. Prefira desativar em vez de excluir.',(adm?'<b>Excluir</b> apaga o login da pessoa de vez e não pode ser desfeito.':'A exclusão de usuários não está disponível para o seu perfil.')])],
+    '<h3>No dia a dia</h3>'+li(['Para liberar ou tirar uma empresa de um técnico: <b>Editar</b> o usuário, marque ou desmarque a empresa e salve.','Se alguém esquecer a senha, use <b>Gerar nova senha provisória</b> em Editar usuário.','Para bloquear o acesso por um tempo, <b>desative</b> o usuário em Editar. Prefira desativar em vez de excluir.',(adm?'<b>Excluir</b> apaga o login da pessoa de vez e não pode ser desfeito.':(tecA?'<b>Excluir</b> apaga de vez o login de um usuário que <b>você criou</b> e não pode ser desfeito. Você não exclui o seu próprio login.':'A exclusão de usuários não está disponível para o seu perfil.'))])],
   ['Segurança e boas práticas',true,
     li((['Não compartilhe sua senha. Cada pessoa usa o próprio usuário.','Saia do sistema em aparelhos de outras pessoas.'].concat(tec?['Confira os dados antes de salvar: o relatório é um documento da empresa.','Quando o sistema pedir confirmação para excluir ou remover algo, leia com atenção. Algumas exclusões não têm volta.']:[])))],
   ['Dúvidas e problemas comuns',true,
@@ -3228,6 +3314,8 @@ document.addEventListener('click',function(e){
     case 'g-add':syncGrupos();S.route.draft.grupos.push({titulo:'',fotos:[],ia:false});renderGrupos();break;
     case 'g-rm':var grI=+el.dataset.g;confirmar('Remover grupo de fotos','O grupo e as fotos e textos dele serão retirados deste relatório. Deseja remover?','Remover',function(){syncGrupos();S.route.draft.grupos.splice(grI,1);if(!S.route.draft.grupos.length)S.route.draft.grupos=gruposNovos();renderGrupos()});break;
     case 'gphoto-rm':var gi=+el.dataset.g,gpI=+el.dataset.i;confirmar('Remover foto','A foto será retirada deste grupo. Deseja remover?','Remover',function(){syncGrupos();S.route.draft.grupos[gi].fotos.splice(gpI,1);$('#fg-'+gi).innerHTML=thumbsG(S.route.draft.grupos[gi].fotos,gi)});break;
+    case 'tema':try{localStorage.setItem('sevia-tema',el.dataset.id)}catch(e){}window.__aplicaTema();renderMain();break;
+    case 'perfil-foto-rm':confirmar('Remover foto','Sua foto será retirada e voltará a aparecer a inicial do seu nome. Deseja remover?','Remover',function(){(async function(){try{await window.SEVIA_API.definirFoto(null);toast('Foto removida.');renderAv();renderNav();renderMain()}catch(er){console.error(er);toast('Não foi possível remover a foto.')}})()});break;
     case 'logo-rm':confirmar('Remover logomarca','A logomarca deixa de sair no cabeçalho dos relatórios e inspeções. Deseja remover?','Remover',function(){S.db.doc('config/marca').set({logo:''}).catch(function(er){console.error(er);toast('Não foi possível remover.')})});break;
     case 'cad-rm':var cdK=el.dataset.kind,cdI=+el.dataset.i;confirmar('Remover da lista','O item será retirado da lista padrão. Deseja remover?','Remover',function(){cadRm(cdK,cdI)});break;
     case 'ia-run':analisarIA();break;
@@ -3285,6 +3373,7 @@ document.addEventListener('change',function(e){
     case 'foto-i':if(el.files&&el.files.length)addFotosI(Array.prototype.slice.call(el.files),+el.dataset.g,el);break;
     case 'foto-g':if(el.files&&el.files.length)addFotosG(Array.prototype.slice.call(el.files),+el.dataset.g,el);break;
     case 'emp-logo':if(el.files&&el.files[0]&&S.route&&S.route.draft){(async function(f,inp){var rt=S.route;try{var b=await prepararLogo(f);var pq=false;try{var u9=URL.createObjectURL(b);var i9=await loadImg(u9);URL.revokeObjectURL(u9);pq=Math.max(i9.naturalWidth,i9.naturalHeight)<600}catch(e9){}var r=await S.assets.upload(b,{type:b.type||'image/png'});rt.draft.logo=r.id;var bx=$('#emp-logo');if(bx&&S.route===rt)bx.innerHTML=empLogoHtml(r.id);toast(pq?'Logomarca anexada, mas a imagem é pequena e vai sair embaçada. Envie um PNG com pelo menos 600 px de largura.':'Logomarca anexada. Toque em Salvar empresa.')}catch(er){console.error(er);toast('Não foi possível enviar a logomarca.')}inp.value=''})(el.files[0],el)}break;
+    case 'perfil-foto-in':if(el.files&&el.files[0]){(async function(f,inp){var st=$('#perfil-st');try{if(!window.SEVIA_API||!window.SEVIA_API.definirFoto)throw new Error('sem api');if(st)st.textContent='Salvando a foto…';var d=await prepararAvatar(f);await window.SEVIA_API.definirFoto(d);toast('Foto salva.');renderAv();renderNav();renderMain()}catch(er){console.error(er);if(st)st.textContent='Não foi possível salvar a foto. Tente de novo.';toast('Não foi possível salvar a foto.')}inp.value=''})(el.files[0],el)}break;
     case 'logo-in':if(el.files&&el.files[0]){(async function(f,inp){try{var b=await prepararLogo(f);var r=await S.assets.upload(b,{type:b.type||'image/png'});await S.db.doc('config/marca').set({logo:r.id});toast('Logomarca salva.')}catch(er){console.error(er);toast('Não foi possível enviar a logomarca.')}inp.value=''})(el.files[0],el)}break;
     case 'foto-in':if(el.files&&el.files.length)addFotos(Array.prototype.slice.call(el.files));break;
     case 'acao-status':
