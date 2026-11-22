@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-22-2225 lista-usuarios-foto --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-22-2250 voltar-fecha-menu --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <script>(function(){function t(){var m='auto';try{m=localStorage.getItem('sevia-tema')||'auto'}catch(e){}return m==='escuro'||(m==='auto'&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'escuro':'claro'}window.__aplicaTema=function(){var x=t(),d=document.documentElement;d.setAttribute('data-tema',x);var c=document.querySelector('meta[name="theme-color"]');if(c)c.setAttribute('content',x==='escuro'?'#000000':'#000000')};window.__aplicaTema();try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',window.__aplicaTema)}catch(e){}})()</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -3240,11 +3240,22 @@ function restauraRascunho(){
     S.view='inspecoes';S.skipHash=true;location.hash='#inspecoes';S.hist=[];
     var rt={name:'insp-form',draft:o.draft};if(o.id)rt.id=o.id;S.route=rt;renderMain();window.scrollTo(0,0)});
 }
+/* menu: o botão voltar do telefone fecha o menu (cria um passo no histórico enquanto ele está aberto) */
+function menuUI(on){var n=$('#nav'),b=$('#menu-bg'),f=$('#fab');if(!n)return;n.classList.toggle('open',on);b.hidden=!on;f.setAttribute('aria-expanded',on?'true':'false');f.setAttribute('aria-label',on?'Fechar menu':'Abrir menu')}
+function menuAbre(){menuUI(true);if(!S.menuH){try{history.pushState({sm:1},'');S.menuH=true}catch(er){}}}
+function menuFecha(){menuUI(false);if(S.menuH){S.menuH=false;try{history.back()}catch(er){}}}
+window.addEventListener('popstate',function(){
+  if(S.menuH){S.menuH=false;menuUI(false)}
+  if(S.alvo){var a=S.alvo;S.alvo=null;location.hash=a}
+});
 document.addEventListener('click',function(e){
   var nvEl=$('#nav'),fab=$('#fab'),bg=$('#menu-bg');
-  function menu(on){nvEl.classList.toggle('open',on);bg.hidden=!on;fab.setAttribute('aria-expanded',on?'true':'false');fab.setAttribute('aria-label',on?'Fechar menu':'Abrir menu')}
-  if(e.target.closest('#fab')){menu(!nvEl.classList.contains('open'));return}
-  if(nvEl.classList.contains('open')&&(e.target.closest('#menu-bg')||e.target.closest('.nav a')))menu(false);
+  if(e.target.closest('#fab')){if(nvEl.classList.contains('open'))menuFecha();else menuAbre();return}
+  if(nvEl.classList.contains('open')&&e.target.closest('#menu-bg')){menuFecha()}
+  else if(nvEl.classList.contains('open')&&e.target.closest('.nav a')){
+    var la=e.target.closest('.nav a');
+    if(S.menuH){e.preventDefault();S.alvo=la.getAttribute('href');menuFecha()}else menuUI(false);
+  }
   var bs=$('#busca-res');if(bs&&!e.target.closest('.search'))bs.hidden=true;
   var nv=e.target.closest('.nav a');
   if(nv&&S.route&&nv.getAttribute('href')==='#'+S.view){limpaRota();renderMain();window.scrollTo(0,0)}
@@ -3405,7 +3416,7 @@ document.addEventListener('input',function(e){
 });
 document.addEventListener('keydown',function(e){
   if(e.key!=='Escape')return;
-  var nm=$('#nav');if(nm&&nm.classList.contains('open')){nm.classList.remove('open');$('#menu-bg').hidden=true;$('#fab').setAttribute('aria-expanded','false')}
+  var nm=$('#nav');if(nm&&nm.classList.contains('open'))menuFecha();
   if(!$('#modal').hidden)fechaModal();
   if(!$('#lightbox').hidden)$('#lightbox').hidden=true;
   $('#busca-res').hidden=true;
