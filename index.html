@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-22-1715 rodape-direita --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-22-1810 lupa-nc --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -400,7 +400,7 @@ var GRP=[['Empresa executante',['execNome','execCnpj','representante','equipe','
 var S={marca:null,db:null,assets:null,downloads:null,sample:null,dbFail:false,insp:[],ncs:[],acoes:[],empresas:[],contratos:[],cad:null,user:null,me:{id:'',name:''},perfil:'Administradora',canWrite:true,acessos:null,mig:false,skipHash:false,
   R:{insp:[],ncs:[],acoes:[],empresas:[],contratos:[],usuarios:[]},
   loaded:{i:false,n:false,a:false,e:false,c:false,k:false,x:false,p:false},view:'painel',route:null,hist:[],
-  f:{insp:'todas',nc:'todas',acoes:'todas',acEmp:'todas',acUn:'todas',q:''},pf:{empresa:'todas',unidade:'todas',periodo:'12m',tipo:'todos'},modalOk:null,saving:false};
+  f:{insp:'todas',nc:'todas',acoes:'todas',acEmp:'todas',acUn:'todas',acSet:'todas',ncEmp:'todas',ncUn:'todas',ncSet:'todas',q:''},pf:{empresa:'todas',unidade:'todas',periodo:'12m',tipo:'todos'},modalOk:null,saving:false};
 
 /* ---------- utilidades ---------- */
 function isoDate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
@@ -518,6 +518,23 @@ function unidadesDe(emp){
   S.empresas.forEach(function(e){if(!emp||emp==='todas'||e.id===emp)unObjs(e).forEach(function(u){l.push(u.nome)})});
   S.insp.forEach(function(i){if(!emp||emp==='todas'||i.empresaId===emp)l.push(i.unidade)});
   return uniq(l).sort();
+}
+function setoresFiltro(emp,un){
+  var l=[];S.empresas.forEach(function(e){if(emp!=='todas'&&e.id!==emp)return;unObjs(e).forEach(function(u){if(un==='todas'||u.nome===un)l=l.concat(u.setores||[])})});
+  S.insp.forEach(function(i){if((emp==='todas'||i.empresaId===emp)&&(un==='todas'||i.unidade===un)&&i.setor)l.push(i.setor)});
+  return uniq(l).sort();
+}
+function filtrosLoc(pre){
+  var E=S.f[pre+'Emp'],U=S.f[pre+'Un'],T=S.f[pre+'Set'];
+  return field('Empresa','f-'+pre+'emp','<select id="f-'+pre+'emp" data-chg="f-'+pre+'emp">'+opts([['todas','Todas']].concat(S.empresas.map(function(e){return [e.id,e.nome]})),E)+'</select>')+
+    field('Unidade','f-'+pre+'un','<select id="f-'+pre+'un" data-chg="f-'+pre+'un">'+opts([['todas','Todas']].concat(unidadesDe(E).map(function(u){return [u,u]})),U)+'</select>')+
+    field('Setor','f-'+pre+'set','<select id="f-'+pre+'set" data-chg="f-'+pre+'set">'+opts([['todas','Todos']].concat(setoresFiltro(E,U).map(function(u){return [u,u]})),T)+'</select>');
+}
+function passaLoc(pre,ip,setor){
+  if(S.f[pre+'Emp']!=='todas'&&!(ip&&ip.empresaId===S.f[pre+'Emp']))return false;
+  if(S.f[pre+'Un']!=='todas'&&!(ip&&ip.unidade===S.f[pre+'Un']))return false;
+  if(S.f[pre+'Set']!=='todas'&&(setor||(ip&&ip.setor)||'')!==S.f[pre+'Set'])return false;
+  return true;
 }
 function setoresDe(emp,un){
   var l=[];var e=empDe(emp);
@@ -1518,13 +1535,13 @@ function viewNcs(){
   return head('Não conformidades','Itens registrados nas inspeções, com prioridade e status calculado pelo plano de ação.',act)+
   (S.insp.length?'':'<div class="card"><p>Registre uma inspeção primeiro. Os itens ficam ligados a ela.</p></div>')+
   '<div class="filters">'+field('Buscar na lista','q-nc','<div class="busca"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q-nc" type="search" data-inp="q-nc" placeholder="Item, setor ou nº da inspeção" value="'+esc(S.f.q)+'"></div>')+
-  field('Status','f-nc','<select id="f-nc" data-chg="f-nc">'+opts([['todas','Todos'],['Em andamento','Em andamento'],['Vencida','Vencido'],['Concluída','Concluído']],S.f.nc)+'</select>')+'</div>'+
+  filtrosLoc('nc')+field('Status','f-nc','<select id="f-nc" data-chg="f-nc">'+opts([['todas','Todos'],['Em andamento','Em andamento'],['Vencida','Vencido'],['Concluída','Concluído']],S.f.nc)+'</select>')+'</div>'+
   '<div class="card"><div class="list" id="lista">'+listaNc()+'</div></div>';
 }
 function listaNc(){
   var q=S.f.q.trim().toLowerCase();
   var L=S.ncs.slice().sort(byGrau).filter(function(n){var i=inspDe(n.inspId);
-    return (S.f.nc==='todas'||stNc(n)===S.f.nc)&&(!q||(n.titulo+' '+n.setor+' '+num(i)).toLowerCase().indexOf(q)>-1)});
+    return passaLoc('nc',i,n.setor)&&(S.f.nc==='todas'||stNc(n)===S.f.nc)&&(!q||(n.titulo+' '+n.setor+' '+num(i)).toLowerCase().indexOf(q)>-1)});
   if(!L.length)return '<p class="muted pad">'+(S.ncs.length?'Nenhum item com esse filtro.':'Nenhum item registrado ainda.')+'</p>';
   return L.map(rowNc).join('');
 }
@@ -1583,14 +1600,13 @@ function rowAcao(a,showNc){
 }
 function viewAcoes(){
   return head('Plano de ação','Medidas corretivas, responsáveis e prazos.',S.downloads&&S.acoes.length?btn('Exportar tudo em Excel','excel','','btn-primary'):'')+
-  '<div class="filters">'+field('Empresa','f-acemp','<select id="f-acemp" data-chg="f-acemp">'+opts([['todas','Todas']].concat(S.empresas.map(function(e){return [e.id,e.nome]})),S.f.acEmp)+'</select>')+field('Unidade','f-acun','<select id="f-acun" data-chg="f-acun">'+opts([['todas','Todas']].concat(unidadesDe(S.f.acEmp).map(function(u){return [u,u]})),S.f.acUn)+'</select>')+field('Situação','f-acoes','<select id="f-acoes" data-chg="f-acoes">'+opts([['todas','Todos'],['Em andamento','Em andamento'],['Vencida','Vencido'],['Concluída','Concluído']],S.f.acoes)+'</select>')+'</div>'+
+  '<div class="filters">'+filtrosLoc('ac')+field('Situação','f-acoes','<select id="f-acoes" data-chg="f-acoes">'+opts([['todas','Todos'],['Em andamento','Em andamento'],['Vencida','Vencido'],['Concluída','Concluído']],S.f.acoes)+'</select>')+'</div>'+
   '<div class="card"><div class="list" id="lista">'+listaAcoes()+'</div></div>';
 }
 function listaAcoes(){
   var L=S.acoes.slice().sort(byPrazo).filter(function(a){
     var n=ncDe(a.ncId),ip=n&&inspDe(n.inspId);
-    if(S.f.acEmp!=='todas'&&!(ip&&ip.empresaId===S.f.acEmp))return false;
-    if(S.f.acUn!=='todas'&&!(ip&&ip.unidade===S.f.acUn))return false;
+    if(!passaLoc('ac',ip,n&&n.setor))return false;
     var f=S.f.acoes;if(f==='todas')return true;return stAcao(a)===f});
   if(!L.length)return '<p class="muted pad">'+(S.acoes.length?'Nenhuma ação com esse filtro.':'Nenhuma ação definida ainda. Abra uma não conformidade para criar o plano de ação.')+'</p>';
   return L.map(function(a){return rowAcao(a,true)}).join('');
@@ -3242,8 +3258,12 @@ document.addEventListener('change',function(e){
   switch(el.dataset.chg){
     case 'f-insp':S.f.insp=el.value;$('#lista').innerHTML=listaInsp();break;
     case 'f-nc':S.f.nc=el.value;$('#lista').innerHTML=listaNc();break;
-    case 'f-acemp':S.f.acEmp=el.value;S.f.acUn='todas';renderMain();break;
-    case 'f-acun':S.f.acUn=el.value;renderMain();break;
+    case 'f-acemp':S.f.acEmp=el.value;S.f.acUn='todas';S.f.acSet='todas';renderMain();break;
+    case 'f-acun':S.f.acUn=el.value;S.f.acSet='todas';renderMain();break;
+    case 'f-acset':S.f.acSet=el.value;renderMain();break;
+    case 'f-ncemp':S.f.ncEmp=el.value;S.f.ncUn='todas';S.f.ncSet='todas';renderMain();break;
+    case 'f-ncun':S.f.ncUn=el.value;S.f.ncSet='todas';renderMain();break;
+    case 'f-ncset':S.f.ncSet=el.value;renderMain();break;
     case 'f-acoes':S.f.acoes=el.value;$('#lista').innerHTML=listaAcoes();break;
     case 'pf-empresa':S.pf.empresa=el.value;S.pf.unidade='todas';renderMain();break;
     case 'u-perf':var ea=$('#emp-acc');if(ea)ea.hidden=['Técnico ADM','Técnico SST'].indexOf(el.value)<0;break;
