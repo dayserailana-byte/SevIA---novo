@@ -114,7 +114,7 @@
   function usaGuardado(g) {
     perfil = g; semSinal = true; faixa();
     window.SEVIA_PERFIL = perfil.perfil;
-    window.SEVIA_EU = { nome: perfil.nome || "", funcao: perfil.funcao || "", registro: perfil.registro_prof || "", foto: perfil.foto || "" };
+    window.SEVIA_EU = { nome: perfil.nome || "", funcao: perfil.funcao || "", registro: perfil.registro_prof || "", foto: perfil.foto || "", tema: perfil.tema || "" };
     return true;
   }
   var ready0 = (async function () {
@@ -134,7 +134,7 @@
     perfil = r.data;
     try { localStorage.setItem(CK, JSON.stringify(perfil)); } catch (e) {}
     window.SEVIA_PERFIL = perfil.perfil;
-    window.SEVIA_EU = { nome: perfil.nome || "", funcao: perfil.funcao || "", registro: perfil.registro_prof || "", foto: perfil.foto || "" };
+    window.SEVIA_EU = { nome: perfil.nome || "", funcao: perfil.funcao || "", registro: perfil.registro_prof || "", foto: perfil.foto || "", tema: perfil.tema || "" };
     return true;
   })();
   async function carregaPendentes() {
@@ -186,6 +186,13 @@
       perfil.foto = dataUrl || "";
       try { localStorage.setItem(CK, JSON.stringify(perfil)); } catch (e) {}
       if (window.SEVIA_EU) window.SEVIA_EU.foto = perfil.foto;
+    },
+    definirTema: async function (t) {
+      var r = await sb.rpc("sevia_definir_meu_tema", { p_tema: t || null });
+      if (r.error) throw r.error;
+      perfil.tema = t || "";
+      try { localStorage.setItem(CK, JSON.stringify(perfil)); } catch (e) {}
+      if (window.SEVIA_EU) window.SEVIA_EU.tema = perfil.tema;
     },
     excluirUsuario: function (id) { return chamar("admin-usuarios", { acao: "excluir", id: id }); }
   };
