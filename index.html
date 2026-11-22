@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-22-1740 sem-botoes-novo --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-22-1820 sem-registrar-item --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -148,6 +148,7 @@ p{margin:0}
 .evo .gl{stroke:var(--border);stroke-width:1}
 .evo .br{fill:var(--brand)}
 
+.row-foto{display:block;width:100%;max-height:170px;object-fit:cover;border-radius:10px;margin-bottom:8px;background:var(--surface2)}
 .rl{padding:16px 4px;border-bottom:1px solid var(--border)}
 .rl:last-child{border-bottom:0}
 .rl-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
@@ -1465,6 +1466,7 @@ function draftInsp(i){
 }
 function camposView(i){
   var secs=GRP.map(function(g){
+    if(isIns(i)&&g[0]==='Empresa executante')return '';
     var l=g[1].filter(function(k){return i[k]});if(!l.length)return '';
     return '<section class="card"><div class="card-h"><h2>'+esc(g[0])+'</h2></div>'+l.map(function(k){return '<h3 style="margin-top:10px">'+esc(CD[k][1])+'</h3><p class="text-block">'+esc(i[k])+'</p>'}).join('')+'</section>'});
   var ex='';
@@ -1492,14 +1494,14 @@ function viewInsp(id){
     (i.rascunho?btn('Continuar rascunho','edit-insp',id,'btn-primary'):'')+(S.downloads&&!i.rascunho?btn('Relatório em PDF','pdf',id,'btn-primary')+btn('Relatório em Word','word',id,'btn-primary'):'')+(i.rascunho?'':btn('Editar','edit-insp',id))+btn('Excluir','del-insp',id,'btn-danger'))+(i.revisao==='pendente'?'<div class="banner"><span><b>Criado sem internet.</b> Este relatório veio do campo e ainda não foi revisado. Use <b>Editar</b> para ajustar (a IA já pode ser usada). Quando estiver pronto, toque em <b>Marcar como revisado</b>.</span>'+((S.perfil==="Administradora"||S.perfil==="Técnico ADM")?btn('Marcar como revisado','revisado',id,'btn-primary'):'')+'</div>':'')+(i.rascunho?'<div class="banner"><span><b>Rascunho.</b> Este documento ainda não foi finalizado. Clique em "Continuar rascunho" para completar; o PDF e o Word só ficam disponíveis depois de finalizar.</span></div>':'')+
   '<section class="card"><dl class="kv"><div><dt>'+(isIns(i)?'Nº da inspeção':'Nº do relatório')+'</dt><dd>'+num(i)+'</dd></div><div><dt>Data</dt><dd>'+fmt(i.data)+'</dd></div><div><dt>Empresa</dt><dd>'+esc(en||'-')+'</dd></div>'+(i.unidade?'<div><dt>Unidade</dt><dd>'+esc(i.unidade)+'</dd></div>':'')+(i.setor?'<div><dt>Setor</dt><dd>'+esc(i.setor)+'</dd></div>':'')+'<div><dt>Realizado por</dt><dd>'+esc(i.responsavel||'-')+'</dd></div><div'+(isIns(i)?'':' hidden')+'><dt>Situação</dt><dd>'+chip(si,sk(si))+'</dd></div></dl>'+
   (i.observacoes?'<h3 style="margin-top:16px">Observações</h3><p class="text-block">'+esc(i.observacoes)+'</p>':'')+
-  (i.fotos&&i.fotos.length?'<h3 style="margin:16px 0 8px">Evidências fotográficas</h3>'+thumbs(i.fotos):'')+'</section>'+camposView(i)+(isIns(i)?'<section class="card"><div class="card-h"><h2>Itens e não conformidades</h2>'+btn('Registrar item','new-nc',id,'btn-primary')+'</div>'+(L.length?'<div class="list">'+L.map(rowNc).join('')+'</div>':'<p class="muted">Nenhum item registrado nesta inspeção. Toque em "Registrar item": no item, a IA sugere a não conformidade e a ação a partir da foto.</p>')+'</section>':'');
+  (i.fotos&&i.fotos.length?'<h3 style="margin:16px 0 8px">Evidências fotográficas</h3>'+thumbs(i.fotos):'')+'</section>'+camposView(i)+(isIns(i)?'<section class="card"><div class="card-h"><h2>Itens e não conformidades</h2></div>'+(L.length?'<div class="list">'+L.map(rowNc).join('')+'</div>':'<p class="muted">Nenhum item registrado nesta inspeção. Toque em "Editar" e use "Adicionar item": no item, a IA sugere a não conformidade e a ação a partir da foto.</p>')+'</section>':'');
 }
 
 /* ---------- itens da inspeção / não conformidades ---------- */
 function refBadge(n){return (n.refValidada||n.requisitoLegal===PENDENTE)?'':'<span class="pend">'+PENDENTE+'</span>'}
 function rowNc(n){
   var ac=acoesDe(n.id),v=ac.filter(vencida).length,insp=inspDe(n.inspId),s=stNc(n);
-  return '<button type="button" class="row" data-act="open-nc" data-id="'+esc(n.id)+'"><span class="row-main" style="cursor:inherit"><span class="insp-num">'+tr(insp)+' Nº '+num(insp)+'</span><b>'+esc(n.titulo)+'</b><span class="muted small">'+esc(n.setor||'')+(insp?' · '+fmt(insp.data):'')+' · '+ac.length+(ac.length===1?' ação':' ações')+(v?' · '+v+' vencida(s)':'')+(n.prazo?' · prazo '+fmt(n.prazo):'')+'</span></span><span class="row-side">'+prio(prioDe(n))+chip(grau(n),gk(grau(n)))+chip(s,sk(s))+'</span></button>';
+  return '<button type="button" class="row" data-act="open-nc" data-id="'+esc(n.id)+'"><span class="row-main" style="cursor:inherit">'+(n.fotos&&n.fotos.length?'<img class="row-foto" src="'+BLOB(esc(n.fotos[0]))+'" alt="Foto do item" loading="lazy">':'')+'<span class="insp-num">'+tr(insp)+' Nº '+num(insp)+'</span><b>'+esc(n.titulo)+'</b><span class="muted small">'+esc(n.setor||'')+(insp?' · '+fmt(insp.data):'')+' · '+ac.length+(ac.length===1?' ação':' ações')+(v?' · '+v+' vencida(s)':'')+(n.prazo?' · prazo '+fmt(n.prazo):'')+'</span></span><span class="row-side">'+prio(prioDe(n))+chip(grau(n),gk(grau(n)))+chip(s,sk(s))+'</span></button>';
 }
 function viewNcs(){
   var act=S.insp.length?btn('Novo item','new-nc','','btn-primary'):'';
