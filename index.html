@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-22-1500 texto-exportar --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-22-1520 cores-status --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -253,6 +253,7 @@ dl.kv{margin:0}
 .chip-st-info{background:#1D5FBF}
 .chip-st-danger{background:#C62828}
 .chip-st-warn{background:#9A5B00}
+.chip-st-amarelo{background:#F5B342;color:#3A2600}
 .prio{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:14px;white-space:nowrap}
 .pdot{display:inline-block;width:20px;height:20px;border-radius:50%;flex:none}
 .p-alta{background:#C62828}.p-media{background:#E0A100}.p-baixa{background:#1B7F3B}
@@ -430,7 +431,7 @@ function empNome(i){var e=i.empresaId&&empDe(i.empresaId);return e?e.nome:(i.emp
 function ncsDe(id){return S.ncs.filter(function(x){return x.inspId===id})}
 function acoesDe(id){return S.acoes.filter(function(x){return x.ncId===id})}
 function chip(t,k){return '<span class="chip chip-'+k+'">'+esc(t)+'</span>'}
-function sk(s){return {'Concluída':'st-ok','Em andamento':'st-info','Vencida':'st-danger','Pendente':'st-warn','Aberta':'st-warn'}[s]||'neutral'}
+function sk(s){return {'Concluída':'st-ok','Em andamento':'st-amarelo','Vencida':'st-danger','Pendente':'st-danger','Aberta':'st-danger'}[s]||'neutral'}
 function num(i){return i&&i.numero?String(i.numero).padStart(5,'0'):(i&&i._semNumero?'pendente':'-----')}
 function prioDe(n){return n.prioridade||({'Crítico':'Alta','Alto':'Alta','Médio':'Média','Baixo':'Baixa','Alta':'Alta','Média':'Média','Baixa':'Baixa'}[n.gravidade]||'Média')}
 function prio(p){return '<span class="prio"><i class="pdot p-'+slug(p)+'" aria-hidden="true"></i>'+esc(p)+'</span>'}
@@ -778,7 +779,7 @@ function viewConcluidas(){
   var t=media(tempos);
   return head('Relatórios concluídos','Acompanhe os relatórios fotográficos concluídos.')+filtrosPainel()+
   '<div class="tiles">'+tile(C.length,'Relatórios concluídos','#inspecoes')+tile(pct(C.length,fi.length)+'%','Taxa de conclusão','#inspecoes')+tile(noMes,'Concluídas neste mês','#inspecoes')+tile(t==null?'-':t+' d','Tempo médio até concluir','#inspecoes')+'</div>'+
-  '<div class="cols"><section class="card"><div class="card-h"><h2>Situação das inspeções</h2></div>'+donut([{l:'Concluídas',v:C.length,c:'var(--ok)'},{l:'Em andamento',v:abertas-venc,c:'var(--info)'},{l:'Vencidas',v:venc,c:'var(--danger)'}],fi.length,'Inspeções',fi.length+' inspeções por situação')+'</section>'+
+  '<div class="cols"><section class="card"><div class="card-h"><h2>Situação das inspeções</h2></div>'+donut([{l:'Concluídas',v:C.length,c:'var(--ok)'},{l:'Em andamento',v:abertas-venc,c:'#F5B342'},{l:'Vencidas',v:venc,c:'var(--danger)'}],fi.length,'Inspeções',fi.length+' inspeções por situação')+'</section>'+
   '<section class="card"><div class="card-h"><h2>Concluídas por mês</h2><span class="muted small">Últimos 12 meses</span></div>'+barrasMes(serieMes(C.map(function(c){return c.dc})),'Relatórios concluídos por mês, total '+C.length)+'</section></div>'+
   '<section class="card"><div class="card-h"><h2>Lista de concluídas</h2></div><div class="list">'+(C.length?C.slice(0,30).map(function(c){var i=c.i;
     return '<button type="button" class="row" data-act="open-insp" data-id="'+esc(i.id)+'"><span class="row-main" style="cursor:inherit"><span class="insp-num">'+tr(i)+' Nº '+num(i)+'</span><b>'+esc(locDe(i)||empNome(i)||'Relatório')+'</b><span class="muted small">'+esc(empNome(i))+' · realizada em '+fmt(i.data)+' · concluída em '+fmt(c.dc)+' · '+ncsDe(i.id).length+' itens</span></span><span class="row-side">'+chip('Concluída','st-ok')+'</span></button>'}).join(''):'<p class="muted pad">Nenhuma inspeção concluída neste filtro.</p>')+'</div></section>';
