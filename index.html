@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-22-1440 espaco-assinatura --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-22-1610 manual-atualizado --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -585,7 +585,7 @@ function renderNav(){
     [null,[['painel','Início',0,0]]],
     ['Registrar',[['inspecoes','Relatórios e inspeções',0,0],['relatorios','Baixar relatórios',0,0]]],
     ['Acompanhar',(temIns?[['ncs','Não conformidades',ncAb,0],['acoes','Plano de ação',venc,1]]:[]).concat([['concluidas','Relatórios concluídos',0,0],['indicadores','Indicadores',0,0]])],
-    ['Cadastros',[['empresas','Empresa',0,0],['contratos','Contratos',0,0]].concat(ehAdm()?[['usuarios','Usuários e acessos',0,0]]:[])],
+    ['Cadastros',[['empresas','Empresa',0,0],['contratos','Contratos',0,0]].concat(podeUsuarios()?[['usuarios','Usuários e acessos',0,0]]:[])],
     ['Ajuda',[['manual','Manual do usuário',0,0]]]
   ];
   $('#nav').innerHTML=grupos.map(function(g){
@@ -859,7 +859,7 @@ function formEmpresa(r){
 /* ---------- usuários e acessos ---------- */
 var PERFIS=[
   ['Administradora','Administradora','Acesso total: cadastra empresas, contratos e usuários, cria e edita todos os registros e emite relatórios.'],
-  ['Técnico ADM','Técnico ADM','Mesmas permissões da Administradora: acesso total, cadastra empresas, contratos e usuários, cria e edita todos os registros e emite relatórios.'],
+  ['Técnico ADM','Técnico ADM','Cadastra empresas e contratos, cria e edita registros e emite relatórios das empresas liberadas para ele. Também cria usuários Técnico SST e Cliente dessas empresas. Não cria Administradora nem outro Técnico ADM e não exclui usuários.'],
   ['Técnico SST','Técnico SST','Cria e edita relatórios, inspeções, fotos e planos de ação de todas as empresas e gera os relatórios finais (PDF, Word e Excel). Não gerencia usuários.'],
   ['Cliente','Cliente / ADM','Só consulta e baixa os relatórios e indicadores da empresa vinculada. Não cria nem edita.']
 ];
@@ -870,10 +870,11 @@ function instalarApp(){
   toast(ios?'No iPhone: toque em Compartilhar e depois em "Adicionar à Tela de Início".':'Toque nos 3 pontinhos do navegador e escolha "Instalar app" ou "Adicionar à tela inicial".');
 }
 function ehAdm(){return S.perfil==='Administradora'}
+function podeUsuarios(){return S.perfil==='Administradora'||S.perfil==='Técnico ADM'}
 function podeEmpresa(){return S.perfil==='Administradora'||S.perfil==='Técnico ADM'}
 function perfilNome(p){var x=PERFIS.filter(function(a){return a[0]===p})[0];return x?x[1]:(p||'-')}
 function viewUsuarios(){
-  if(!ehAdm())return head('Usuários e acessos')+'<div class="card"><p>Somente administradoras gerenciam usuários.</p></div>';
+  if(!podeUsuarios())return head('Usuários e acessos')+'<div class="card"><p>Somente a administradora e o Técnico ADM gerenciam usuários.</p></div>';
   var L=(S.R.usuarios||[]).slice().sort(function(a,b){return String(a.nome).localeCompare(String(b.nome))});
   return head('Usuários e acessos','Quem pode entrar no sistema e o que cada perfil faz.',btn('Novo usuário','new-usuario','','btn-primary'))+
   '<div class="card"><div class="list">'+(L.length?L.map(function(u){
@@ -914,14 +915,14 @@ function formUsuario(r){
     field('Telefone (opcional)','u-tel','<input id="u-tel" name="telefone" type="tel" inputmode="tel" value="'+esc(d.telefone)+'">')+
     field('Função (aparece nos relatórios)','u-func','<input id="u-func" name="funcao" placeholder="Ex.: Técnico em Segurança do Trabalho" value="'+esc(d.funcao)+'">')+
     field('Registro profissional (REG / MTE)','u-reg','<input id="u-reg" name="registroProf" value="'+esc(d.registroProf)+'">')+
-    field('Perfil de acesso','u-perf','<select id="u-perf" name="perfil" required data-chg="u-perf">'+opts(PERFIS.map(function(x){return [x[0],x[1]]}),d.perfil)+'</select>')+
+    field('Perfil de acesso','u-perf','<select id="u-perf" name="perfil" required data-chg="u-perf">'+opts(PERFIS.filter(function(x){return ehAdm()||x[0]==='Técnico SST'||x[0]==='Cliente'}).map(function(x){return [x[0],x[1]]}),d.perfil)+'</select>')+
     field('Empresa (obrigatória para Cliente)','u-emp','<select id="u-emp" name="empresaId">'+opts([['','Todas / não se aplica']].concat(S.empresas.map(function(e){return [e.id,e.nome]})),d.empresaId)+'</select>','full')+
     '<div class="field full" id="emp-acc"'+(['Técnico ADM','Técnico SST'].indexOf(d.perfil)>-1?'':' hidden')+'><span class="lbl">Empresas que este perfil pode acessar</span>'+
       '<div id="emp-lst">'+(S.empresas.length?S.empresas.slice().sort(function(a,b){return String(a.nome).localeCompare(String(b.nome))}).map(function(e){return '<label class="chk-row"><input type="checkbox" data-emp-acc value="'+esc(e.id)+'"'+((d.empresasAcesso||[]).indexOf(e.id)>-1?' checked':'')+'><span>'+esc(e.nome)+'</span></label>'}).join(''):'<p class="muted small">Nenhuma empresa cadastrada ainda.</p>')+'</div>'+
       '<p class="muted small">Marque as empresas que este usuário pode ver e editar. Sem nenhuma marcada, ele não vê empresa alguma. Empresas novas criadas por você ficam bloqueadas até você marcá-las aqui; as que o Técnico ADM criar entram automaticamente na lista dele.</p></div>'+
     (r.id?field('Situação','u-at','<select id="u-at" name="ativo">'+opts([['sim','Ativo'],['nao','Inativo']],d.ativo===false?'nao':'sim')+'</select>'):'')+
   '</div><p class="muted small">Ativo consegue entrar no sistema; Inativo fica bloqueado. A Administradora vê todas as empresas. Técnico ADM e Técnico SST veem só as empresas marcadas acima. Cliente vê somente a empresa escolhida.'+(r.id?'':' Ao salvar, o sistema gera a senha provisória.')+'</p>'+
-  '<div class="actions"><button class="btn btn-primary" type="submit">'+(r.id?'Salvar usuário':'Criar acesso')+'</button><button type="button" class="btn btn-ghost" data-act="back">Cancelar</button>'+(r.id?btn('Gerar nova senha provisória','reset-usuario',r.id,'btn-ghost')+btn('Excluir','del-usuario',r.id,'btn-danger'):'')+'</div></form>';
+  '<div class="actions"><button class="btn btn-primary" type="submit">'+(r.id?'Salvar usuário':'Criar acesso')+'</button><button type="button" class="btn btn-ghost" data-act="back">Cancelar</button>'+(r.id?btn('Gerar nova senha provisória','reset-usuario',r.id,'btn-ghost')+(ehAdm()?btn('Excluir','del-usuario',r.id,'btn-danger'):''):'')+'</div></form>';
 }
 
 /* ---------- contratos ---------- */
@@ -975,8 +976,8 @@ function viewManual(){
     '<h3>Instalar no celular ou no tablet</h3><p>A instalação é feita <b>pelo navegador do telefone ou do tablet</b>, e não por uma loja de aplicativos.</p>'+ol(['No celular ou no tablet, abra o navegador (<b>Chrome</b> no Android ou <b>Safari</b> no iPhone e no iPad) e entre em <b>seviasst.com.br</b>.','Faça o login normalmente.','No <b>Android (Chrome)</b>: toque nos três pontinhos no canto da tela e escolha <b>Instalar app</b> (ou <b>Adicionar à tela inicial</b>). Se preferir, toque em <b>Instalar app no telefone</b> no menu do SevIA.','No <b>iPhone ou iPad (Safari)</b>: toque no botão <b>Compartilhar</b> e escolha <b>Adicionar à Tela de Início</b>.','Confirme o nome <b>SevIA</b>. O ícone passa a ficar na tela do aparelho, como um aplicativo.'])+
     '<h3>Sair e bloqueio automático</h3><p>Por segurança, depois de <b>5 minutos sem uso</b> o sistema sai da conta sozinho. No último minuto aparece o aviso &ldquo;Você ainda está aí?&rdquo; com o botão <b>Continuar conectada</b>. Para sair por conta própria, use o botão <b>Sair</b> no final do menu.</p>'+
     (tec?'<p>Se você estiver preenchendo um relatório ou inspeção quando o sistema bloquear, o rascunho fica guardado neste aparelho por <b>7 dias</b>. Ao entrar de novo, escolha <b>Continuar rascunho</b> para voltar de onde parou. Para guardar um rascunho a qualquer momento, veja <b>Salvar como rascunho</b>.</p>':'')],
-  ['Perfis de acesso',adm,
-    li(['<b>Administradora:</b> acessa tudo, cadastra empresas, contratos e usuários e libera as empresas de cada técnico.','<b>Técnico ADM:</b> registra relatórios e inspeções, cadastra e edita empresas e contratos. Vê só as empresas liberadas pela administradora e as que ele mesmo cadastrar.','<b>Técnico SST:</b> registra e edita relatórios e inspeções das empresas liberadas para ele. Não cadastra empresas.','<b>Cliente:</b> consulta e baixa os relatórios e os indicadores da própria empresa. Não altera nada.'])+
+  ['Perfis de acesso',podeUsuarios(),
+    li(['<b>Administradora:</b> acessa tudo, cadastra empresas, contratos e usuários e libera as empresas de cada técnico.','<b>Técnico ADM:</b> registra relatórios e inspeções, cadastra e edita empresas e contratos e cria o login de Técnico SST e de Cliente das empresas dele. Vê só as empresas liberadas pela administradora e as que ele mesmo cadastrar.','<b>Técnico SST:</b> registra e edita relatórios e inspeções das empresas liberadas para ele. Não cadastra empresas.','<b>Cliente:</b> consulta e baixa os relatórios e os indicadores da própria empresa. Não altera nada.'])+
     '<p>O perfil de cada pessoa é definido pela administradora. Se algo que você precisa não aparece no seu menu, fale com ela.</p>'],
   ['Conhecendo o menu',true,
     li([].concat(
@@ -984,7 +985,7 @@ function viewManual(){
       tec?['<b>Relatórios e inspeções:</b> lista, cria e edita relatórios fotográficos e inspeções de segurança.','<b>Baixar relatórios:</b> baixa os documentos em PDF ou Word e exclui relatórios que não servem mais.','<b>Não conformidades e Plano de ação:</b> aparecem quando existem inspeções de segurança. Mostram os itens com problema e as ações para corrigir, com prazo.']:['<b>Relatórios e inspeções:</b> consulta os relatórios e as inspeções da sua empresa.','<b>Baixar relatórios:</b> baixa os documentos em PDF ou Word.'],
       ['<b>Relatórios concluídos:</b> o que já foi finalizado.','<b>Indicadores:</b> gráficos por empresa, unidade, período e tipo de relatório.'],
       emp?['<b>Empresa e Contratos:</b> cadastro e acompanhamento das empresas e dos contratos.']:['<b>Empresa e Contratos:</b> consulta '+(tecS?'das empresas liberadas para você e dos contratos delas.':'da sua empresa e do contrato.')],
-      adm?['<b>Usuários e acessos:</b> cadastro dos usuários e liberação das empresas de cada técnico.']:[]))],
+      podeUsuarios()?['<b>Usuários e acessos:</b> '+(adm?'cadastro dos usuários e liberação das empresas de cada técnico.':'criação do login de Técnico SST e de Cliente das suas empresas.')]:[]))],
   ['Consultar e baixar seus relatórios',cli,
     ol(['Abra <b>Relatórios e inspeções</b> e toque no relatório que quer ver.','Para baixar, vá em <b>Baixar relatórios</b> e toque em <b>PDF</b> ou <b>Word</b>.','Em <b>Indicadores</b>, use os filtros de unidade, período e tipo de relatório para acompanhar os números da sua empresa.'])+'<p>Você só consulta. Para corrigir ou incluir algo, fale com o responsável técnico da sua empresa.</p>'],
   ['Novo relatório fotográfico',tec,
@@ -1002,9 +1003,11 @@ function viewManual(){
     ol(['Adicione as fotos no grupo <b>Registros das atividades</b>.','Toque em <b>Preencher a partir das fotos</b> e aguarde. A IA analisa <b>uma foto por vez</b> e mostra o andamento (por exemplo, &ldquo;Analisando a foto 3 de 8&rdquo;). Com várias fotos pode levar alguns minutos.','Revise cada campo sugerido e corrija o que for preciso.'])+
     li(['Cada campo do relatório (como os de <b>Detalhes do serviço</b>) tem o botão <b>Analisar com IA</b>, que sugere só aquele campo usando <b>apenas as fotos do grupo Registros das atividades</b> (uma foto por vez, até 8 fotos) e mostra uma mensagem logo abaixo. <b>Todos</b> os grupos de fotos têm o botão <b>Analisar este grupo com IA</b>, que sugere o apontamento e a orientação usando só as fotos daquele grupo. Se o campo já tiver texto, a sugestão é adicionada embaixo, sem apagar o que você escreveu.','A IA <b>respeita cada grupo de fotos</b>: o <b>apontamento</b> e a <b>orientação</b> de um grupo saem só das fotos daquele grupo. Ela também sugere as <b>atividades especiais</b> (Aplicável / Não aplicável) e os <b>EPI</b> visíveis.','A IA <b>só preenche o que as fotos mostram</b>. O que não dá para saber fica em branco.','Nos <b>riscos físicos, químicos, biológicos, ergonômicos e de acidentes</b>, ela lista todos os riscos identificados, do maior ao menor. Se não houver evidência, escreve &ldquo;Não identificado nas fotos analisadas&rdquo;.','Se aparecer ferramenta elétrica ou motorizada, ela registra o risco de <b>ruído</b>. A medição (dosimetria ou decibelímetro) é que confirma o valor.','Em <b>EPI</b> e <b>Isolamento e sinalização</b>, descreve o que as fotos mostram.','<b>APR, ordem de serviço e exames ocupacionais</b> são documentos e não aparecem em foto. Nesses campos a IA escreve &ldquo;Não verificável pelas fotos; conferir no local&rdquo;. Troque pelo que for o caso.','Em <b>Observações</b> (Detalhes do serviço) o botão <b>Analisar com IA (matriz de riscos)</b> lista os principais riscos, um por linha, com severidade × frequência, o resultado e o nível (muito baixo a muito alto). O cálculo é feito pelo sistema. A <b>frequência é uma estimativa pelas fotos</b>: confirme e ajuste. O botão geral de preenchimento também faz isso quando o campo está vazio.','Em grupos em que ninguém executa atividade, a descrição da atividade sai como &ldquo;Não se aplica&rdquo;.','Ela <b>não altera</b> campos que você já preencheu.','Depois da análise ela lista o que você precisa <b>confirmar no local</b>.','Se uma foto falhar, as outras continuam e o sistema avisa quantas não foram analisadas.','Nada é salvo automaticamente. Você revisa tudo antes de salvar.'])],
   ['Nova inspeção de segurança',tec,
-    '<p>Toque em <b>Nova inspeção de segurança</b>. Depois dos dados de identificação, registre os <b>itens da inspeção</b>:</p>'+
-    ol(['Tire a foto do item e descreva o risco.','Escolha a classificação (não conformidade, condição insegura, ato inseguro ou observação) e a criticidade.','Informe a <b>norma e o requisito legal</b>. A IA pode sugerir o achado a partir da foto, mas <b>você valida a norma</b> antes de salvar.','Preencha o <b>plano de ação</b>: o que fazer, quem responde e o prazo.'])+
-    '<p>Os itens com problema aparecem em <b>Não conformidades</b>, e as ações em <b>Plano de ação</b>, onde você acompanha o prazo e marca como concluída.</p>'],
+    '<p>Toque em <b>Nova inspeção de segurança</b>. Primeiro preencha a identificação: <b>data, empresa, unidade, setor, realizado por</b> e o <b>endereço</b> do local inspecionado (o endereço é opcional). Depois registre os <b>itens da inspeção</b>, cada um em 4 partes:</p>'+
+    ol(['<b>Evidência fotográfica:</b> tire a foto do item ou escolha da galeria. Se quiser, toque em <b>Preencher item com IA a partir da foto</b>.','<b>Constatação:</b> informe o setor/local, descreva o risco observado e escolha a <b>classificação</b> (não conformidade ou conformidade).','<b>Base legal:</b> informe a <b>norma e o item</b> e o <b>requisito legal</b> que está sendo descumprido. A IA pode sugerir, mas <b>você valida a norma</b> antes de salvar. Se não souber, deixe em branco: o item fica como pendente de validação.','<b>Plano de ação:</b> o que fazer, quem responde e a data para realização. Conformidade não exige plano de ação.'])+
+    '<p>Os itens com problema aparecem em <b>Não conformidades</b>, e as ações em <b>Plano de ação</b>, onde você acompanha o prazo e marca como concluída.</p>'+
+    '<h3>Como sai o PDF e o Word da inspeção</h3>'+
+    li(['<b>1. Identificação:</b> empresa, CNPJ, unidade, setor/local, endereço e realizado por. O número e a data da inspeção ficam no cabeçalho.','<b>2. Itens e não conformidades identificados:</b> cada item traz <b>1. Evidência fotográfica</b>, <b>2. Não conformidade</b> (título do item e requisito legal descumprido) e <b>3. Plano de ação</b> (ação, local, responsável, prazo e situação).','<b>3. Parecer técnico e conclusão:</b> resumo da inspeção, das ações e das ações vencidas, seguido da assinatura do responsável técnico.','A <b>situação</b> da ação aparece em cores: <b>Em andamento</b> (amarelo, dentro do prazo), <b>Pendente</b> (vermelho, prazo vencido) e <b>Concluída</b> (verde).','A inspeção de segurança <b>não traz a matriz de riscos nem o nível de risco</b>. A matriz continua no relatório de campo (relatório fotográfico).'])],
   ['Baixar relatórios (PDF, Word e Excel)',true,
     '<p>Em <b>Baixar relatórios</b>, toque em <b>PDF</b> ou <b>Word</b> no relatório desejado. Dentro da tela de cada relatório também há os botões de download, e nas inspeções de segurança há ainda o <b>Excel</b>. O documento sai com a logomarca, o CNPJ da empresa, as fotos e o responsável técnico. Todas as páginas trazem no rodapé <b>Gerado pelo SevIA SST 4.0</b>. O <b>PDF</b> é o documento oficial e não pode ser editado; o Word serve para ajustes.</p>'+(tec?'<p>Para <b>excluir</b> um relatório, toque em <b>Excluir</b> na linha dele e confirme. A exclusão não pode ser desfeita.</p>':'')],
   ['Indicadores',true,
@@ -1016,14 +1019,14 @@ function viewManual(){
   ['Contratos e vigência',emp,
     '<p>Em <b>Contratos</b> ficam a vigência e os serviços de cada empresa. O sistema avisa os contratos <b>a vencer</b> e <b>vencidos</b>. Só é possível registrar relatórios e inspeções de empresa com contrato vigente.</p>'+
     li(['<b>Novo contrato:</b> cria um contrato para a empresa. Use para <b>renovar</b>: o contrato antigo fica no histórico e passa a constar como vencido.','<b>Editar:</b> corrige datas ou serviços do mesmo contrato, sem criar outro.'])],
-  ['Usuários e acessos',adm,
-    '<h3>Criar um usuário</h3>'+ol(['Vá em <b>Usuários e acessos</b> e toque em <b>Novo usuário</b>.','Preencha nome completo, e-mail, telefone, função e registro profissional.','Escolha o <b>perfil</b>. Para Cliente, escolha também a empresa dele.','Para Técnico ADM e Técnico SST, marque as <b>empresas que ele pode acessar</b>.','Salve e envie ao usuário o <b>login e a senha provisória</b> mostrados na tela. Ele troca a senha no primeiro acesso.'])+
-    '<h3>No dia a dia</h3>'+li(['Para liberar ou tirar uma empresa de um técnico: <b>Editar</b> o usuário, marque ou desmarque a empresa e salve.','Se alguém esquecer a senha, use <b>Resetar senha</b> para gerar uma nova senha provisória.','Para bloquear o acesso por um tempo, <b>desative</b> o usuário em Editar. Prefira desativar em vez de excluir.','<b>Excluir</b> apaga o login da pessoa de vez e não pode ser desfeito.'])],
+  ['Usuários e acessos',podeUsuarios(),
+    (tecA?'<p>Como <b>Técnico ADM</b>, você cria e gerencia usuários <b>Técnico SST</b> e <b>Cliente</b>, e só nas <b>empresas que você acessa</b>. Você não cria Administradora nem outro Técnico ADM, e <b>só a Administradora exclui usuários</b>.</p>':'')+'<h3>Criar um usuário</h3>'+ol(['Vá em <b>Usuários e acessos</b> e toque em <b>Novo usuário</b>.','Preencha nome completo, e-mail, telefone, função e registro profissional.','Escolha o <b>perfil</b>'+(tecA?' (Técnico SST ou Cliente)':'')+'. Para Cliente, escolha também a empresa dele.','Para '+(tecA?'Técnico SST':'Técnico ADM e Técnico SST')+', marque as <b>empresas que ele pode acessar</b>.','Salve e envie ao usuário o <b>login e a senha provisória</b> mostrados na tela. Ele troca a senha no primeiro acesso.'])+
+    '<h3>No dia a dia</h3>'+li(['Para liberar ou tirar uma empresa de um técnico: <b>Editar</b> o usuário, marque ou desmarque a empresa e salve.','Se alguém esquecer a senha, use <b>Gerar nova senha provisória</b> em Editar usuário.','Para bloquear o acesso por um tempo, <b>desative</b> o usuário em Editar. Prefira desativar em vez de excluir.',(adm?'<b>Excluir</b> apaga o login da pessoa de vez e não pode ser desfeito.':'A exclusão de usuários é feita só pela Administradora.')])],
   ['Segurança e boas práticas',true,
     li((['Não compartilhe sua senha. Cada pessoa usa o próprio usuário.','Saia do sistema em aparelhos de outras pessoas.'].concat(tec?['Confira os dados antes de salvar: o relatório é um documento da empresa.','Quando o sistema pedir confirmação para excluir ou remover algo, leia com atenção. Algumas exclusões não têm volta.']:[])))],
   ['Dúvidas e problemas comuns',true,
     li([].concat(
-      [adm?'<b>Alguém esqueceu a senha:</b> em <b>Usuários e acessos</b>, abra o usuário e use <b>Resetar senha</b>.':'<b>Esqueci a senha:</b> peça à administradora para resetar.'],
+      [podeUsuarios()?'<b>Alguém esqueceu a senha:</b> em <b>Usuários e acessos</b>, abra o usuário e use <b>Gerar nova senha provisória</b>.':'<b>Esqueci a senha:</b> peça à administradora para resetar.'],
       tec?['<b>A câmera não abre:</b> use o botão <b>Galeria</b>.']:[],
       adm?['<b>Um técnico não vê uma empresa:</b> libere a empresa no cadastro dele, em <b>Usuários e acessos</b>.']:(tec?['<b>A empresa não aparece na lista:</b> ela pode não estar liberada para você. Fale com a administradora.']:[]),
       tec?['<b>Não consigo salvar o relatório:</b> confira se a empresa tem contrato vigente, se escolheu a unidade e se o CNPJ informado é válido. Se precisar parar, use <b>Salvar rascunho</b>.','<b>A IA diz que não foi possível analisar:</b> o serviço gratuito pode estar sobrecarregado ou ter chegado ao limite do dia. Tente de novo em alguns minutos ou preencha manualmente.']:[],
@@ -1350,10 +1353,6 @@ function itensHtml(d){
     F('Setor / local','setor','<input data-ik="setor" value="'+esc(it.setor||d.setor||'')+'" placeholder="Ex.: Almoxarifado, cobertura, sala de máquinas">',true)+
     F('Descrição do risco','descricao','<textarea data-ik="descricao" placeholder="O que foi observado, o perigo e a possível consequência">'+esc(it.descricao)+'</textarea>',true)+
     F('Classificação','classificacao','<select data-ik="classificacao" data-chg="i-cls">'+opts(CLS2,it.classificacao)+'</select>')+
-    F('Severidade (matriz de riscos)','severidade','<select data-ik="severidade" data-chg="i-mz">'+mzOptS(it.severidade)+'</select>')+
-    F('Frequência (matriz de riscos)','frequencia','<select data-ik="frequencia" data-chg="i-mz">'+mzOptF(it.frequencia)+'</select>')+
-    F('Criticidade','gravidade','<select data-ik="gravidade" data-chg="i-crit">'+opts(GRAUS,it.gravidade)+'</select>')+
-    '<p class="small muted" style="grid-column:1/-1;margin:0">'+esc(mzTxtAval(it.severidade,it.frequencia))+' A criticidade é calculada por ela.</p>'+
     '</div><h4 class="stp-h">3. Base legal</h4><div class="fields">'+
     F('Item (norma / item / subitem)','norma','<input data-ik="norma" value="'+esc(it.norma)+'" placeholder="Ex.: NR-35, item 35.5.1">',true)+
     F('Requisito legal','requisitoLegal','<textarea data-ik="requisitoLegal" placeholder="Texto do requisito. Se não souber, deixe em branco: fica como pendente de validação.">'+esc(it.requisitoLegal)+'</textarea>',true)+
@@ -1363,7 +1362,7 @@ function itensHtml(d){
     F('Ação corretiva / preventiva','planoAcao','<textarea data-ik="planoAcao" placeholder="O que será feito para eliminar ou controlar o risco">'+esc(it.planoAcao)+'</textarea>',true)+
     F('Responsável','responsavel','<input data-ik="responsavel" value="'+esc(it.responsavel)+'">')+
     F('Data para realização','prazo','<input type="date" data-ik="prazo" value="'+esc(it.prazo)+'">')+
-    '</div><p class="muted small">Prazo sugerido para criticidade '+esc(it.gravidade)+': '+dsug+' dias.</p>')+
+    '</div><p class="muted small">Prazo sugerido: '+dsug+' dias.</p>')+
     '</div>'}).join('')||'<div class="ph-empty">Nenhum item ainda. Use a IA a partir das fotos ou adicione manualmente.</div>';
 }
 function renderItens(){var g=$('#itens');if(g)g.innerHTML=itensHtml(S.route.draft)}
@@ -1395,12 +1394,11 @@ async function preencherItemIA(k){
     var n=Math.min(it.fotos.length,caps.images.maxCount||4,4);
     var ok=(await Promise.all(it.fotos.slice(0,n).map(fotoBlob))).filter(Boolean);
     if(!ok.length){out.textContent='Nenhuma foto pôde ser lida.';return}
-    var prompt='Você é engenheiro de segurança do trabalho no Brasil e vai preencher UM ITEM DE INSPEÇÃO DE SEGURANÇA a partir da(s) foto(s) anexa(s).\n\nContexto: empresa '+(empNomeDe(d.empresaId)||'não informada')+', setor '+(it.setor||d.setor||'não informado')+'.\n\nRegras:\n- Descreva SOMENTE o que é visível. Não invente fatos.\n- classificacao: "Conformidade" ou "Não conformidade".\n- criticidade: "Crítico", "Alto", "Médio" ou "Baixo".\n- severidade: "Leve", "Moderada", "Grave", "Crítica" ou "Catastrófica" (pior consequência plausível do perigo observado).\n- frequencia: "Remota", "Pouco provável", "Ocasional", "Provável" ou "Freqüente" (chance de ocorrer, considerando a exposição visível).\n- Escreva como engenheiro de segurança especialista em gerenciamento de riscos ocupacionais: identifique o perigo, a fonte, o possível dano e quem pode ser exposto, em linguagem técnica e objetiva.\n- item e requisitoLegal: preencha SOMENTE se tiver certeza da norma brasileira (NR e item). Se não tiver certeza, deixe vazio. Nunca invente norma, item ou texto de requisito.\n- planoAcao: ação corretiva objetiva e prazoDias (número de dias).\n- Se algo não puder ser concluído pela foto, coloque em "verificar".\n\nResponda APENAS com JSON: {"descricao":"","classificacao":"","criticidade":"","severidade":"","frequencia":"","item":"","requisitoLegal":"","planoAcao":"","prazoDias":30,"verificar":["..."]}';
+    var prompt='Você é engenheiro de segurança do trabalho no Brasil e vai preencher UM ITEM DE INSPEÇÃO DE SEGURANÇA a partir da(s) foto(s) anexa(s).\n\nContexto: empresa '+(empNomeDe(d.empresaId)||'não informada')+', setor '+(it.setor||d.setor||'não informado')+'.\n\nRegras:\n- Descreva SOMENTE o que é visível. Não invente fatos.\n- classificacao: "Conformidade" ou "Não conformidade".\n- Escreva como engenheiro de segurança especialista em gerenciamento de riscos ocupacionais: identifique o perigo, a fonte, o possível dano e quem pode ser exposto, em linguagem técnica e objetiva.\n- item e requisitoLegal: preencha SOMENTE se tiver certeza da norma brasileira (NR e item). Se não tiver certeza, deixe vazio. Nunca invente norma, item ou texto de requisito.\n- planoAcao: ação corretiva objetiva e prazoDias (número de dias).\n- Se algo não puder ser concluído pela foto, coloque em "verificar".\n\nResponda APENAS com JSON: {"descricao":"","classificacao":"","item":"","requisitoLegal":"","planoAcao":"","prazoDias":30,"verificar":["..."]}';
     var r=await S.sample.json(prompt,{signal:auCtl.signal,images:ok});
     if(S.route!==rt)return;
     syncDraft();it=d.itens[k];if(!it)return;
-    var cr=GRAUS.indexOf(r&&r.criticidade)>-1?r.criticidade:it.gravidade;
-    var avI=mzAval(r&&r.severidade,r&&r.frequencia);if(avI){cr=avI.grau;if(!it.severidade)it.severidade=avI.s;if(!it.frequencia)it.frequencia=avI.f}
+    var cr=it.gravidade||'Médio';
     var antes=it.gravidade;
     function put(key,val,max){val=String(val==null?'':val).trim();if(val&&!String(it[key]||'').trim())it[key]=val.slice(0,max||1000)}
     put('descricao',r&&r.descricao);put('norma',r&&r.item,200);put('requisitoLegal',r&&r.requisitoLegal);put('planoAcao',r&&r.planoAcao);
@@ -1790,7 +1788,8 @@ async function salvar(form,rascunho){
       if(!old&&v.cFim&&v.cInicio&&v.cFim<v.cInicio){nao('O término da vigência não pode ser antes do início.');return}
       data={nome:v.nome,cnpj:v.cnpj,contato:v.contato,logo:r.draft.logo||'',unidades:uns};
     }else if(kind==='usuario'){
-      if(!ehAdm()){nao('Somente administradoras gerenciam usuários.');return}
+      if(!podeUsuarios()){nao('Somente a administradora e o Técnico ADM gerenciam usuários.');return}
+      if(!ehAdm()&&['Técnico SST','Cliente'].indexOf(v.perfil)<0){nao('O Técnico ADM cria apenas usuários Técnico SST ou Cliente.');return}
       col='usuarios';old=r.id?(S.R.usuarios.filter(function(u){return u.id===r.id})[0]||null):null;
       var em2=String(v.email||'').toLowerCase();
       if(em2&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em2)){nao('E-mail inválido. Deixe em branco se não tiver.');return}
