@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-23-1430 epi-funcao-linhas --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-23-1550 epi-auto --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <script>(function(){function t(){var m='auto';try{m=localStorage.getItem('sevia-tema')||'auto'}catch(e){}return m==='escuro'||(m==='auto'&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'escuro':'claro'}window.__aplicaTema=function(){var x=t(),d=document.documentElement;d.setAttribute('data-tema',x);var c=document.querySelector('meta[name="theme-color"]');if(c)c.setAttribute('content',x==='escuro'?'#000000':'#000000')};window.__aplicaTema();try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',window.__aplicaTema)}catch(e){}})()</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -417,6 +417,7 @@ html[data-tema="escuro"] svg circle[stroke="#3A3A3A"]{stroke:#6A6A6A}
 .ae-roda-c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;line-height:1.1}.ae-roda-c b{font-size:1.7rem;font-weight:800}.ae-roda-c span{font-size:.8rem;color:var(--muted)}.ae-roda.sm .ae-roda-c b{font-size:1.2rem}.ae-roda.sm .ae-roda-c span{font-size:.7rem}
 .ae-rl{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:6px 0 12px}.ae-leg{list-style:none;margin:0;padding:0;flex:1;min-width:160px;display:flex;flex-direction:column;gap:6px}.ae-leg li{display:flex;align-items:center;gap:8px;font-size:.92rem}.ae-leg li span{flex:1}.ae-leg i{width:12px;height:12px;border-radius:50%;flex:none}
 .ae-minis{display:grid;grid-template-columns:1fr 1fr;gap:14px 8px}.ae-mini{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;font-size:.9rem}
+.ae-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;align-items:center}.ae-chip{font:inherit;font-size:.95rem;padding:8px 14px;border-radius:999px;border:1px solid var(--border);background:var(--neutral-bg);color:var(--text,inherit);cursor:pointer;min-height:38px}.ae-chip:active{filter:brightness(.92)}.ae-chip.on{background:#1B7F3B;border-color:#1B7F3B;color:#fff}.ae-dica{margin:10px 0 0;font-size:.88rem;color:var(--muted)}
 .ae-set{padding:10px 0;border-bottom:1px solid var(--border)}.ae-set:last-child{border-bottom:0}.ae-set-h{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:6px}.ae-set-h span{color:var(--muted);font-size:.9rem}
 .ae-pils{display:flex;flex-wrap:wrap;gap:6px}.ae-pil{font-size:.85rem;padding:4px 10px;border-radius:999px;background:var(--neutral-bg);color:var(--neutral-fg)}.ae-pil.ruim{background:#FDE7E7;color:#B3261E}html[data-tema="escuro"] .ae-pil.ruim{background:#4A1D1D;color:#FFB4AB}
 .ae-prog{height:6px;border-radius:6px;background:var(--border);margin:-4px 0 14px;overflow:hidden}.ae-prog i{display:block;height:100%;background:var(--accent)}
@@ -1236,12 +1237,12 @@ function formEpi(r){
     h+='<div class="card form"><h2 class="ae-h2">Trabalhador</h2><div class="fields">'+
       field('Nome do trabalhador','ae-tn','<input id="ae-tn" data-ep="trab.nome" required value="'+esc(d.trab.nome)+'" autocomplete="off">','full')+
       field('Matrícula ou CPF','ae-td','<input id="ae-td" data-ep="trab.doc" required value="'+esc(d.trab.doc)+'" autocomplete="off" inputmode="numeric">')+
-      field('Função','ae-tf','<input id="ae-tf" data-ep="trab.funcao" list="ae-dl-fn" required value="'+esc(d.trab.funcao)+'" autocomplete="off">'+datalist('ae-dl-fn',epiFnNomes(d.empresaId,d.unidade))+(fnx?'<p class="muted small" style="margin:6px 0 0">'+fnx.epis.length+(fnx.epis.length===1?' EPI cadastrado':' EPIs cadastrados')+' para esta função. <button type="button" class="btn btn-ghost" data-act="ae-fn-load">Carregar EPIs da função</button></p>':''))+
+      field('Função','ae-tf',epiSelFn(d,fnx))+
     '</div></div>'+
-    '<h2 class="ae-h2" style="margin:18px 2px 8px">Conferência dos EPIs</h2>'+datalist('ae-dl-tipo',epiListaDe(d.empresaId))+
+    '<h2 class="ae-h2" id="ae-conf" style="margin:18px 2px 8px">Conferência dos EPIs</h2>'+(fnx?'<p class="ae-dica" style="margin:0 2px 8px">Função <b>'+esc(fnx.funcao)+'</b>: confira '+fnx.epis.length+(fnx.epis.length===1?' EPI':' EPIs')+' abaixo e marque o que se aplica.</p>':'')+datalist('ae-dl-tipo',epiListaDe(d.empresaId))+
     d.itens.map(function(it,i){
-      return '<div class="card ae-it"><div class="ae-it-h"><b>EPI '+(i+1)+'</b>'+(d.itens.length>1?'<button type="button" class="btn btn-ghost" data-act="ae-rm" data-i="'+i+'">Remover</button>':'')+'</div>'+
-      field('Tipo de EPI','ae-ti'+i,'<input id="ae-ti'+i+'" data-ep="itens.'+i+'.tipo" list="ae-dl-tipo" value="'+esc(it.tipo)+'" placeholder="Escolha ou digite o EPI" autocomplete="off">')+
+      return '<div class="card ae-it"><div class="ae-it-h"><b>'+(fnx&&String(it.tipo||'').trim()&&fnx.epis.some(function(x){return x.toLowerCase()===it.tipo.trim().toLowerCase()})?(i+1)+'. '+esc(it.tipo):'EPI '+(i+1))+'</b>'+(d.itens.length>1?'<button type="button" class="btn btn-ghost" data-act="ae-rm" data-i="'+i+'">Remover</button>':'')+'</div>'+
+      (fnx&&String(it.tipo||'').trim()&&fnx.epis.some(function(x){return x.toLowerCase()===it.tipo.trim().toLowerCase()})?'':field('Tipo de EPI','ae-ti'+i,epiSelTipo(d,it,i)))+
       Object.keys(EPI_OPC).map(function(k){if(k!=='uso'&&it.uso==='Não')return '<div class="ae-lin"><span>'+EPI_ROT[k]+'</span><span class="muted small">N/A (não se aplica, o EPI não estava em uso)</span></div>';return '<div class="ae-lin"><span>'+EPI_ROT[k]+(k==='conservacao'?' <small class="muted">(se precisa trocar)</small>':'')+'</span><span class="ae-tgs">'+EPI_OPC[k].map(function(v){return epiTog(i,k,v,it[k])}).join('')+'</span></div>'}).join('')+'</div>'}).join('')+
     '<button type="button" class="btn btn-ghost" data-act="ae-add" style="width:100%">+ Adicionar EPI</button>';
   }else{
@@ -1438,13 +1439,22 @@ async function epiWord(id){
 function epiRender(){var y=window.scrollY;renderMain();window.scrollTo(0,y)}
 document.addEventListener('input',function(e){
   var el=e.target.closest&&e.target.closest('[data-ep]');if(!el||!S.route||S.route.name!=='epi-form')return;
-  if(el.dataset.ep==='empresaId')return;
+  if(el.dataset.ep==='empresaId'||el.value==='__outro')return;
   epiSet(S.route.draft,el.dataset.ep,el.value);S.route._sujo=true;epiRascSalva();
 });
 document.addEventListener('change',function(e){
+  var o0=e.target.closest&&e.target.closest('[data-ep]');
+  if(o0&&o0.value==='__outro'&&S.route&&S.route.name==='epi-form'){var d9=S.route.draft,m9=o0.dataset.ep.match(/^itens\.(\d+)\.tipo$/);
+    if(m9){(S.route._outroE=S.route._outroE||{})[+m9[1]]=true;d9.itens[+m9[1]].tipo=''}else if(o0.dataset.ep==='trab.funcao'){S.route._outroF=true;d9.trab.funcao=''}
+    S.route._sujo=true;epiRascSalva();epiRender();return}
   var f0=e.target.closest&&e.target.closest('[data-ep="trab.funcao"]');
   if(f0&&S.route&&S.route.name==='epi-form'){var d0=S.route.draft,fx=epiFnAchar(d0.empresaId,d0.unidade,f0.value);
-    if(fx){d0.trab.funcao=fx.funcao;if(d0.itens.every(function(i){return !String(i.tipo||'').trim()})){d0.itens=fx.epis.map(function(x){var i=epiItem();i.tipo=x;return i})}S.route._sujo=true;epiRascSalva();epiRender()}return}
+    if(fx){S.route._outroF=false;d0.trab.funcao=fx.funcao;
+      var pad=epiItem(),mexido=function(i){return String(i.tipo||'').trim()&&(i.uso!==pad.uso||i.conservacao!==pad.conservacao||i.higienizacao!==pad.higienizacao||i.tamanho!==pad.tamanho||i.treinamento!==pad.treinamento)};
+      var mant=d0.itens.filter(mexido),tem={};mant.forEach(function(i){tem[i.tipo.trim().toLowerCase()]=1});
+      d0.itens=mant.concat(fx.epis.filter(function(x){return !tem[x.toLowerCase()]}).map(function(x){var i=epiItem();i.tipo=x;return i}));
+      S.route._outroE={};S.route._sujo=true;epiRascSalva();epiRender();
+      setTimeout(function(){var h=document.getElementById('ae-conf');if(h&&h.scrollIntoView)h.scrollIntoView({behavior:'smooth',block:'start'})},60)}return}
   var el=e.target.closest&&e.target.closest('[data-ep]');if(!el||!S.route||S.route.name!=='epi-form'||el.dataset.ep!=='empresaId')return;
   var d=S.route.draft;d.empresaId=el.value;d.unidade='';d.setor='';S.route._sujo=true;epiRender();
 });
@@ -1603,6 +1613,23 @@ function epiFuncoesDe(empId){var e=empId&&empDe(empId);return (e&&Array.isArray(
 function epiFnAchar(empId,unidade,funcao){var L=epiFuncoesDe(empId),f=epiNorm(funcao),u=epiNorm(unidade);if(!f)return null;
   return L.filter(function(x){return epiNorm(x.funcao)===f&&epiNorm(x.unidade)===u})[0]||L.filter(function(x){return epiNorm(x.funcao)===f&&!x.unidade})[0]||null}
 function epiFnNomes(empId,unidade){var u=epiNorm(unidade),L=epiFuncoesDe(empId),a=L.filter(function(x){return !x.unidade||epiNorm(x.unidade)===u}),n=[];(u&&a.length?a:L).forEach(function(x){if(n.indexOf(x.funcao)<0)n.push(x.funcao)});return n}
+function epiSelFn(d,fnx){
+  var nm=epiFnNomes(d.empresaId,d.unidade),v=String(d.trab.funcao||'').trim(),rt=S.route||{};
+  var falta=fnx&&fnx.epis.some(function(e){return !d.itens.some(function(i){return String(i.tipo||'').trim().toLowerCase()===e.toLowerCase()})}),dica=falta?'<p class="muted small" style="margin:6px 0 0">'+fnx.epis.length+(fnx.epis.length===1?' EPI cadastrado':' EPIs cadastrados')+' para esta função. <button type="button" class="btn btn-ghost" data-act="ae-fn-load">Carregar EPIs da função</button></p>':'';
+  if(!nm.length)return '<input id="ae-tf" data-ep="trab.funcao" required value="'+esc(d.trab.funcao)+'" autocomplete="off">'+'<p class="ae-dica">Nenhuma função cadastrada para esta empresa e unidade. Digite a função ou cadastre em Lista de EPIs.</p>';
+  var dentro=nm.some(function(x){return x.toLowerCase()===v.toLowerCase()}),outra=!!rt._outroF||(v&&!dentro);
+  return '<select id="ae-tf" data-ep="trab.funcao" required>'+'<option value="">Selecione a função</option>'+nm.map(function(x){return '<option value="'+esc(x)+'"'+(!outra&&x.toLowerCase()===v.toLowerCase()?' selected':'')+'>'+esc(x)+'</option>'}).join('')+'<option value="__outro"'+(outra?' selected':'')+'>Outra função (digitar)</option></select>'+
+    (outra?'<input id="ae-tf-o" data-ep="trab.funcao" style="margin-top:8px" placeholder="Digite a função" value="'+esc(d.trab.funcao)+'" autocomplete="off">':'')+dica;
+}
+function epiSelTipo(d,it,i){
+  var rt=S.route||{},v=String(it.tipo||'').trim(),usados={};d.itens.forEach(function(x,k){if(k!==i)usados[String(x.tipo||'').trim().toLowerCase()]=1});
+  var fx=epiFnAchar(d.empresaId,d.unidade,d.trab.funcao),base=(fx?fx.epis.concat(epiListaDe(d.empresaId).filter(function(x){return !fx.epis.some(function(y){return y.toLowerCase()===x.toLowerCase()})})):epiListaDe(d.empresaId)).filter(function(x){return !usados[x.toLowerCase()]});
+  if(!base.length&&!v)return '<input id="ae-ti'+i+'" data-ep="itens.'+i+'.tipo" value="'+esc(it.tipo)+'" placeholder="Digite o EPI" autocomplete="off">';
+  var dentro=base.some(function(x){return x.toLowerCase()===v.toLowerCase()}),outro=!!(rt._outroE&&rt._outroE[i])||(v&&!dentro);
+  return '<select id="ae-ti'+i+'" data-ep="itens.'+i+'.tipo">'+'<option value="">Selecione o EPI</option>'+base.map(function(x){return '<option value="'+esc(x)+'"'+(!outro&&x.toLowerCase()===v.toLowerCase()?' selected':'')+'>'+esc(x)+'</option>'}).join('')+'<option value="__outro"'+(outro?' selected':'')+'>Outro EPI (digitar)</option></select>'+
+    (outro?'<input id="ae-tio'+i+'" data-ep="itens.'+i+'.tipo" style="margin-top:8px" placeholder="Digite o EPI" value="'+esc(it.tipo)+'" autocomplete="off">':'');
+}
+function epiChips(lista,act,extra,max){var L=lista.slice(0,max||24);return '<div class="ae-chips">'+L.map(function(v){return '<button type="button" class="ae-chip" data-act="'+act+'" data-v="'+esc(v)+'"'+(extra||'')+'>'+esc(v)+'</button>'}).join('')+(lista.length>L.length?'<span class="muted small">e mais '+(lista.length-L.length)+'. Digite para buscar.</span>':'')+'</div>'}
 function epiFnCard(id,e){
   var F=epiFuncoesDe(id),ed=S.epiFn;
   var h='<section class="card" style="margin-top:12px"><div class="card-h"><h2>EPIs por função</h2></div>';
@@ -1642,7 +1669,11 @@ document.addEventListener('change',async function(e){
   }catch(er){console.error(er);toast('Não consegui ler este PDF. Confira a internet e tente de novo, ou digite as linhas.')}
 });
 document.addEventListener('click',function(e){
-  var el=e.target.closest&&e.target.closest('[data-act^="ae-fn"]');if(!el)return;var a=el.dataset.act,id=S.epiEmp||'';
+  var el=e.target.closest&&e.target.closest('[data-act^="ae-fn"],[data-act="ae-epi-pick"]');if(!el)return;var a=el.dataset.act,id=S.epiEmp||'';
+  if(a==='ae-epi-pick'&&S.route&&S.route.name==='epi-form'){var dd=S.route.draft,ix=+el.dataset.i;if(dd.itens[ix]){dd.itens[ix].tipo=el.dataset.v;S.route._sujo=true;epiRascSalva();epiRender()}return}
+  if(a==='ae-fn-pick'&&S.route&&S.route.name==='epi-form'){var d2=S.route.draft,fp=epiFnAchar(d2.empresaId,d2.unidade,el.dataset.v);d2.trab.funcao=el.dataset.v;
+    if(fp&&d2.itens.every(function(i){return !String(i.tipo||'').trim()}))d2.itens=fp.epis.map(function(x){var i=epiItem();i.tipo=x;return i});
+    S.route._sujo=true;epiRascSalva();epiRender();return}
   if(a==='ae-fn-edit'){var em=id&&empDe(id);S.epiFn={modo:em&&epiFuncoesDe(id).length?'edit':'imp',txt:em?epiFnRowsTxt(epiFnDeEmpresa(em)):'',aviso:'',id:id};renderMain()}
   else if(a==='ae-fn-cancel'){S.epiFn=null;renderMain()}
   else if(a==='ae-fn-save'){var t=($('#epi-fn-txt')||{}).value||'',R=epiFnLinhas(t.split('\n')),g=epiFnAgrupa(R);
