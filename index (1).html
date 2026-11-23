@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-23-1915 epi-sem-word --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-23-1930 epi-lista-setor --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <script>(function(){function t(){var m='auto';try{m=localStorage.getItem('sevia-tema')||'auto'}catch(e){}return m==='escuro'||(m==='auto'&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'escuro':'claro'}window.__aplicaTema=function(){var x=t(),d=document.documentElement;d.setAttribute('data-tema',x);var c=document.querySelector('meta[name="theme-color"]');if(c)c.setAttribute('content',x==='escuro'?'#000000':'#000000')};window.__aplicaTema();try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',window.__aplicaTema)}catch(e){}})()</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1277,6 +1277,15 @@ function epiResumo(){
   if(bt)bt.disabled=!!f;
   ['trab','sup','tst'].forEach(function(k){var s=document.querySelector('.ae-st[data-st="'+k+'"]');if(s)s.textContent=(k==='trab'&&a.trab.recusou)?'Recusou-se a assinar':(a[k].img?'Assinado em '+epiQuando(a[k].quando):'Aguardando assinatura')});
 }
+/* Unidade e Setor: ao tocar no campo preenchido, limpa na tela para a lista completa aparecer; se nada for escolhido, volta o valor */
+document.addEventListener('focusin',function(e){
+  var el=e.target;if(!el||(el.id!=='ae-set'&&el.id!=='ae-un')||!S.route||S.route.name!=='epi-form'||!el.value)return;
+  el.dataset.antes=el.value;el.value='';
+});
+document.addEventListener('focusout',function(e){
+  var el=e.target;if(!el||(el.id!=='ae-set'&&el.id!=='ae-un'))return;
+  if(el.dataset.antes&&!el.value)el.value=el.dataset.antes;delete el.dataset.antes;
+});
 document.addEventListener('change',function(e){
   var el=e.target;if(!el||el.id!=='ae-recusa'||!S.route||S.route.name!=='epi-form')return;var d=S.route.draft;
   epiAss(d).trab=el.checked?{img:'',quando:Date.now(),recusou:true}:{img:'',quando:0,recusou:false};
