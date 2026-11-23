@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-23-1340 menu-intuitivo --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-23-1430 menu-icones --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <script>(function(){function t(){var m='auto';try{m=localStorage.getItem('sevia-tema')||'auto'}catch(e){}return m==='escuro'||(m==='auto'&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'escuro':'claro'}window.__aplicaTema=function(){var x=t(),d=document.documentElement;d.setAttribute('data-tema',x);var c=document.querySelector('meta[name="theme-color"]');if(c)c.setAttribute('content',x==='escuro'?'#000000':'#000000')};window.__aplicaTema();try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',window.__aplicaTema)}catch(e){}})()</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -578,6 +578,10 @@ var ICONES={
   epis:['#0E8A8A','<path d="M12 3l8 3v6c0 4.5-3.2 7.8-8 9-4.8-1.2-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>'],
   relfoto:['#1D5FBF','<rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/>'],
   inspsg:['#1B7F3B','<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9zM9 13l2 2 4-4"/>'],
+  grel:['#1D5FBF','<path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h7"/>'],
+  gacomp:['#7B3FBF','<path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/>'],
+  gcad:['#C27C00','<path d="M3 6a2 2 0 012-2h4l2 2h8a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>'],
+  gajuda:['#0E8A8A','<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 114 2c-1 .7-1.5 1.2-1.5 2.5M12 17.5h.01"/>'],
   inspecoes:['#1B7F3B','<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9zM9 13l2 2 4-4"/>'],
   ncs:['#C62828','<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>'],
   acoes:['#FA6905','<path d="M5 21V4M5 4h12l-2 4 2 4H5"/>'],
@@ -708,6 +712,7 @@ function shell(){
   $('#app').innerHTML='<div class="app"><aside class="side"><a class="logo" href="#painel" aria-label="SevIA SST 4.0, ir para o início"><b>Sev<i>IA</i></b><span>SST 4.0</span></a><a class="side-av" id="side-av" href="#config" aria-label="Meu perfil"></a><nav class="nav" id="nav" aria-label="Principal"></nav><p class="side-note"></p></aside>'+
   '<main class="main"><div class="main-in"><div class="search"><input id="busca" type="search" placeholder="Buscar relatórios, empresas, setores…" aria-label="Buscar" autocomplete="off" data-inp="busca"><div id="busca-res" class="busca-res" hidden></div></div><div class="wrap" id="wrap"></div></div></main><div class="menu-bg" id="menu-bg" hidden></div><button type="button" class="fab" id="fab" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div>';
 }
+var GIC={'Relatórios':'grel','Acompanhar':'gacomp','Cadastros':'gcad','Ajuda':'gajuda'};
 function navLink(it){return '<a href="#'+it[0]+'"'+(S.view===it[0]?' aria-current="page"':'')+'><span class="nl">'+ico(it[0])+'<span>'+it[1]+'</span></span>'+(it[2]?'<span class="badge'+(it[3]?' bad':'')+'" aria-label="'+it[2]+(it[3]?' vencidas':' abertas')+'">'+it[2]+'</span>':'')+'</a>'}
 function navFly(){
   var f=$('#nav-fly'),n=$('#nav');if(!n)return;
@@ -737,7 +742,7 @@ function renderNav(){
   $('#nav').innerHTML=grupos.map(function(g){
     if(!g[0])return g[1].map(navLink).join('');
     var ab=g[0]===S.navG,tot=g[1].reduce(function(a,it){return a+(it[2]||0)},0),atual=g[1].some(function(it){return it[0]===S.view});
-    return '<button type="button" class="nav-gb'+(atual?' atual':'')+'" data-nav-g="'+esc(g[0])+'" aria-expanded="'+ab+'" aria-haspopup="true"><span>'+g[0]+'</span><span class="nav-gr">'+(tot?'<span class="badge">'+tot+'</span>':'')+'<svg class="nav-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></span></button>'}).join('');
+    return '<button type="button" class="nav-gb'+(atual?' atual':'')+'" data-nav-g="'+esc(g[0])+'" aria-expanded="'+ab+'" aria-haspopup="true"><span class="nl">'+ico(GIC[g[0]])+'<span>'+g[0]+'</span></span><span class="nav-gr">'+(tot?'<span class="badge">'+tot+'</span>':'')+'<svg class="nav-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></span></button>'}).join('');
   $('#nav').insertAdjacentHTML('beforeend',(S.me.name?'<p class="menu-perfil" style="display:flex;align-items:center;gap:10px">'+avatar(minhaFoto(),S.me.name,36)+'<span>Usuário: <b>'+esc(S.me.name)+'</b></span></p>':'')+(jaInstalado()?'':'<p class="menu-perfil"><button type="button" class="btn btn-ghost" data-act="instalar">Instalar app no telefone</button></p>')+(window.SEVIA_SAIR?'<p class="menu-perfil"><button type="button" class="btn btn-ghost" data-act="sair">Sair</button></p>':''));
   navFly();
 }
@@ -1183,7 +1188,7 @@ function formEpi(r){
       field('Matrícula ou CPF','ae-td','<input id="ae-td" data-ep="trab.doc" required value="'+esc(d.trab.doc)+'" autocomplete="off" inputmode="numeric">')+
       field('Função','ae-tf','<input id="ae-tf" data-ep="trab.funcao" required value="'+esc(d.trab.funcao)+'" autocomplete="off">')+
     '</div></div>'+
-    '<h2 class="ae-h2" style="margin:18px 2px 8px">Conferência dos EPIs</h2>'+datalist('ae-dl-tipo',cadAtual().epis)+
+    '<h2 class="ae-h2" style="margin:18px 2px 8px">Conferência dos EPIs</h2>'+datalist('ae-dl-tipo',epiListaDe(d.empresaId))+
     d.itens.map(function(it,i){
       return '<div class="card ae-it"><div class="ae-it-h"><b>EPI '+(i+1)+'</b>'+(d.itens.length>1?'<button type="button" class="btn btn-ghost" data-act="ae-rm" data-i="'+i+'">Remover</button>':'')+'</div>'+
       field('Tipo de EPI','ae-ti'+i,'<input id="ae-ti'+i+'" data-ep="itens.'+i+'.tipo" list="ae-dl-tipo" value="'+esc(it.tipo)+'" placeholder="Escolha ou digite o EPI" autocomplete="off">')+
@@ -1468,10 +1473,39 @@ function cardTema(){
   return '<section class="card"><div class="card-h"><h2>Aparência</h2></div><p class="muted small">Escolha como o sistema aparece para você. A escolha fica salva na sua conta e vale em qualquer aparelho. Automático segue o modo claro ou escuro do celular ou do computador. Os relatórios em PDF e Word não mudam.</p><div class="tema-op" role="group" aria-label="Tema do sistema">'+o.map(function(x){return '<button type="button" class="btn btn-ghost" data-act="tema" data-id="'+x[0]+'" aria-pressed="'+(m===x[0])+'"><svg class="tema-ic" viewBox="0 0 24 24" aria-hidden="true">'+IT[x[0]]+'</svg>'+x[1]+'</button>'}).join('')+'</div></section>';
 }
 function viewConfig(){return head('Configurações','Ajustes da sua conta.')+'<div class="cols">'+cardPerfil()+cardTema()+'</div>'}
+function epiListaDe(empId){var e=empId&&empDe(empId);return (e&&Array.isArray(e.epis))?e.epis.slice():cadAtual().epis}
 function viewEpiCad(){
   if(!podeEmpresa())return head('Lista de EPIs')+'<div class="card"><p>Somente a Administradora e o Técnico ADM alteram esta lista.</p></div>';
-  return head('Lista de EPIs','Sugestões que aparecem no campo Tipo de EPI da Auditoria de EPI. O TST ainda pode digitar um EPI que não esteja na lista.')+'<div class="cols">'+cardCad('EPIs','epis',cadAtual().epis,'Nome do EPI, ex.: Protetor solar')+'</div>';
+  var id=S.epiEmp||'',e=id&&empDe(id);if(id&&!e){id='';S.epiEmp=''}
+  var propria=!!(e&&Array.isArray(e.epis)),L=epiListaDe(id);
+  var sel=[['','Lista geral (todas as empresas)']].concat(S.empresas.map(function(x){return [x.id,x.nome+(Array.isArray(x.epis)?' (lista própria)':'')]}));
+  return head('Lista de EPIs','Sugestões do campo Tipo de EPI na Auditoria de EPI. O TST ainda pode digitar um EPI que não esteja na lista.')+
+  '<section class="card"><div class="fields">'+field('Lista de qual empresa?','epe','<select id="epe" data-epe>'+opts(sel,id)+'</select>','full')+'</div>'+
+  '<p class="muted small" style="margin:8px 0 0">'+(!id?'Esta é a lista geral. Ela vale para as empresas que não têm lista própria.':(propria?'Esta empresa usa uma lista própria. Mudanças na lista geral não afetam esta empresa.':'Esta empresa ainda usa a lista geral. Ao incluir ou remover um EPI aqui, ela passa a ter uma lista própria (começando com uma cópia da geral).'))+'</p>'+
+  (propria?'<div class="actions" style="margin-top:12px"><button type="button" class="btn btn-ghost" data-act="ae-cad-geral">Voltar a usar a lista geral</button></div>':'')+'</section>'+
+  '<section class="card" style="margin-top:12px"><div class="card-h"><h2>EPIs'+(e?' de '+esc(e.nome):' (geral)')+'</h2></div><form class="inline-add" data-form="epicad" autocomplete="off"><input aria-label="Novo EPI" placeholder="Novo EPI"><button class="btn btn-primary" type="submit">Adicionar</button></form><div class="list">'+
+  (L.length?L.map(function(x,k){return '<div class="row"><span>'+esc(x)+'</span><button type="button" class="btn btn-ghost" data-act="ae-cad-rm" data-i="'+k+'" aria-label="Remover '+esc(x)+'">Remover</button></div>'}).join(''):'<p class="muted pad">Nenhum EPI na lista.</p>')+'</div></section>';
 }
+async function epiCadSalva(lista){
+  var id=S.epiEmp||'';
+  try{
+    if(id){await S.db.doc('empresas/'+id).update({epis:lista,atualizadoEm:Date.now()});var e=empDe(id);if(e)e.epis=lista;var r=S.R.empresas.filter(function(x){return x.id===id})[0];if(r)r.epis=lista}
+    else{var c=cadAtual();c.epis=lista;await S.db.doc('config/cadastros').set(c)}
+    renderMain();return true;
+  }catch(er){console.error(er);toast('Não foi possível salvar a lista.');return false}
+}
+async function epiCadAdd(f){
+  var inp=f.querySelector('input'),v=inp.value.trim();if(!v)return;
+  var L=epiListaDe(S.epiEmp||'');
+  if(L.some(function(x){return x.toLowerCase()===v.toLowerCase()})){toast('Esse EPI já está na lista.');return}
+  L.push(v);L.sort(function(a,b){return a.localeCompare(b)});await epiCadSalva(L);
+}
+document.addEventListener('change',function(e){var el=e.target.closest&&e.target.closest('[data-epe]');if(!el)return;S.epiEmp=el.value;renderMain()});
+document.addEventListener('click',function(e){
+  var el=e.target.closest&&e.target.closest('[data-act="ae-cad-rm"],[data-act="ae-cad-geral"]');if(!el)return;
+  if(el.dataset.act==='ae-cad-rm'){var k=+el.dataset.i;confirmar('Remover da lista','O EPI será retirado das sugestões. Auditorias já feitas não mudam. Deseja remover?','Remover',function(){var L=epiListaDe(S.epiEmp||'');L.splice(k,1);epiCadSalva(L)})}
+  else confirmar('Voltar à lista geral','A lista própria desta empresa será apagada e ela passará a usar a lista geral. Deseja continuar?','Continuar',async function(){try{await S.db.doc('empresas/'+S.epiEmp).update({epis:null,atualizadoEm:Date.now()});var e=empDe(S.epiEmp);if(e)e.epis=null;var r=S.R.empresas.filter(function(x){return x.id===S.epiEmp})[0];if(r)r.epis=null;renderMain()}catch(er){console.error(er);toast('Não foi possível salvar.')}});
+});
 function viewCadastros(){
   var c=cadAtual();
   return head('Cadastros','Responsáveis e acessos. Empresas, unidades e setores ficam em Empresa.')+
@@ -1503,7 +1537,7 @@ function viewManual(){
   ['Consultar e baixar seus relatórios',cli,
     ol(['Abra <b>Relatórios fotográficos</b> ou <b>Inspeções de segurança</b> no menu e toque no que quer ver.','Para baixar, toque em <b>PDF</b> ou <b>Word</b> dentro do relatório.','Em <b>Indicadores</b>, use os filtros de unidade, período e tipo de relatório para acompanhar os números da sua empresa.'])+'<p>Você só consulta. Para corrigir ou incluir algo, fale com o responsável técnico da sua empresa.</p>'],
   ['Auditoria de EPI',true,
-    (tec?ol(['Na tela <b>Início</b>, toque em <b>Auditoria de EPI</b>.','<b>Etapa 1:</b> escolha a empresa e informe unidade, setor, data e o nome do TST que fez a auditoria.','<b>Etapa 2:</b> informe o nome, a matrícula ou CPF e a função do trabalhador. Para cada EPI escolha o tipo e marque o estado de conservação (bom ou precisa trocar), a higienização, o tamanho e se recebeu treinamento. Toque em <b>+ Adicionar EPI</b> para incluir outro.','<b>Etapa 3:</b> escreva as observações e ações corretivas (há atalhos para &ldquo;parabéns&rdquo; e &ldquo;não estava usando o EPI&rdquo;). Em seguida o <b>trabalhador</b>, o <b>supervisor ou encarregado</b> e o <b>TST</b> assinam com o dedo na tela.','Com as três assinaturas, toque em <b>Assinar como TST e concluir</b>. A auditoria concluída fica <b>travada</b> e não pode ser alterada; se algo estiver errado, faça uma nova auditoria.','Se faltar alguma assinatura, toque em <b>Salvar e continuar depois</b>. A auditoria fica <b>em andamento</b> e pode ser retomada em Auditoria de EPI.','Na auditoria concluída, toque em <b>PDF</b> ou <b>Word</b> para baixar.'])+'<p>Se o EPI não estiver na lista, basta <b>digitar o nome</b> no campo Tipo de EPI.'+(podeEmpresa()?' Para incluir ou remover EPIs das sugestões, abra <b>Lista de EPIs</b> no menu.':'')+'</p>'+'<p>Para assinar, o nome do trabalhador e a matrícula ou CPF precisam estar preenchidos.</p>':ol(['Abra <b>Auditoria de EPI</b> no menu e toque na auditoria que quer ver.','Só aparecem as auditorias já <b>concluídas</b> e assinadas. Toque em <b>PDF</b> ou <b>Word</b> para baixar.']))],
+    (tec?ol(['Na tela <b>Início</b>, toque em <b>Auditoria de EPI</b>.','<b>Etapa 1:</b> escolha a empresa e informe unidade, setor, data e o nome do TST que fez a auditoria.','<b>Etapa 2:</b> informe o nome, a matrícula ou CPF e a função do trabalhador. Para cada EPI escolha o tipo e marque o estado de conservação (bom ou precisa trocar), a higienização, o tamanho e se recebeu treinamento. Toque em <b>+ Adicionar EPI</b> para incluir outro.','<b>Etapa 3:</b> escreva as observações e ações corretivas (há atalhos para &ldquo;parabéns&rdquo; e &ldquo;não estava usando o EPI&rdquo;). Em seguida o <b>trabalhador</b>, o <b>supervisor ou encarregado</b> e o <b>TST</b> assinam com o dedo na tela.','Com as três assinaturas, toque em <b>Assinar como TST e concluir</b>. A auditoria concluída fica <b>travada</b> e não pode ser alterada; se algo estiver errado, faça uma nova auditoria.','Se faltar alguma assinatura, toque em <b>Salvar e continuar depois</b>. A auditoria fica <b>em andamento</b> e pode ser retomada em Auditoria de EPI.','Na auditoria concluída, toque em <b>PDF</b> ou <b>Word</b> para baixar.'])+'<p>Se o EPI não estiver na lista, basta <b>digitar o nome</b> no campo Tipo de EPI.'+(podeEmpresa()?' Para incluir ou remover EPIs das sugestões, abra <b>Lista de EPIs</b> no menu: há uma lista geral e, se quiser, uma lista própria para cada empresa.':'')+'</p>'+'<p>Para assinar, o nome do trabalhador e a matrícula ou CPF precisam estar preenchidos.</p>':ol(['Abra <b>Auditoria de EPI</b> no menu e toque na auditoria que quer ver.','Só aparecem as auditorias já <b>concluídas</b> e assinadas. Toque em <b>PDF</b> ou <b>Word</b> para baixar.']))],
   ['Novo relatório fotográfico',tec,
     '<p>Na tela <b>Início</b>, toque em <b>Relatório fotográfico</b>. O formulário tem etapas que abrem e fecham ao tocar no título. Para salvar é preciso que a empresa tenha um <b>contrato vigente</b>.</p>'+
     ol(['<b>Identificação:</b> data, empresa e <b>unidade</b>. O <b>CNPJ da empresa</b> aparece sozinho ao escolher a empresa. A unidade é obrigatória e é ela que faz o relatório entrar nos <b>Indicadores</b> por unidade. Ela <b>não sai</b> no relatório de campo. O seu nome sai no relatório como quem realizou o trabalho.','<b>Empresa executante:</b> quem executou o serviço. Se você informar o nome, o <b>CNPJ</b> é obrigatório e precisa ser um CNPJ válido. Só a empresa executante sai no relatório (a empresa do passo 1 é o cliente e não aparece). Preencha também o <b>Escola / unidade atendida</b>: é o que sai na caixa ESCOLA / UNIDADE.','<b>Fotos:</b> as fotos ficam em grupos. Use <b>Tirar foto</b> ou <b>Galeria</b>. Para remover uma foto, toque no <b>X</b> vermelho dela. Os grupos podem ser renomeados, adicionados ou removidos.','<b>Detalhes do serviço:</b> serviços, segurança, riscos e observações.','<b>Responsável técnico:</b> nome, função e registro profissional. Já vêm do seu cadastro.'])+
@@ -3740,7 +3774,7 @@ document.addEventListener('click',function(e){
 });
 document.addEventListener('submit',function(e){
   var f=e.target.closest('[data-form]');if(!f)return;e.preventDefault();
-  if(f.dataset.form==='cad')cadAdd(f);else salvar(f);
+  if(f.dataset.form==='cad')cadAdd(f);else if(f.dataset.form==='epicad')epiCadAdd(f);else salvar(f);
 });
 document.addEventListener('change',function(e){
   var el=e.target.closest('[data-chg]');if(!el)return;
