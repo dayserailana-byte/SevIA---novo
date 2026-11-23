@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-23-1500 empresa-endereco --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-23-1530 indicadores-epi --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <script>(function(){function t(){var m='auto';try{m=localStorage.getItem('sevia-tema')||'auto'}catch(e){}return m==='escuro'||(m==='auto'&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'escuro':'claro'}window.__aplicaTema=function(){var x=t(),d=document.documentElement;d.setAttribute('data-tema',x);var c=document.querySelector('meta[name="theme-color"]');if(c)c.setAttribute('content',x==='escuro'?'#000000':'#000000')};window.__aplicaTema();try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',window.__aplicaTema)}catch(e){}})()</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -930,8 +930,34 @@ function ixDonut(parts,center,sub,label){
 function ixCard(t,sub,parts,center,csub,label){
   return '<section class="ix-card"><div class="ix-h"><h2>'+t+'</h2><span class="ix-sub">'+esc(sub)+'</span></div><div class="ix-dn">'+ixDonut(parts,center,csub,label)+'<div class="ix-lg">'+parts.map(function(x){return '<div><i style="background:'+x.c+'"></i><span>'+esc(x.l)+'</span><b>'+x.v+'</b></div>'}).join('')+'</div></div></section>';
 }
+function epiFiltrados(){
+  var min='';if(S.pf.periodo!=='tudo'){var d=new Date();d.setDate(d.getDate()-({'30d':30,'90d':90,'12m':365}[S.pf.periodo]));min=isoDate(d)}
+  return S.epis.filter(function(e){return (S.pf.empresa==='todas'||e.empresaId===S.pf.empresa)&&unOk(e)&&(!min||(e.data||'')>=min)});
+}
+function viewIndEpi(){
+  var E=epiFiltrados(),conc=E.filter(function(e){return e.status==='Concluída'}).length,and=E.length-conc;
+  var trab={};E.forEach(function(e){var t=e.trab||{};var k=String(t.doc||t.nome||'').replace(/\W/g,'').toLowerCase();if(k)trab[k]=1});
+  var it=[];E.forEach(function(e){(e.itens||[]).forEach(function(i){it.push(i)})});
+  var uso=it.filter(function(i){return i.uso!=='Não'}),nao=it.length-uso.length;
+  var troca=uso.filter(function(i){return i.conservacao==='Precisa trocar'}).length,hig=uso.filter(function(i){return i.higienizacao==='Inadequada'}).length,tam=uso.filter(function(i){return i.tamanho==='Inadequado'}).length,trein=uso.filter(function(i){return i.treinamento==='Não'}).length;
+  var prob={};it.forEach(function(i){var n=(i.uso==='Não'?1:0)+(i.conservacao==='Precisa trocar'?1:0)+(i.higienizacao==='Inadequada'?1:0)+(i.tamanho==='Inadequado'?1:0)+(i.treinamento==='Não'?1:0);var k=String(i.tipo||'').trim();if(k&&n)prob[k]=(prob[k]||0)+n});
+  var rank=Object.keys(prob).map(function(k){return {l:k,v:prob[k]}}).sort(function(a,b){return b.v-a.v}).slice(0,6);
+  var ms=serieMes(E.map(function(e){return e.data})),mx=Math.max.apply(null,ms.map(function(m){return m.v}).concat([1]));
+  function seg(id,l){return '<button type="button" data-act="pf-tipo" data-id="'+id+'" aria-pressed="'+(id==='epi')+'">'+l+'</button>'}
+  function kpi(n,l,bad){return '<div class="ix-k'+(bad?' bad':'')+'"><span class="n">'+n+'</span><span class="l">'+l+'</span></div>'}
+  function bar(l,v,m,c){return '<div class="ix-bar"><div><span>'+esc(l)+'</span><b>'+v+'</b></div><div class="t"><i style="width:'+(m?Math.round(v/m*100):0)+'%;background:'+c+'"></i></div></div>'}
+  var vazio='<p class="muted small">Sem dados neste filtro.</p>';
+  return head('Indicadores','Relatórios fotográficos, inspeções de segurança e auditorias de EPI.')+filtrosPainel()+
+  '<div class="ix"><div class="ix-seg" role="group" aria-label="Tipo de documento">'+seg('todos','Tudo')+seg('foto','Fotográficos')+seg('insp','Inspeções')+seg('epi','EPI')+'</div>'+
+  '<div class="ix-kpis">'+kpi(E.length,'Auditorias de EPI')+kpi(conc,'Concluídas')+kpi(and,'Em andamento')+kpi(Object.keys(trab).length,'Trabalhadores auditados')+'</div>'+
+  '<section class="ix-card"><div class="ix-h"><h2>Uso dos EPIs</h2><span class="ix-sub">no momento da auditoria</span></div>'+(it.length?'<p style="font-size:34px;font-weight:800;margin:4px 0">'+pct(uso.length,it.length)+'%</p><p class="muted small" style="margin:0 0 8px">dos EPIs conferidos estavam em uso ('+uso.length+' de '+it.length+')</p>'+bar('Estavam usando',uso.length,it.length,'#1B7F3B')+bar('Não estavam usando',nao,it.length,'#C62828'):vazio)+'</section>'+
+  '<section class="ix-card"><div class="ix-h"><h2>Pontos de atenção</h2><span class="ix-sub">entre os EPIs em uso</span></div>'+(uso.length?bar('Precisam trocar',troca,uso.length,'#C62828')+bar('Higienização inadequada',hig,uso.length,'#C62828')+bar('Tamanho inadequado',tam,uso.length,'#C62828')+bar('Sem treinamento',trein,uso.length,'#C62828'):vazio)+'</section>'+
+  '<section class="ix-card"><div class="ix-h"><h2>EPIs com mais problemas</h2></div>'+(rank.length?rank.map(function(r){return bar(r.l,r.v,rank[0].v,'#FA6905')}).join(''):vazio)+'</section>'+
+  '<section class="ix-card"><div class="ix-h"><h2>Auditorias por mês</h2><span class="ix-sub">Últimos 12 meses</span></div><div class="ix-mes" role="img" aria-label="Auditorias de EPI por mês, total '+E.length+'">'+ms.map(function(m){return '<div title="'+m.l+': '+m.v+'"><div style="height:'+Math.round(m.v/mx*120)+'px;background:#0E8A8A;border-radius:3px 3px 0 0"></div></div>'}).join('')+'</div><div class="ix-ax"><span>'+ms[0].l+'</span><span>'+ms[6].l+'</span><span>'+ms[11].l+'</span></div></section></div>';
+}
 function viewIndicadores(){
   var base=filtrados(),tp=S.pf.tipo||'todos';
+  if(tp==='epi')return viewIndEpi();
   function noTipo(i){return tp==='todos'||(tp==='insp')===isIns(i)}
   var fi=base.fi.filter(noTipo);
   var is={};fi.forEach(function(i){is[i.id]=1});
@@ -994,7 +1020,7 @@ function viewIndicadores(){
     meses:mF.map(function(m,k){return [m.l,m.v,mS[k].v]}),
     unid:uL.map(function(k){var o=un[k],t=o.c+o.n,sub=isF?o.f+(o.f===1?' relatório':' relatórios')+' · '+(fotosPorUn[k]||0)+' fotos':(isI?o.s+(o.s===1?' inspeção':' inspeções')+' · '+o.n+(o.n===1?' não conformidade':' não conformidades'):o.f+(o.f===1?' fotográfico':' fotográficos')+' · '+o.s+(o.s===1?' inspeção':' inspeções')+' · '+o.n+(o.n===1?' não conformidade':' não conformidades'));return [k,sub,t?pct(o.c,t):null]})};
   return head('Indicadores','Relatórios fotográficos e inspeções de segurança.',S.downloads?btn('PDF','ind-pdf','','btn-primary')+btn('Word','ind-word','','btn-primary'):'')+filtrosPainel()+
-  '<div class="ix"><div class="ix-seg" role="group" aria-label="Tipo de documento">'+seg('todos','Tudo')+seg('foto','Fotográficos')+seg('insp','Inspeções')+'</div>'+
+  '<div class="ix"><div class="ix-seg" role="group" aria-label="Tipo de documento">'+seg('todos','Tudo')+seg('foto','Fotográficos')+seg('insp','Inspeções')+seg('epi','EPI')+'</div>'+
   (isT||isI?'':'')+
   (isF?'':'')+
   '<div class="ix-kpis">'+kp+'</div>'+
@@ -1148,10 +1174,14 @@ function epiRascLer(){try{var o=JSON.parse(localStorage.getItem(EPI_RASC)||'null
 function epiRascLimpa(){try{localStorage.removeItem(EPI_RASC)}catch(e){}}
 function epiChipSt(e){return e.status==='Concluída'?chip('Concluída','ok'):chip('Em andamento','warn')}
 function viewEpis(){
-  var L=S.epis.slice().sort(function(a,b){return (b.numero||0)-(a.numero||0)});
-  var abertas=L.filter(function(e){return e.status!=='Concluída'}).length;
+  var F=S.fe||(S.fe={empresa:'todas',periodo:'12m',st:'todas'}),min='';
+  if(F.periodo!=='tudo'){var dd=new Date();dd.setDate(dd.getDate()-({'30d':30,'90d':90,'12m':365}[F.periodo]));min=isoDate(dd)}
+  var L=S.epis.filter(function(e){return (F.empresa==='todas'||e.empresaId===F.empresa)&&(!min||(e.data||'')>=min)&&(F.st==='todas'||(F.st==='conc')===(e.status==='Concluída'))}).sort(function(a,b){return (b.numero||0)-(a.numero||0)});
+  var abertas=S.epis.filter(function(e){return e.status!=='Concluída'}).length;
+  var empO=[['todas','Todas']].concat(S.empresas.map(function(x){return [x.id,x.nome]}));
   return head('Auditoria de EPI','Abra uma auditoria para consultar'+(S.canWrite?', continuar ou baixar o PDF e o Word. Para criar uma nova, use a tela Início.':' e baixar o PDF e o Word.'))+
   (abertas&&S.canWrite?'<div class="banner"><span>'+abertas+(abertas===1?' auditoria aguardando assinaturas.':' auditorias aguardando assinaturas.')+'</span></div>':'')+
+  '<div class="filters">'+field('Empresa','fe-emp','<select id="fe-emp" data-fe="empresa">'+opts(empO,F.empresa)+'</select>')+field('Período','fe-per','<select id="fe-per" data-fe="periodo">'+opts([['30d','Últimos 30 dias'],['90d','Últimos 90 dias'],['12m','Últimos 12 meses'],['tudo','Todo o período']],F.periodo)+'</select>')+field('Situação','fe-st','<select id="fe-st" data-fe="st">'+opts([['todas','Todas'],['conc','Concluídas'],['and','Em andamento']],F.st)+'</select>')+'</div>'+
   '<div class="card"><div class="list">'+(L.length?L.map(function(e){
     return '<button type="button" class="row" data-act="ae-open" data-id="'+esc(e.id)+'"><span class="row-main" style="cursor:inherit"><span class="insp-num">Auditoria de EPI Nº '+epiNum(e)+'</span><b>'+esc((e.trab&&e.trab.nome)||'Trabalhador')+'</b><span class="muted small">'+esc(empNome(e)||'')+' · '+esc(e.unidade||'')+' · '+esc(e.setor||'')+' · '+fmt(e.data)+'</span></span><span class="row-side">'+epiChipSt(e)+'</span></button>'}).join(''):'<p class="muted pad">Nenhuma auditoria de EPI ainda.'+(S.canWrite?' Para começar, use o card Auditoria de EPI na tela Início.':'')+'</p>')+'</div></div>';
 }
@@ -1501,7 +1531,7 @@ async function epiCadAdd(f){
   if(L.some(function(x){return x.toLowerCase()===v.toLowerCase()})){toast('Esse EPI já está na lista.');return}
   L.push(v);L.sort(function(a,b){return a.localeCompare(b)});await epiCadSalva(L);
 }
-document.addEventListener('change',function(e){var el=e.target.closest&&e.target.closest('[data-epe]');if(!el)return;S.epiEmp=el.value;renderMain()});
+document.addEventListener('change',function(e){var fe=e.target.closest&&e.target.closest('[data-fe]');if(fe){(S.fe||(S.fe={empresa:'todas',periodo:'12m',st:'todas'}))[fe.dataset.fe]=fe.value;renderMain();return}var el=e.target.closest&&e.target.closest('[data-epe]');if(!el)return;S.epiEmp=el.value;renderMain()});
 document.addEventListener('click',function(e){
   var el=e.target.closest&&e.target.closest('[data-act="ae-cad-rm"],[data-act="ae-cad-geral"]');if(!el)return;
   if(el.dataset.act==='ae-cad-rm'){var k=+el.dataset.i;confirmar('Remover da lista','O EPI será retirado das sugestões. Auditorias já feitas não mudam. Deseja remover?','Remover',function(){var L=epiListaDe(S.epiEmp||'');L.splice(k,1);epiCadSalva(L)})}
