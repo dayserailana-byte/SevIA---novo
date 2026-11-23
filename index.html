@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-23-1550 epi-auto --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-23-1620 epi-add-funcao --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <script>(function(){function t(){var m='auto';try{m=localStorage.getItem('sevia-tema')||'auto'}catch(e){}return m==='escuro'||(m==='auto'&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'escuro':'claro'}window.__aplicaTema=function(){var x=t(),d=document.documentElement;d.setAttribute('data-tema',x);var c=document.querySelector('meta[name="theme-color"]');if(c)c.setAttribute('content',x==='escuro'?'#000000':'#000000')};window.__aplicaTema();try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',window.__aplicaTema)}catch(e){}})()</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1537,6 +1537,15 @@ function cardTema(){
 }
 function viewConfig(){return head('Configurações','Ajustes da sua conta.')+'<div class="cols">'+cardPerfil()+cardTema()+'</div>'}
 function epiListaDe(empId){var e=empId&&empDe(empId);return (e&&Array.isArray(e.epis))?e.epis.slice():cadAtual().epis}
+function epiAddForm(id,e){
+  if(!id)return '<form class="inline-add" data-form="epicad" autocomplete="off"><input aria-label="Novo EPI" placeholder="Novo EPI"><button class="btn btn-primary" type="submit">Adicionar</button></form>';
+  var F=epiFuncoesDe(id),sel=S.epiAddFn||'',nova=sel==='__nova'||(!F.length);
+  return '<form class="inline-add" data-form="epicad" autocomplete="off" style="flex-wrap:wrap">'+
+    '<select id="epi-add-fn" aria-label="Função" style="flex:1 1 100%">'+'<option value="">Escolha a função</option>'+F.map(function(f,k){return '<option value="'+k+'"'+(String(k)===sel?' selected':'')+'>'+esc((f.unidade?f.unidade+' · ':'')+f.funcao)+'</option>'}).join('')+'<option value="__nova"'+(nova?' selected':'')+'>Nova função (digitar)</option></select>'+
+    (nova?'<input id="epi-add-un" aria-label="Unidade" placeholder="Unidade (ex.: Castanhal)" style="flex:1 1 40%"><input id="epi-add-f" aria-label="Nome da função" placeholder="Nome da função" style="flex:1 1 40%">':'')+
+    '<input id="epi-add-e" aria-label="Novo EPI" placeholder="Novo EPI" style="flex:1 1 60%"><button class="btn btn-primary" type="submit">Adicionar</button></form>';
+}
+document.addEventListener('change',function(e){if(e.target&&e.target.id==='epi-add-fn'){S.epiAddFn=e.target.value;renderMain()}});
 function viewEpiCad(){
   if(!podeEmpresa())return head('Lista de EPIs')+'<div class="card"><p>Somente a Administradora e o Técnico ADM alteram esta lista.</p></div>';
   var id=S.epiEmp||'',e=id&&empDe(id);if(id&&!e){id='';S.epiEmp=''}
@@ -1546,27 +1555,43 @@ function viewEpiCad(){
   '<section class="card"><div class="fields">'+field('Lista de qual empresa?','epe','<select id="epe" data-epe>'+opts(sel,id)+'</select>','full')+'</div>'+
   '<p class="muted small" style="margin:8px 0 0">'+(!id?'Esta é a lista geral. Ela vale para as empresas que não têm lista própria.':(propria?'Esta empresa usa uma lista própria. Mudanças na lista geral não afetam esta empresa.':'Esta empresa ainda usa a lista geral. Ao incluir ou remover um EPI aqui, ela passa a ter uma lista própria (começando com uma cópia da geral).'))+'</p>'+
   (propria?'<div class="actions" style="margin-top:12px"><button type="button" class="btn btn-ghost" data-act="ae-cad-geral">Voltar a usar a lista geral</button></div>':'')+'</section>'+
-  '<section class="card" style="margin-top:12px"><div class="card-h"><h2>EPIs'+(e?' de '+esc(e.nome):' (geral)')+'</h2></div><form class="inline-add" data-form="epicad" autocomplete="off"><input aria-label="Novo EPI" placeholder="Novo EPI"><button class="btn btn-primary" type="submit">Adicionar</button></form><div class="list">'+
+  '<section class="card" style="margin-top:12px"><div class="card-h"><h2>EPIs'+(e?' de '+esc(e.nome):' (geral)')+'</h2></div>'+epiAddForm(id,e)+'<div class="list">'+
   (L.length?L.map(function(x,k){return '<div class="row"><span>'+esc(x)+'</span><button type="button" class="btn btn-ghost" data-act="ae-cad-rm" data-i="'+k+'" aria-label="Remover '+esc(x)+'">Remover</button></div>'}).join(''):'<p class="muted pad">Nenhum EPI na lista.</p>')+'</div></section>'+epiFnCard(id,e);
 }
-async function epiCadSalva(lista){
+async function epiCadSalva(lista,removido){
   var id=S.epiEmp||'';
   try{
-    if(id){await S.db.doc('empresas/'+id).update({epis:lista,atualizadoEm:Date.now()});var e=empDe(id);if(e)e.epis=lista;var r=S.R.empresas.filter(function(x){return x.id===id})[0];if(r)r.epis=lista}
+    if(id){var up={epis:lista,atualizadoEm:Date.now()};
+      if(removido){up.funcoesEpi=epiFuncoesDe(id).map(function(f){return {unidade:f.unidade||'',funcao:f.funcao,epis:f.epis.filter(function(x){return epiNorm(x)!==epiNorm(removido)})}}).filter(function(f){return f.epis.length})}
+      await S.db.doc('empresas/'+id).update(up);var e=empDe(id);if(e){e.epis=lista;if(up.funcoesEpi)e.funcoesEpi=up.funcoesEpi}var r=S.R.empresas.filter(function(x){return x.id===id})[0];if(r){r.epis=lista;if(up.funcoesEpi)r.funcoesEpi=up.funcoesEpi}}
     else{var c=cadAtual();c.epis=lista;await S.db.doc('config/cadastros').set(c)}
     renderMain();return true;
   }catch(er){console.error(er);toast('Não foi possível salvar a lista.');return false}
 }
 async function epiCadAdd(f){
-  var inp=f.querySelector('input'),v=inp.value.trim();if(!v)return;
-  var L=epiListaDe(S.epiEmp||'');
-  if(L.some(function(x){return x.toLowerCase()===v.toLowerCase()})){toast('Esse EPI já está na lista.');return}
-  L.push(v);L.sort(function(a,b){return a.localeCompare(b)});await epiCadSalva(L);
+  var id=S.epiEmp||'';
+  if(id){
+    var v=(f.querySelector('#epi-add-e')||{}).value||'';v=v.trim();var sel=(f.querySelector('#epi-add-fn')||{}).value||'';
+    if(!sel){toast('Escolha a função para este EPI.');return}
+    if(!v){toast('Digite o nome do EPI.');return}
+    var F=epiFuncoesDe(id).map(function(x){return {unidade:x.unidade||'',funcao:x.funcao,epis:x.epis.slice()}}),alvo;
+    if(sel==='__nova'){var un=((f.querySelector('#epi-add-un')||{}).value||'').trim(),fn=((f.querySelector('#epi-add-f')||{}).value||'').trim();
+      if(!fn){toast('Digite o nome da função.');return}
+      alvo=F.filter(function(x){return epiNorm(x.unidade)===epiNorm(un)&&epiNorm(x.funcao)===epiNorm(fn)})[0];if(!alvo){alvo={unidade:un,funcao:fn,epis:[]};F.push(alvo)}}
+    else alvo=F[+sel];
+    if(!alvo){toast('Função não encontrada.');return}
+    if(alvo.epis.some(function(x){return epiNorm(x)===epiNorm(v)})){toast('Esse EPI já está nesta função.');return}
+    alvo.epis.push(v);var o={};o[id]=F;S.epiAddFn='';await epiFnSalva(o,'edit',id);return;
+  }
+  var inp=f.querySelector('input'),v2=inp.value.trim();if(!v2)return;
+  var L=epiListaDe('');
+  if(L.some(function(x){return x.toLowerCase()===v2.toLowerCase()})){toast('Esse EPI já está na lista.');return}
+  L.push(v2);L.sort(function(a,b){return a.localeCompare(b)});await epiCadSalva(L);
 }
 document.addEventListener('change',function(e){var fe=e.target.closest&&e.target.closest('[data-fe]');if(fe){(S.fe||(S.fe={empresa:'todas',periodo:'12m',st:'todas'}))[fe.dataset.fe]=fe.value;renderMain();return}var el=e.target.closest&&e.target.closest('[data-epe]');if(!el)return;S.epiEmp=el.value;renderMain()});
 document.addEventListener('click',function(e){
   var el=e.target.closest&&e.target.closest('[data-act="ae-cad-rm"],[data-act="ae-cad-geral"]');if(!el)return;
-  if(el.dataset.act==='ae-cad-rm'){var k=+el.dataset.i;confirmar('Remover da lista','O EPI será retirado das sugestões. Auditorias já feitas não mudam. Deseja remover?','Remover',function(){var L=epiListaDe(S.epiEmp||'');L.splice(k,1);epiCadSalva(L)})}
+  if(el.dataset.act==='ae-cad-rm'){var k=+el.dataset.i;confirmar('Remover da lista','O EPI será retirado das sugestões e de todas as funções desta empresa. Auditorias já feitas não mudam. Deseja remover?','Remover',function(){var L=epiListaDe(S.epiEmp||''),rm=L.splice(k,1)[0];epiCadSalva(L,rm)})}
   else confirmar('Voltar à lista geral','A lista própria desta empresa será apagada e ela passará a usar a lista geral. Deseja continuar?','Continuar',async function(){try{await S.db.doc('empresas/'+S.epiEmp).update({epis:null,atualizadoEm:Date.now()});var e=empDe(S.epiEmp);if(e)e.epis=null;var r=S.R.empresas.filter(function(x){return x.id===S.epiEmp})[0];if(r)r.epis=null;renderMain()}catch(er){console.error(er);toast('Não foi possível salvar.')}});
 });
 /* ---------- EPIs por função (importar PDF) ---------- */
