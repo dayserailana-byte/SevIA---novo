@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-22-2310 menu-trava-rolagem --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-23-0850 rodape-sem-nome --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <script>(function(){function t(){var m='auto';try{m=localStorage.getItem('sevia-tema')||'auto'}catch(e){}return m==='escuro'||(m==='auto'&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'escuro':'claro'}window.__aplicaTema=function(){var x=t(),d=document.documentElement;d.setAttribute('data-tema',x);var c=document.querySelector('meta[name="theme-color"]');if(c)c.setAttribute('content',x==='escuro'?'#000000':'#000000')};window.__aplicaTema();try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',window.__aplicaTema)}catch(e){}})()</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1138,7 +1138,7 @@ function viewManual(){
   ['Relatório de campo (modelo do cliente)',tec,
     '<p>O Word e o PDF do relatório fotográfico saem no <b>modelo Relatório de Campo</b>: cabeçalho com logo e número, dados da empresa executante, atividades especiais, EPI, riscos, fotos com apontamento e orientação, consolidação, considerações finais, referências e responsável técnico.</p>'+
     ol(['Em <b>Atividades especiais</b>, marque Aplicável ou Não aplicável para cada NR e escreva a observação.','Na tabela de <b>EPI</b>, use <b>Adicionar EPI</b> para cada item (EPI, CA, condições de uso, observações).','Em cada grupo de fotos, preencha <b>Apontamento</b> e <b>Orientação / recomendação</b>. Os grupos preenchidos viram atividades numeradas e entram na <b>consolidação dos apontamentos</b>. Grupos sem texto saem como fotos gerais.','Preencha <b>Considerações finais</b> e <b>Referências</b> (uma norma por linha).'])+
-    li(['Campos em branco saem como <b>NA</b> no documento.','Relatório criado <b>sem internet</b> aparece com o selo <b>Pendente de revisão</b> assim que o técnico recupera o sinal e o sistema envia. '+(ehAdm()?'A Administradora e o Técnico ADM abrem o relatório, usam <b>Editar</b> (e a IA, se quiserem) e tocam em <b>Marcar como revisado</b>.':'O Técnico ADM abre o relatório, usa <b>Editar</b> (e a IA, se quiser) e toca em <b>Marcar como revisado</b>.')+'','Em todas as páginas o rodapé traz <b>Gerado pelo SevIA SST 4.0</b> e o número da página. Para entregar ao cliente, use o <b>PDF</b>: o Word pode ser editado por quem abrir.','A matriz de riscos é inserida automaticamente após as observações gerais.','A inspeção de segurança continua com o modelo próprio.'])],
+    li(['Campos em branco saem como <b>NA</b> no documento.','Relatório criado <b>sem internet</b> aparece com o selo <b>Pendente de revisão</b> assim que o técnico recupera o sinal e o sistema envia. '+(ehAdm()?'A Administradora e o Técnico ADM abrem o relatório, usam <b>Editar</b> (e a IA, se quiserem) e tocam em <b>Marcar como revisado</b>.':'O Técnico ADM abre o relatório, usa <b>Editar</b> (e a IA, se quiser) e toca em <b>Marcar como revisado</b>.')+'','Em todas as páginas o rodapé traz o número do relatório, a data de geração e o número da página. Para entregar ao cliente, use o <b>PDF</b>: o Word pode ser editado por quem abrir.','A matriz de riscos é inserida automaticamente após as observações gerais.','A inspeção de segurança continua com o modelo próprio.'])],
   ['Salvar como rascunho',tec,
     '<p>Quando não der para finalizar na hora, guarde o trabalho como rascunho:</p>'+ol(['No relatório fotográfico ou na inspeção de segurança, toque em <b>Salvar rascunho</b>. É preciso apenas escolher a empresa.','O documento aparece em <b>Relatórios e inspeções</b> com o selo <b>Rascunho</b>.','Para continuar, abra o rascunho e toque em <b>Continuar rascunho</b>. Quando terminar, toque em <b>Finalizar e salvar</b>.'])+li(['O rascunho <b>só aparece para você</b>, mesmo que outras pessoas tenham acesso à empresa. Ele passa a ser visto pelos demais somente depois de finalizado.','Enquanto for rascunho, o PDF e o Word não ficam disponíveis, e o número do relatório ainda não é gerado.',(tecS?'Quem exclui rascunhos e relatórios é o Técnico ADM.':'Para apagar um rascunho, abra-o e toque em <b>Excluir</b>.'),'Se você sair da tela <b>sem salvar nada</b>, o que já preencheu fica guardado <b>neste aparelho</b> por até 7 dias. Ao tocar em <b>Relatório fotográfico</b> (ou <b>Inspeção de segurança</b>) na tela Início de novo, o sistema recupera o formulário e avisa. Para começar em branco, toque em <b>Começar do zero</b>. Esse guardado automático não aparece em outro aparelho: para isso, use <b>Salvar rascunho</b>.'])],
   ['Preenchimento com a IA',tec,
@@ -1152,7 +1152,7 @@ function viewManual(){
     '<h3>Como sai o PDF e o Word da inspeção</h3>'+
     li(['<b>1. Identificação:</b> empresa, CNPJ, unidade, setor/local, endereço e realizado por. O número e a data da inspeção ficam no cabeçalho.','<b>2. Itens e não conformidades identificados:</b> cada item traz <b>1. Evidência fotográfica</b>, <b>2. Não conformidade</b> (título do item e requisito legal descumprido) e <b>3. Plano de ação</b> (ação, local, responsável, prazo e situação).','<b>3. Parecer técnico e conclusão:</b> resumo da inspeção, das ações e das ações vencidas, seguido da assinatura do responsável técnico.','A <b>situação</b> da ação aparece em cores: <b>Em andamento</b> (amarelo, dentro do prazo), <b>Vencido</b> (vermelho, o prazo passou; muda sozinho) e <b>Concluído</b> (verde).','A inspeção de segurança <b>não traz a matriz de riscos nem o nível de risco</b>. A matriz continua no relatório de campo (relatório fotográfico).'])],
   ['Baixar o PDF e o Word',true,
-    '<p>Em <b>Relatórios e inspeções</b>, abra o relatório desejado e toque em <b>PDF</b> ou <b>Word</b>. O documento sai com a logomarca, o CNPJ da empresa, as fotos e o responsável técnico. Todas as páginas trazem no rodapé <b>Gerado pelo SevIA SST 4.0</b>. O <b>PDF</b> é o documento oficial e não pode ser editado; o Word serve para ajustes.</p>'+(tec&&!tecS?'<p>Para <b>excluir</b> um relatório, abra-o, toque em <b>Excluir</b> e confirme. A exclusão não pode ser desfeita.</p>':'')+(tecS?'<p>O <b>Técnico SST não exclui</b> relatórios, inspeções, itens, ações nem rascunhos. Se precisar apagar algo, peça a um Técnico ADM.</p>':'')],
+    '<p>Em <b>Relatórios e inspeções</b>, abra o relatório desejado e toque em <b>PDF</b> ou <b>Word</b>. O documento sai com a logomarca, o CNPJ da empresa, as fotos e o responsável técnico. Todas as páginas trazem no rodapé o número do relatório, a data de geração e o número da página. O <b>PDF</b> é o documento oficial e não pode ser editado; o Word serve para ajustes.</p>'+(tec&&!tecS?'<p>Para <b>excluir</b> um relatório, abra-o, toque em <b>Excluir</b> e confirme. A exclusão não pode ser desfeita.</p>':'')+(tecS?'<p>O <b>Técnico SST não exclui</b> relatórios, inspeções, itens, ações nem rascunhos. Se precisar apagar algo, peça a um Técnico ADM.</p>':'')],
   ['Indicadores',true,
     '<p>Mostram o andamento dos relatórios e das inspeções. Use os filtros por <b>empresa, unidade, período e tipo de relatório</b> (fotográfico ou inspeção de segurança). Os gráficos e números mudam conforme o filtro.</p><p>Para levar os números para um documento, toque em <b>PDF</b> ou <b>Word</b> no alto da tela. O arquivo sai com os filtros que estão escolhidos naquele momento: resumo, conformidade, risco das não conformidades, planos de ação, normas, quantidade por mês e por empresa e unidade.</p>'],
   ['Cadastro de empresas',emp,
@@ -2254,7 +2254,7 @@ async function gerarPDFCampo(insp){
     if(logo){var f2=fit(logo,CW*.24-6,hh-5);doc.addImage(logo.d,'PNG',M+(CW*.24-f2.w)/2,hy+(hh-f2.h)/2,f2.w,f2.h)}
     font(1,15);doc.text('RELATÓRIO DE CAMPO',(x1+x2)/2,hy+hh/2+2,{align:'center'});
     font(1,10);doc.text('Nº '+num(insp),(x2+M+CW)/2,hy+hh/2+1.5,{align:'center'});
-    font(0,8);doc.setTextColor(68,68,68);doc.setDrawColor(201,201,201);doc.setLineWidth(0.2);doc.line(M,PH-11.5,PW-M,PH-11.5);doc.text('SevIA SST 4.0  |  Relatório nº '+num(insp)+'  |  Gerado em '+new Date().toLocaleDateString('pt-BR'),M,PH-8);doc.text('Página '+p+' de '+n,PW-M,PH-8,{align:'right'});doc.setTextColor(0,0,0);
+    font(0,8);doc.setTextColor(68,68,68);doc.setDrawColor(201,201,201);doc.setLineWidth(0.2);doc.line(M,PH-11.5,PW-M,PH-11.5);doc.text('Relatório nº '+num(insp)+'  |  Gerado em '+new Date().toLocaleDateString('pt-BR'),M,PH-8);doc.text('Página '+p+' de '+n,PW-M,PH-8,{align:'right'});doc.setTextColor(0,0,0);
   }
   try{
     await S.downloads.save({filename:'relatorio-de-campo-'+num(insp)+'-'+slug(insp.unidade||insp.setor||empNome(insp))+'.pdf',data:doc.output('arraybuffer')});
@@ -2472,7 +2472,7 @@ async function gerarPDF(id){
   doc.text('Registro MTE: '+(rt.reg||'-'),PW/2,y,{align:'center'});y+=7;
   var np=doc.internal.getNumberOfPages(),gen=new Date().toLocaleDateString('pt-BR');
   for(var p=1;p<=np;p++){doc.setPage(p);doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor.apply(doc,MU);
-    doc.setDrawColor(201,201,201);doc.setLineWidth(0.2);doc.line(M,287,PW-M,287);doc.text('SevIA SST 4.0  |  '+(tipoIns?'Inspeção':'Relatório')+' nº '+num(insp)+'  |  Gerado em '+gen,M,291);doc.text('Página '+p+' de '+np,PW-M,291,{align:'right'})}
+    doc.setDrawColor(201,201,201);doc.setLineWidth(0.2);doc.line(M,287,PW-M,287);doc.text(''+(tipoIns?'Inspeção':'Relatório')+' nº '+num(insp)+'  |  Gerado em '+gen,M,291);doc.text('Página '+p+' de '+np,PW-M,291,{align:'right'})}
   try{
     await S.downloads.save({filename:(isIns(insp)?'inspecao-':'relatorio-fotografico-')+num(insp)+'-'+slug(insp.setor||empNome(insp))+'.pdf',data:doc.output('arraybuffer')});
     toast('Relatório pronto.');
@@ -2707,12 +2707,12 @@ async function gerarWordCampo(insp){
   var lg=logo?[new D.ImageRun({type:'png',data:logo.d,transformation:{width:Math.round(logo.w*Math.min(110/logo.w,44/logo.h)),height:Math.round(logo.h*Math.min(110/logo.w,44/logo.h))}})]:[R('')];
   var head=tbl([new D.TableRow({children:[cel([new D.Paragraph({alignment:AL.CENTER,children:lg})],24,{va:D.VerticalAlign.CENTER}),cel([P('RELATÓRIO DE CAMPO',{b:true,size:30,al:AL.CENTER,after:0})],54,{va:D.VerticalAlign.CENTER}),cel([P('Nº '+num(insp),{b:true,al:AL.CENTER,after:0})],22,{va:D.VerticalAlign.CENTER})]})],[24,54,22]);
   var doc=new D.Document({
-    creator:'SevIA SST 4.0',title:'Relatório de campo '+num(insp),
+    creator:'',title:'Relatório de campo '+num(insp),
     styles:{default:{document:{run:{font:'Arial',size:20}}}},
     sections:[{
       properties:{page:{size:{width:11906,height:16838},margin:{top:1700,bottom:1000,left:800,right:800,header:500,footer:400}}},
       headers:{default:new D.Header({children:[head]})},
-      footers:{default:new D.Footer({children:[new D.Paragraph({tabStops:[{type:D.TabStopType.RIGHT,position:10306}],children:[new D.TextRun({text:'SevIA SST 4.0  |  Relatório nº '+num(insp)+'  |  Gerado em '+new Date().toLocaleDateString('pt-BR'),size:16,color:'444444'}),new D.TextRun({children:[new D.Tab(),'Página '],size:16,color:'444444'}),new D.TextRun({children:[D.PageNumber.CURRENT],size:16,color:'444444'}),new D.TextRun({text:' de ',size:16,color:'444444'}),new D.TextRun({children:[D.PageNumber.TOTAL_PAGES],size:16,color:'444444'})]})]})},
+      footers:{default:new D.Footer({children:[new D.Paragraph({tabStops:[{type:D.TabStopType.RIGHT,position:10306}],children:[new D.TextRun({text:'Relatório nº '+num(insp)+'  |  Gerado em '+new Date().toLocaleDateString('pt-BR'),size:16,color:'444444'}),new D.TextRun({children:[new D.Tab(),'Página '],size:16,color:'444444'}),new D.TextRun({children:[D.PageNumber.CURRENT],size:16,color:'444444'}),new D.TextRun({text:' de ',size:16,color:'444444'}),new D.TextRun({children:[D.PageNumber.TOTAL_PAGES],size:16,color:'444444'})]})]})},
       children:out
     }]
   });
@@ -2829,12 +2829,12 @@ async function gerarWord(id){
   }
   if(ncs.length)kids=kids.concat(SIG.map(function(x,k){return x}));
   var doc=new D.Document({
-    creator:'SevIA SST 4.0',title:'Relatório de inspeção '+num(insp),
+    creator:'',title:'Relatório de inspeção '+num(insp),
     styles:{default:{document:{run:{font:'Arial',size:22}}}},
     sections:[{
       properties:{page:{size:{width:11906,height:16838},margin:{top:1134,bottom:1134,left:1134,right:1134}}},
       headers:{default:new D.Header({children:[new D.Paragraph({children:[new D.TextRun({text:isIns(insp)?'INSPEÇÃO DE SEGURANÇA':'RELATÓRIO DE CAMPO',bold:true,size:28}),new D.TextRun({text:'     '})].concat(logo?[new D.ImageRun({type:'png',data:logo.d,transformation:{width:Math.round(logo.w*Math.min(120/logo.w,40/logo.h)),height:Math.round(logo.h*Math.min(120/logo.w,40/logo.h))}})]:[])})]})},
-      footers:{default:new D.Footer({children:[new D.Paragraph({tabStops:[{type:D.TabStopType.RIGHT,position:9638}],children:[new D.TextRun({text:'SevIA SST 4.0  |  '+tr(insp)+' nº '+num(insp)+'  |  Gerado em '+new Date().toLocaleDateString('pt-BR'),size:16,color:'444444'}),new D.TextRun({children:[new D.Tab(),'Página '],size:16,color:'444444'}),new D.TextRun({children:[D.PageNumber.CURRENT],size:16,color:'444444'}),new D.TextRun({text:' de ',size:16,color:'444444'}),new D.TextRun({children:[D.PageNumber.TOTAL_PAGES],size:16,color:'444444'})]})]})},
+      footers:{default:new D.Footer({children:[new D.Paragraph({tabStops:[{type:D.TabStopType.RIGHT,position:9638}],children:[new D.TextRun({text:''+tr(insp)+' nº '+num(insp)+'  |  Gerado em '+new Date().toLocaleDateString('pt-BR'),size:16,color:'444444'}),new D.TextRun({children:[new D.Tab(),'Página '],size:16,color:'444444'}),new D.TextRun({children:[D.PageNumber.CURRENT],size:16,color:'444444'}),new D.TextRun({text:' de ',size:16,color:'444444'}),new D.TextRun({children:[D.PageNumber.TOTAL_PAGES],size:16,color:'444444'})]})]})},
       children:kids
     }]
   });
@@ -2903,7 +2903,7 @@ async function gerarPDFInd(){
   function cartao(x,y0,w,h){doc.setFillColor(255,255,255);doc.setDrawColor(227,227,223);doc.setLineWidth(0.3);doc.roundedRect(x,y0,w,h,2.5,2.5,'FD')}
   /* cabeçalho */
   if(lg){var r0=Math.min(60/lg.w,18/lg.h);doc.addImage(lg.d,'PNG',M,y-1,lg.w*r0,lg.h*r0)}
-  else{doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor.apply(doc,BR);doc.text('SevIA SST 4.0',M,y+8)}
+  
   doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor.apply(doc,BR);doc.text('INDICADORES',PW-M,y+7,{align:'right'});
   doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor.apply(doc,MU);doc.text('Gerado em '+new Date().toLocaleDateString('pt-BR'),PW-M,y+12.5,{align:'right'});
   y+=20;doc.setDrawColor.apply(doc,OR);doc.setLineWidth(0.6);doc.line(M,y,PW-M,y);y+=6;
@@ -2968,7 +2968,7 @@ async function gerarPDFInd(){
     y+=12.5});
   var np=doc.internal.getNumberOfPages(),gen=new Date().toLocaleDateString('pt-BR');
   for(var p=1;p<=np;p++){doc.setPage(p);doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor.apply(doc,MU);
-    doc.setDrawColor(201,201,201);doc.setLineWidth(0.2);doc.line(M,287,PW-M,287);doc.text('SevIA SST 4.0  |  Indicadores  |  Gerado em '+gen,M,291);doc.text('Página '+p+' de '+np,PW-M,291,{align:'right'})}
+    doc.setDrawColor(201,201,201);doc.setLineWidth(0.2);doc.line(M,287,PW-M,287);doc.text('Indicadores  |  Gerado em '+gen,M,291);doc.text('Página '+p+' de '+np,PW-M,291,{align:'right'})}
   try{
     await S.downloads.save({filename:'indicadores-'+slug(X.filtros[0][1])+'-'+new Date().toISOString().slice(0,10)+'.pdf',data:doc.output('arraybuffer')});
     toast('Indicadores prontos.');
@@ -3017,12 +3017,12 @@ async function gerarWordInd(){
   if(!X.unid.length)kids.push(P(R('Sem dados ainda neste filtro.',{size:19,color:'595959'})));
   else kids.push(tab(X.unid.map(function(u){var hx=u[2]==null?'595959':(u[2]>=85?'1B7F3A':(u[2]>=70?'8A5A00':'B3261E'));return [cel([P(R(u[0],{b:true,size:19}),{after:10}),P(R(u[1],{size:16,color:'595959'}),{after:0})],X.tipo==='foto'?100:84,{mt:70})].concat(X.tipo==='foto'?[]:[cel(P(R(u[2]==null?'-':u[2]+'%',{b:true,size:20,color:hx}),{al:D.AlignmentType.RIGHT,after:0}),16,{mt:70})])}),X.tipo==='foto'?[100]:[84,16]));
   var doc=new D.Document({
-    creator:'SevIA SST 4.0',title:'Indicadores',
+    creator:'',title:'Indicadores',
     styles:{default:{document:{run:{font:'Arial',size:22}}}},
     sections:[{
       properties:{page:{size:{width:11906,height:16838},margin:{top:1134,bottom:1134,left:1134,right:1134}}},
       headers:{default:new D.Header({children:[new D.Paragraph({children:[new D.TextRun({text:'INDICADORES',bold:true,size:28}),new D.TextRun({text:'     '})].concat(logo?[new D.ImageRun({type:'png',data:logo.d,transformation:{width:Math.round(logo.w*Math.min(120/logo.w,40/logo.h)),height:Math.round(logo.h*Math.min(120/logo.w,40/logo.h))}})]:[])})]})},
-      footers:{default:new D.Footer({children:[new D.Paragraph({tabStops:[{type:D.TabStopType.RIGHT,position:9638}],children:[new D.TextRun({text:'SevIA SST 4.0  |  Indicadores  |  Gerado em '+new Date().toLocaleDateString('pt-BR'),size:16,color:'444444'}),new D.TextRun({children:[new D.Tab(),'Página '],size:16,color:'444444'}),new D.TextRun({children:[D.PageNumber.CURRENT],size:16,color:'444444'}),new D.TextRun({text:' de ',size:16,color:'444444'}),new D.TextRun({children:[D.PageNumber.TOTAL_PAGES],size:16,color:'444444'})]})]})},
+      footers:{default:new D.Footer({children:[new D.Paragraph({tabStops:[{type:D.TabStopType.RIGHT,position:9638}],children:[new D.TextRun({text:'Indicadores  |  Gerado em '+new Date().toLocaleDateString('pt-BR'),size:16,color:'444444'}),new D.TextRun({children:[new D.Tab(),'Página '],size:16,color:'444444'}),new D.TextRun({children:[D.PageNumber.CURRENT],size:16,color:'444444'}),new D.TextRun({text:' de ',size:16,color:'444444'}),new D.TextRun({children:[D.PageNumber.TOTAL_PAGES],size:16,color:'444444'})]})]})},
       children:kids
     }]
   });
