@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-23-1120 menu-relatorios --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-23-1300 sem-nova-auditoria --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <script>(function(){function t(){var m='auto';try{m=localStorage.getItem('sevia-tema')||'auto'}catch(e){}return m==='escuro'||(m==='auto'&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'escuro':'claro'}window.__aplicaTema=function(){var x=t(),d=document.documentElement;d.setAttribute('data-tema',x);var c=document.querySelector('meta[name="theme-color"]');if(c)c.setAttribute('content',x==='escuro'?'#000000':'#000000')};window.__aplicaTema();try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',window.__aplicaTema)}catch(e){}})()</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -426,6 +426,23 @@ canvas.ae-pad{display:block;width:100%;height:120px;background:#fff;border:1.5px
 .ae-nav{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap}.ae-nav .btn{flex:1 1 160px}
 .ae-tb{width:100%;border-collapse:collapse;font-size:.92rem}.ae-tb th,.ae-tb td{border:1px solid var(--border);padding:8px;text-align:left}.ae-tb th{background:var(--neutral-bg)}.ae-tb td.ruim{color:#C62828;font-weight:700}
 .ae-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.ae-img{display:block;width:100%;max-width:260px;background:#fff;border-radius:8px;margin-top:6px}
+.nav{max-height:calc(100vh - 100px - env(safe-area-inset-bottom,0px))!important;max-height:calc(100dvh - 100px - env(safe-area-inset-bottom,0px))!important}
+.nav.c1 a{min-height:36px;padding:5px 12px}.nav.c1 .nav-g{margin:6px 0 0}.nav.c1 .menu-perfil{padding:5px 12px 2px;margin-top:2px}.nav.c1 .btn{min-height:36px;padding:4px 14px}
+.nav.c2 a{min-height:27px;padding:2px 10px;font-size:.92rem}.nav.c2 .nl svg{width:18px;height:18px}.nav.c2 .nav-g{margin:4px 0 0;font-size:11px}.nav.c2 .menu-perfil{padding:3px 10px 1px;margin-top:1px}.nav.c2 .btn{min-height:28px;padding:1px 12px;font-size:.9rem}.nav.c2 .av{width:26px!important;height:26px!important}
+@media (min-width:480px){.nav.c3{display:grid!important;grid-template-columns:1fr 1fr;width:min(560px,calc(100vw - 32px));align-content:start}.nav.c3 .nav-g,.nav.c3 .menu-perfil,.nav.c3>a:first-child{grid-column:1/-1}}
+.nav-gb{font:inherit;font-weight:700;color:var(--side-fg);background:none;border:0;border-radius:8px;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:44px;padding:10px 14px;cursor:pointer;width:100%;text-align:left}
+.nav-gb:hover{background:rgba(0,0,0,.06)}.nav-gr{display:flex;align-items:center;gap:8px}
+.nav-chev{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:transform .15s}
+.nav-gb.atual{background:rgba(0,0,0,.05)}.nav-gb[aria-expanded="true"]{background:rgba(29,95,191,.14)}
+.nav-fly{position:fixed;z-index:40;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:8px;box-shadow:0 12px 36px rgba(0,0,0,.22);display:flex;flex-direction:column;gap:2px;max-height:calc(100vh - 24px);overflow:auto;overscroll-behavior:contain}
+.nav-fly[hidden]{display:none}.nav-fly a{color:var(--side-fg);text-decoration:none;padding:10px 14px;border-radius:8px;font-weight:500;white-space:nowrap;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:44px}
+.nav-fly a:hover{background:rgba(0,0,0,.06)}.nav-fly a[aria-current="page"]{background:var(--accent);color:var(--on-accent);font-weight:600}.nav-fly a[aria-current="page"] .nl svg{stroke:#000!important}
+.nav-fly .nl{display:flex;align-items:center;gap:8px}.nav-fly .nl svg{width:22px;height:22px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.nav-fly-t{margin:2px 0 4px;padding:6px 14px 6px;font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;opacity:.65;border-bottom:1px solid var(--border)}
+.nav-fly-b{font:inherit;font-weight:700;color:var(--side-fg);background:none;border:0;text-align:left;padding:8px 14px;min-height:40px;cursor:pointer}
+html[data-tema="escuro"] .nav-fly a:hover{background:rgba(255,255,255,.12)}html[data-tema="escuro"] .nav-fly a[aria-current="page"]{background:#FFFFFF;color:#000}
+html[data-tema="escuro"] .nav-gb:hover{background:rgba(255,255,255,.12)}
+.nav.c1 .nav-gb{min-height:36px;padding:5px 12px}.nav.c2 .nav-gb{min-height:30px;padding:3px 10px}
 </style></head><body>
 
 <div id="app"></div>
@@ -688,6 +705,19 @@ function shell(){
   $('#app').innerHTML='<div class="app"><aside class="side"><a class="logo" href="#painel" aria-label="SevIA SST 4.0, ir para o início"><b>Sev<i>IA</i></b><span>SST 4.0</span></a><a class="side-av" id="side-av" href="#config" aria-label="Meu perfil"></a><nav class="nav" id="nav" aria-label="Principal"></nav><p class="side-note"></p></aside>'+
   '<main class="main"><div class="main-in"><div class="search"><input id="busca" type="search" placeholder="Buscar relatórios, empresas, setores…" aria-label="Buscar" autocomplete="off" data-inp="busca"><div id="busca-res" class="busca-res" hidden></div></div><div class="wrap" id="wrap"></div></div></main><div class="menu-bg" id="menu-bg" hidden></div><button type="button" class="fab" id="fab" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div>';
 }
+function navLink(it){return '<a href="#'+it[0]+'"'+(S.view===it[0]?' aria-current="page"':'')+'><span class="nl">'+ico(it[0])+'<span>'+it[1]+'</span></span>'+(it[2]?'<span class="badge'+(it[3]?' bad':'')+'" aria-label="'+it[2]+(it[3]?' vencidas':' abertas')+'">'+it[2]+'</span>':'')+'</a>'}
+function navFly(){
+  var f=$('#nav-fly'),n=$('#nav');if(!n)return;
+  if(!f){f=document.createElement('div');f.id='nav-fly';f.className='nav-fly';f.hidden=true;document.body.appendChild(f)}
+  var g=(S.navGrp||[]).filter(function(x){return x[0]&&x[0]===S.navG})[0],bt=g&&n.querySelector('.nav-gb[aria-expanded="true"]');
+  if(!g||!bt||!n.classList.contains('open')){f.hidden=true;f.innerHTML='';return}
+  var nr=n.getBoundingClientRect(),room=nr.left-8-12,sobre=room<200;
+  f.innerHTML=(sobre?'<button type="button" class="nav-fly-b" data-nav-g="'+esc(g[0])+'">&lsaquo; Voltar</button>':'')+'<p class="nav-fly-t">'+esc(g[0])+'</p>'+g[1].map(navLink).join('');
+  f.classList.toggle('sobre',sobre);f.hidden=false;
+  var w=sobre?nr.width:Math.min(300,room);f.style.width=w+'px';f.style.left=(sobre?nr.left:nr.left-8-w)+'px';f.style.minHeight=sobre?nr.height+'px':'';
+  var vh=document.documentElement.clientHeight||window.innerHeight,t=sobre?nr.top:bt.getBoundingClientRect().top-8;
+  f.style.top=Math.max(12,Math.min(t,vh-12-f.offsetHeight))+'px';
+}
 function renderNav(){
   renderAv();
   var ncAb=S.ncs.filter(function(n){return stNc(n)!=='Concluída'}).length;
@@ -700,10 +730,13 @@ function renderNav(){
     ['Cadastros',[['empresas','Empresa',0,0],['contratos','Contratos',0,0]].concat(podeEmpresa()?[['epicad','Lista de EPIs',0,0]]:[]).concat(podeUsuarios()?[['usuarios','Usuários e acessos',0,0]]:[])],
     ['Ajuda',[['manual','Manual do usuário',0,0],['config','Configurações',0,0]]]
   ];
+  S.navGrp=grupos;
   $('#nav').innerHTML=grupos.map(function(g){
-    return (g[0]?'<p class="nav-g">'+g[0]+'</p>':'')+g[1].map(function(it){
-    return '<a href="#'+it[0]+'"'+(S.view===it[0]?' aria-current="page"':'')+'><span class="nl">'+ico(it[0])+'<span>'+it[1]+'</span></span>'+(it[2]?'<span class="badge'+(it[3]?' bad':'')+'" aria-label="'+it[2]+(it[3]?' vencidas':' abertas')+'">'+it[2]+'</span>':'')+'</a>'}).join('')}).join('');
+    if(!g[0])return g[1].map(navLink).join('');
+    var ab=g[0]===S.navG,tot=g[1].reduce(function(a,it){return a+(it[2]||0)},0),atual=g[1].some(function(it){return it[0]===S.view});
+    return '<button type="button" class="nav-gb'+(atual?' atual':'')+'" data-nav-g="'+esc(g[0])+'" aria-expanded="'+ab+'" aria-haspopup="true"><span>'+g[0]+'</span><span class="nav-gr">'+(tot?'<span class="badge">'+tot+'</span>':'')+'<svg class="nav-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></span></button>'}).join('');
   $('#nav').insertAdjacentHTML('beforeend',(S.me.name?'<p class="menu-perfil" style="display:flex;align-items:center;gap:10px">'+avatar(minhaFoto(),S.me.name,36)+'<span>Usuário: <b>'+esc(S.me.name)+'</b></span></p>':'')+(jaInstalado()?'':'<p class="menu-perfil"><button type="button" class="btn btn-ghost" data-act="instalar">Instalar app no telefone</button></p>')+(window.SEVIA_SAIR?'<p class="menu-perfil"><button type="button" class="btn btn-ghost" data-act="sair">Sair</button></p>':''));
+  navFly();
 }
 function banner(){
   var h='',n=S.insp.concat(S.ncs,S.acoes,S.empresas).filter(function(x){return x.exemplo}).length;
@@ -1108,10 +1141,10 @@ function epiChipSt(e){return e.status==='Concluída'?chip('Concluída','ok'):chi
 function viewEpis(){
   var L=S.epis.slice().sort(function(a,b){return (b.numero||0)-(a.numero||0)});
   var abertas=L.filter(function(e){return e.status!=='Concluída'}).length;
-  return head('Auditoria de EPI','Conferência dos EPIs com o trabalhador, o supervisor e o TST assinando.',S.canWrite?btn('Nova auditoria','ae-new','','btn-primary'):'')+
+  return head('Auditoria de EPI','Abra uma auditoria para consultar'+(S.canWrite?', continuar ou baixar o PDF e o Word. Para criar uma nova, use a tela Início.':' e baixar o PDF e o Word.'))+
   (abertas&&S.canWrite?'<div class="banner"><span>'+abertas+(abertas===1?' auditoria aguardando assinaturas.':' auditorias aguardando assinaturas.')+'</span></div>':'')+
   '<div class="card"><div class="list">'+(L.length?L.map(function(e){
-    return '<button type="button" class="row" data-act="ae-open" data-id="'+esc(e.id)+'"><span class="row-main" style="cursor:inherit"><span class="insp-num">Auditoria de EPI Nº '+epiNum(e)+'</span><b>'+esc((e.trab&&e.trab.nome)||'Trabalhador')+'</b><span class="muted small">'+esc(empNome(e)||'')+' · '+esc(e.unidade||'')+' · '+esc(e.setor||'')+' · '+fmt(e.data)+'</span></span><span class="row-side">'+epiChipSt(e)+'</span></button>'}).join(''):'<p class="muted pad">Nenhuma auditoria de EPI ainda.'+(S.canWrite?' Toque em &ldquo;Nova auditoria&rdquo; para começar.':'')+'</p>')+'</div></div>';
+    return '<button type="button" class="row" data-act="ae-open" data-id="'+esc(e.id)+'"><span class="row-main" style="cursor:inherit"><span class="insp-num">Auditoria de EPI Nº '+epiNum(e)+'</span><b>'+esc((e.trab&&e.trab.nome)||'Trabalhador')+'</b><span class="muted small">'+esc(empNome(e)||'')+' · '+esc(e.unidade||'')+' · '+esc(e.setor||'')+' · '+fmt(e.data)+'</span></span><span class="row-side">'+epiChipSt(e)+'</span></button>'}).join(''):'<p class="muted pad">Nenhuma auditoria de EPI ainda.'+(S.canWrite?' Para começar, use o card Auditoria de EPI na tela Início.':'')+'</p>')+'</div></div>';
 }
 function epiTog(i,k,v,cur){
   return '<button type="button" class="ae-tg'+(cur===v?(EPI_RUIM[v]?' on ruim':' on'):'')+'" data-act="ae-tg" data-i="'+i+'" data-k="'+k+'" data-v="'+esc(v)+'" aria-pressed="'+(cur===v)+'">'+esc(v)+'</button>';
@@ -1467,7 +1500,7 @@ function viewManual(){
   ['Consultar e baixar seus relatórios',cli,
     ol(['Abra <b>Relatórios fotográficos</b> ou <b>Inspeções de segurança</b> no menu e toque no que quer ver.','Para baixar, toque em <b>PDF</b> ou <b>Word</b> dentro do relatório.','Em <b>Indicadores</b>, use os filtros de unidade, período e tipo de relatório para acompanhar os números da sua empresa.'])+'<p>Você só consulta. Para corrigir ou incluir algo, fale com o responsável técnico da sua empresa.</p>'],
   ['Auditoria de EPI',true,
-    (tec?ol(['Na tela <b>Início</b> toque em <b>Auditoria de EPI</b> (ou abra <b>Auditoria de EPI</b> no menu e toque em <b>Nova auditoria</b>).','<b>Etapa 1:</b> escolha a empresa e informe unidade, setor, data e o nome do TST que fez a auditoria.','<b>Etapa 2:</b> informe o nome, a matrícula ou CPF e a função do trabalhador. Para cada EPI escolha o tipo e marque o estado de conservação (bom ou precisa trocar), a higienização, o tamanho e se recebeu treinamento. Toque em <b>+ Adicionar EPI</b> para incluir outro.','<b>Etapa 3:</b> escreva as observações e ações corretivas (há atalhos para &ldquo;parabéns&rdquo; e &ldquo;não estava usando o EPI&rdquo;). Em seguida o <b>trabalhador</b>, o <b>supervisor ou encarregado</b> e o <b>TST</b> assinam com o dedo na tela.','Com as três assinaturas, toque em <b>Assinar como TST e concluir</b>. A auditoria concluída fica <b>travada</b> e não pode ser alterada; se algo estiver errado, faça uma nova auditoria.','Se faltar alguma assinatura, toque em <b>Salvar e continuar depois</b>. A auditoria fica <b>em andamento</b> e pode ser retomada em Auditoria de EPI.','Na auditoria concluída, toque em <b>PDF</b> ou <b>Word</b> para baixar.'])+'<p>Se o EPI não estiver na lista, basta <b>digitar o nome</b> no campo Tipo de EPI.'+(podeEmpresa()?' Para incluir ou remover EPIs das sugestões, abra <b>Lista de EPIs</b> no menu.':'')+'</p>'+'<p>Para assinar, o nome do trabalhador e a matrícula ou CPF precisam estar preenchidos.</p>':ol(['Abra <b>Auditoria de EPI</b> no menu e toque na auditoria que quer ver.','Só aparecem as auditorias já <b>concluídas</b> e assinadas. Toque em <b>PDF</b> ou <b>Word</b> para baixar.']))],
+    (tec?ol(['Na tela <b>Início</b>, toque em <b>Auditoria de EPI</b>.','<b>Etapa 1:</b> escolha a empresa e informe unidade, setor, data e o nome do TST que fez a auditoria.','<b>Etapa 2:</b> informe o nome, a matrícula ou CPF e a função do trabalhador. Para cada EPI escolha o tipo e marque o estado de conservação (bom ou precisa trocar), a higienização, o tamanho e se recebeu treinamento. Toque em <b>+ Adicionar EPI</b> para incluir outro.','<b>Etapa 3:</b> escreva as observações e ações corretivas (há atalhos para &ldquo;parabéns&rdquo; e &ldquo;não estava usando o EPI&rdquo;). Em seguida o <b>trabalhador</b>, o <b>supervisor ou encarregado</b> e o <b>TST</b> assinam com o dedo na tela.','Com as três assinaturas, toque em <b>Assinar como TST e concluir</b>. A auditoria concluída fica <b>travada</b> e não pode ser alterada; se algo estiver errado, faça uma nova auditoria.','Se faltar alguma assinatura, toque em <b>Salvar e continuar depois</b>. A auditoria fica <b>em andamento</b> e pode ser retomada em Auditoria de EPI.','Na auditoria concluída, toque em <b>PDF</b> ou <b>Word</b> para baixar.'])+'<p>Se o EPI não estiver na lista, basta <b>digitar o nome</b> no campo Tipo de EPI.'+(podeEmpresa()?' Para incluir ou remover EPIs das sugestões, abra <b>Lista de EPIs</b> no menu.':'')+'</p>'+'<p>Para assinar, o nome do trabalhador e a matrícula ou CPF precisam estar preenchidos.</p>':ol(['Abra <b>Auditoria de EPI</b> no menu e toque na auditoria que quer ver.','Só aparecem as auditorias já <b>concluídas</b> e assinadas. Toque em <b>PDF</b> ou <b>Word</b> para baixar.']))],
   ['Novo relatório fotográfico',tec,
     '<p>Na tela <b>Início</b>, toque em <b>Relatório fotográfico</b>. O formulário tem etapas que abrem e fecham ao tocar no título. Para salvar é preciso que a empresa tenha um <b>contrato vigente</b>.</p>'+
     ol(['<b>Identificação:</b> data, empresa e <b>unidade</b>. O <b>CNPJ da empresa</b> aparece sozinho ao escolher a empresa. A unidade é obrigatória e é ela que faz o relatório entrar nos <b>Indicadores</b> por unidade. Ela <b>não sai</b> no relatório de campo. O seu nome sai no relatório como quem realizou o trabalho.','<b>Empresa executante:</b> quem executou o serviço. Se você informar o nome, o <b>CNPJ</b> é obrigatório e precisa ser um CNPJ válido. Só a empresa executante sai no relatório (a empresa do passo 1 é o cliente e não aparece). Preencha também o <b>Escola / unidade atendida</b>: é o que sai na caixa ESCOLA / UNIDADE.','<b>Fotos:</b> as fotos ficam em grupos. Use <b>Tirar foto</b> ou <b>Galeria</b>. Para remover uma foto, toque no <b>X</b> vermelho dela. Os grupos podem ser renomeados, adicionados ou removidos.','<b>Detalhes do serviço:</b> serviços, segurança, riscos e observações.','<b>Responsável técnico:</b> nome, função e registro profissional. Já vêm do seu cadastro.'])+
@@ -3584,8 +3617,8 @@ function restauraRascunho(){
     var rt={name:'insp-form',draft:o.draft};if(o.id)rt.id=o.id;S.route=rt;renderMain();window.scrollTo(0,0)});
 }
 /* menu: o botão voltar do telefone fecha o menu (cria um passo no histórico enquanto ele está aberto) */
-function menuUI(on){var n=$('#nav'),b=$('#menu-bg'),f=$('#fab');if(!n)return;document.documentElement.classList.toggle('menu-on',!!on);n.classList.toggle('open',on);b.hidden=!on;f.setAttribute('aria-expanded',on?'true':'false');f.setAttribute('aria-label',on?'Fechar menu':'Abrir menu')}
-function menuAbre(){menuUI(true);if(!S.menuH){try{history.pushState({sm:1},'');S.menuH=true}catch(er){}}}
+function menuUI(on){var n=$('#nav'),b=$('#menu-bg'),f=$('#fab');if(!n)return;if(!on)S.navG='';document.documentElement.classList.toggle('menu-on',!!on);n.classList.toggle('open',on);n.classList.remove('c1','c2','c3');if(on){if(n.scrollHeight>n.clientHeight+1){n.classList.add('c1');if(n.scrollHeight>n.clientHeight+1){n.classList.add('c2');if(n.scrollHeight>n.clientHeight+1)n.classList.add('c3')}}}b.hidden=!on;f.setAttribute('aria-expanded',on?'true':'false');f.setAttribute('aria-label',on?'Fechar menu':'Abrir menu');navFly()}
+function menuAbre(){S.navG='';renderNav();menuUI(true);if(!S.menuH){try{history.pushState({sm:1},'');S.menuH=true}catch(er){}}}
 function menuFecha(){menuUI(false);if(S.menuH){S.menuH=false;try{history.back()}catch(er){}}}
 window.addEventListener('popstate',function(){
   if(S.menuH){S.menuH=false;menuUI(false)}
@@ -3595,12 +3628,14 @@ document.addEventListener('click',function(e){
   var nvEl=$('#nav'),fab=$('#fab'),bg=$('#menu-bg');
   if(e.target.closest('#fab')){if(nvEl.classList.contains('open'))menuFecha();else menuAbre();return}
   if(nvEl.classList.contains('open')&&e.target.closest('#menu-bg')){menuFecha()}
-  else if(nvEl.classList.contains('open')&&e.target.closest('.nav a')){
-    var la=e.target.closest('.nav a');
+  else if(nvEl.classList.contains('open')&&e.target.closest('.nav a,#nav-fly a')){
+    var la=e.target.closest('.nav a,#nav-fly a');
     if(S.menuH){e.preventDefault();S.alvo=la.getAttribute('href');menuFecha()}else menuUI(false);
   }
   var bs=$('#busca-res');if(bs&&!e.target.closest('.search'))bs.hidden=true;
-  var nv=e.target.closest('.nav a');
+  var ng=e.target.closest('[data-nav-g]');
+  if(ng){var gn=ng.dataset.navG;S.navG=(S.navG===gn)?'':gn;renderNav();menuUI(true);return}
+  var nv=e.target.closest('.nav a,#nav-fly a');
   if(nv&&S.route&&nv.getAttribute('href')==='#'+S.view){limpaRota();renderMain();window.scrollTo(0,0)}
   var el=e.target.closest('[data-act]');if(!el)return;
   var a=el.dataset.act,id=el.dataset.id;
