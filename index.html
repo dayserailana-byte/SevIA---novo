@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-23-1030 auditoria-epi-na --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-23-1120 menu-relatorios --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <script>(function(){function t(){var m='auto';try{m=localStorage.getItem('sevia-tema')||'auto'}catch(e){}return m==='escuro'||(m==='auto'&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'escuro':'claro'}window.__aplicaTema=function(){var x=t(),d=document.documentElement;d.setAttribute('data-tema',x);var c=document.querySelector('meta[name="theme-color"]');if(c)c.setAttribute('content',x==='escuro'?'#000000':'#000000')};window.__aplicaTema();try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',window.__aplicaTema)}catch(e){}})()</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -447,7 +447,7 @@ var SETORES=['Produção','Manutenção','Almoxarifado','Área externa','Adminis
 var GRAUS=['Crítico','Alto','Médio','Baixo'];
 var GO={'Crítico':0,'Alto':1,'Médio':2,'Baixo':3};
 var MESES=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-var VIEWS=['manual','usuarios','teste','painel','concluidas','indicadores','empresas','contratos','cadastros','config','inspecoes','epis','ncs','acoes','relatorios'];
+var VIEWS=['manual','usuarios','teste','painel','concluidas','indicadores','empresas','contratos','cadastros','epicad','config','inspecoes','relfoto','inspsg','epis','ncs','acoes','relatorios'];
 var CLASSES=['Não conformidade','Condição insegura','Ato inseguro','Observação'];
 var PRIOS=['Alta','Média','Baixa'];
 var PENDENTE='Referência normativa pendente de validação';
@@ -553,8 +553,11 @@ var ICONES={
   painel:['#1D5FBF','<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>'],
   empresas:['#7B3FBF','<rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2"/>'],
   contratos:['#0E8A8A','<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/>'],
+  epicad:['#C27C00','<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>'],
   cadastros:['#C27C00','<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>'],
   epis:['#0E8A8A','<path d="M12 3l8 3v6c0 4.5-3.2 7.8-8 9-4.8-1.2-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>'],
+  relfoto:['#1D5FBF','<rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/>'],
+  inspsg:['#1B7F3B','<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9zM9 13l2 2 4-4"/>'],
   inspecoes:['#1B7F3B','<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9zM9 13l2 2 4-4"/>'],
   ncs:['#C62828','<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>'],
   acoes:['#FA6905','<path d="M5 21V4M5 4h12l-2 4 2 4H5"/>'],
@@ -580,7 +583,7 @@ function thumbs(ids,rm){
 function field(label,id,inner,cls){var rq=/\srequired[\s>]/.test(inner);return '<div class="field'+(cls?' '+cls:'')+'"><label for="'+id+'">'+esc(label)+(rq?' <span class="req" aria-hidden="true">*</span>':'')+'</label>'+inner+'</div>'}
 function datalist(id,list){return '<datalist id="'+id+'">'+list.map(function(v){return '<option value="'+esc(v)+'">'}).join('')+'</datalist>'}
 function uniq(list){var o={};return list.filter(function(v){if(!v||o[v])return false;o[v]=1;return true})}
-function cadAtual(){return {setores:(S.cad&&S.cad.setores)?S.cad.setores.slice():SETORES.slice(),responsaveis:(S.cad&&S.cad.responsaveis)?S.cad.responsaveis.slice():[]}}
+function cadAtual(){return {setores:(S.cad&&S.cad.setores)?S.cad.setores.slice():SETORES.slice(),responsaveis:(S.cad&&S.cad.responsaveis)?S.cad.responsaveis.slice():[],epis:(S.cad&&S.cad.epis)?S.cad.epis.slice():EPI_TIPOS.slice()}}
 function unObjs(e){return ((e&&e.unidades)||[]).map(function(u){return typeof u==='string'?{nome:u,setores:[]}:{nome:u.nome,setores:(u.setores||[]).slice()}})}
 function unidadesDe(emp){
   var l=[];
@@ -692,9 +695,9 @@ function renderNav(){
   var temIns=S.insp.some(isIns);
   var grupos=[
     [null,[['painel','Início',0,0]]],
-    ['Registrar',[['inspecoes','Relatórios e inspeções',0,0],['epis','Auditoria de EPI',0,0]]],
+    ['Relatórios',[['relfoto','Relatórios fotográficos',0,0],['inspsg','Inspeções de segurança',0,0],['epis','Auditoria de EPI',0,0]]],
     ['Acompanhar',(temIns?[['ncs','Não conformidades',ncAb,0],['acoes','Plano de ação',venc,1]]:[]).concat([['concluidas','Relatórios concluídos',0,0],['indicadores','Indicadores',0,0]])],
-    ['Cadastros',[['empresas','Empresa',0,0],['contratos','Contratos',0,0]].concat(podeUsuarios()?[['usuarios','Usuários e acessos',0,0]]:[])],
+    ['Cadastros',[['empresas','Empresa',0,0],['contratos','Contratos',0,0]].concat(podeEmpresa()?[['epicad','Lista de EPIs',0,0]]:[]).concat(podeUsuarios()?[['usuarios','Usuários e acessos',0,0]]:[])],
     ['Ajuda',[['manual','Manual do usuário',0,0],['config','Configurações',0,0]]]
   ];
   $('#nav').innerHTML=grupos.map(function(g){
@@ -736,9 +739,10 @@ function viewTab(){
     case 'indicadores':return viewIndicadores();
     case 'contratos':return viewContratos();
     case 'cadastros':return viewCadastros();
+    case 'epicad':return viewEpiCad();
     case 'config':return viewConfig();
     case 'teste':return viewTeste();
-    case 'inspecoes':return viewInsps();
+    case 'inspecoes':case 'relfoto':case 'inspsg':return viewInsps();
     case 'epis':return viewEpis();
     case 'ncs':return viewNcs();
     case 'acoes':return viewAcoes();
@@ -1143,7 +1147,7 @@ function formEpi(r){
       field('Matrícula ou CPF','ae-td','<input id="ae-td" data-ep="trab.doc" required value="'+esc(d.trab.doc)+'" autocomplete="off" inputmode="numeric">')+
       field('Função','ae-tf','<input id="ae-tf" data-ep="trab.funcao" required value="'+esc(d.trab.funcao)+'" autocomplete="off">')+
     '</div></div>'+
-    '<h2 class="ae-h2" style="margin:18px 2px 8px">Conferência dos EPIs</h2>'+datalist('ae-dl-tipo',EPI_TIPOS)+
+    '<h2 class="ae-h2" style="margin:18px 2px 8px">Conferência dos EPIs</h2>'+datalist('ae-dl-tipo',cadAtual().epis)+
     d.itens.map(function(it,i){
       return '<div class="card ae-it"><div class="ae-it-h"><b>EPI '+(i+1)+'</b>'+(d.itens.length>1?'<button type="button" class="btn btn-ghost" data-act="ae-rm" data-i="'+i+'">Remover</button>':'')+'</div>'+
       field('Tipo de EPI','ae-ti'+i,'<input id="ae-ti'+i+'" data-ep="itens.'+i+'.tipo" list="ae-dl-tipo" value="'+esc(it.tipo)+'" placeholder="Escolha ou digite o EPI" autocomplete="off">')+
@@ -1428,6 +1432,10 @@ function cardTema(){
   return '<section class="card"><div class="card-h"><h2>Aparência</h2></div><p class="muted small">Escolha como o sistema aparece para você. A escolha fica salva na sua conta e vale em qualquer aparelho. Automático segue o modo claro ou escuro do celular ou do computador. Os relatórios em PDF e Word não mudam.</p><div class="tema-op" role="group" aria-label="Tema do sistema">'+o.map(function(x){return '<button type="button" class="btn btn-ghost" data-act="tema" data-id="'+x[0]+'" aria-pressed="'+(m===x[0])+'"><svg class="tema-ic" viewBox="0 0 24 24" aria-hidden="true">'+IT[x[0]]+'</svg>'+x[1]+'</button>'}).join('')+'</div></section>';
 }
 function viewConfig(){return head('Configurações','Ajustes da sua conta.')+'<div class="cols">'+cardPerfil()+cardTema()+'</div>'}
+function viewEpiCad(){
+  if(!podeEmpresa())return head('Lista de EPIs')+'<div class="card"><p>Somente a Administradora e o Técnico ADM alteram esta lista.</p></div>';
+  return head('Lista de EPIs','Sugestões que aparecem no campo Tipo de EPI da Auditoria de EPI. O TST ainda pode digitar um EPI que não esteja na lista.')+'<div class="cols">'+cardCad('EPIs','epis',cadAtual().epis,'Nome do EPI, ex.: Protetor solar')+'</div>';
+}
 function viewCadastros(){
   var c=cadAtual();
   return head('Cadastros','Responsáveis e acessos. Empresas, unidades e setores ficam em Empresa.')+
@@ -1452,14 +1460,14 @@ function viewManual(){
   ['Conhecendo o menu',true,
     li([].concat(
       ['<b>Início:</b> tela de boas-vindas'+(tec?', com os botões para criar um <b>novo relatório fotográfico</b> ou uma <b>nova inspeção de segurança</b>':'')+'.'],
-      tec?['<b>Relatórios e inspeções:</b> lista, cria e edita relatórios fotográficos e inspeções de segurança. Dentro de cada um você baixa o PDF ou o Word'+(tecS?'.':' e exclui o que não serve mais.'),'<b>Não conformidades e Plano de ação:</b> aparecem quando existem inspeções de segurança. Mostram os itens com problema e as ações para corrigir, com prazo.']:['<b>Relatórios e inspeções:</b> consulta os relatórios e as inspeções da sua empresa e baixa o PDF ou o Word.'],
+      tec?['<b>Relatórios fotográficos</b> e <b>Inspeções de segurança:</b> uma lista para cada tipo, para consultar e editar. Dentro de cada um você baixa o PDF ou o Word'+(tecS?'.':' e exclui o que não serve mais.'),'<b>Não conformidades e Plano de ação:</b> aparecem quando existem inspeções de segurança. Mostram os itens com problema e as ações para corrigir, com prazo.']:['<b>Relatórios e inspeções:</b> consulta os relatórios e as inspeções da sua empresa e baixa o PDF ou o Word.'],
       ['<b>Relatórios concluídos:</b> o que já foi finalizado.','<b>Indicadores:</b> gráficos por empresa, unidade, período e tipo de relatório.'],
       emp?['<b>Empresa e Contratos:</b> cadastro e acompanhamento das empresas e dos contratos.']:['<b>Empresa e Contratos:</b> consulta '+(tecS?'das empresas liberadas para você e dos contratos delas.':'da sua empresa e do contrato.')],
       podeUsuarios()?['<b>Usuários e acessos:</b> '+(adm?'cadastro dos usuários e liberação das empresas de cada técnico.':'criação do login de Técnico SST e de Cliente das suas empresas.')]:[]))],
   ['Consultar e baixar seus relatórios',cli,
-    ol(['Abra <b>Relatórios e inspeções</b> e toque no relatório que quer ver.','Para baixar, toque em <b>PDF</b> ou <b>Word</b> dentro do relatório.','Em <b>Indicadores</b>, use os filtros de unidade, período e tipo de relatório para acompanhar os números da sua empresa.'])+'<p>Você só consulta. Para corrigir ou incluir algo, fale com o responsável técnico da sua empresa.</p>'],
+    ol(['Abra <b>Relatórios fotográficos</b> ou <b>Inspeções de segurança</b> no menu e toque no que quer ver.','Para baixar, toque em <b>PDF</b> ou <b>Word</b> dentro do relatório.','Em <b>Indicadores</b>, use os filtros de unidade, período e tipo de relatório para acompanhar os números da sua empresa.'])+'<p>Você só consulta. Para corrigir ou incluir algo, fale com o responsável técnico da sua empresa.</p>'],
   ['Auditoria de EPI',true,
-    (tec?ol(['Na tela <b>Início</b> toque em <b>Auditoria de EPI</b> (ou abra <b>Auditoria de EPI</b> no menu e toque em <b>Nova auditoria</b>).','<b>Etapa 1:</b> escolha a empresa e informe unidade, setor, data e o nome do TST que fez a auditoria.','<b>Etapa 2:</b> informe o nome, a matrícula ou CPF e a função do trabalhador. Para cada EPI escolha o tipo e marque o estado de conservação (bom ou precisa trocar), a higienização, o tamanho e se recebeu treinamento. Toque em <b>+ Adicionar EPI</b> para incluir outro.','<b>Etapa 3:</b> escreva as observações e ações corretivas (há atalhos para &ldquo;parabéns&rdquo; e &ldquo;não estava usando o EPI&rdquo;). Em seguida o <b>trabalhador</b>, o <b>supervisor ou encarregado</b> e o <b>TST</b> assinam com o dedo na tela.','Com as três assinaturas, toque em <b>Assinar como TST e concluir</b>. A auditoria concluída fica <b>travada</b> e não pode ser alterada; se algo estiver errado, faça uma nova auditoria.','Se faltar alguma assinatura, toque em <b>Salvar e continuar depois</b>. A auditoria fica <b>em andamento</b> e pode ser retomada em Auditoria de EPI.','Na auditoria concluída, toque em <b>PDF</b> ou <b>Word</b> para baixar.'])+'<p>Para assinar, o nome do trabalhador e a matrícula ou CPF precisam estar preenchidos.</p>':ol(['Abra <b>Auditoria de EPI</b> no menu e toque na auditoria que quer ver.','Só aparecem as auditorias já <b>concluídas</b> e assinadas. Toque em <b>PDF</b> ou <b>Word</b> para baixar.']))],
+    (tec?ol(['Na tela <b>Início</b> toque em <b>Auditoria de EPI</b> (ou abra <b>Auditoria de EPI</b> no menu e toque em <b>Nova auditoria</b>).','<b>Etapa 1:</b> escolha a empresa e informe unidade, setor, data e o nome do TST que fez a auditoria.','<b>Etapa 2:</b> informe o nome, a matrícula ou CPF e a função do trabalhador. Para cada EPI escolha o tipo e marque o estado de conservação (bom ou precisa trocar), a higienização, o tamanho e se recebeu treinamento. Toque em <b>+ Adicionar EPI</b> para incluir outro.','<b>Etapa 3:</b> escreva as observações e ações corretivas (há atalhos para &ldquo;parabéns&rdquo; e &ldquo;não estava usando o EPI&rdquo;). Em seguida o <b>trabalhador</b>, o <b>supervisor ou encarregado</b> e o <b>TST</b> assinam com o dedo na tela.','Com as três assinaturas, toque em <b>Assinar como TST e concluir</b>. A auditoria concluída fica <b>travada</b> e não pode ser alterada; se algo estiver errado, faça uma nova auditoria.','Se faltar alguma assinatura, toque em <b>Salvar e continuar depois</b>. A auditoria fica <b>em andamento</b> e pode ser retomada em Auditoria de EPI.','Na auditoria concluída, toque em <b>PDF</b> ou <b>Word</b> para baixar.'])+'<p>Se o EPI não estiver na lista, basta <b>digitar o nome</b> no campo Tipo de EPI.'+(podeEmpresa()?' Para incluir ou remover EPIs das sugestões, abra <b>Lista de EPIs</b> no menu.':'')+'</p>'+'<p>Para assinar, o nome do trabalhador e a matrícula ou CPF precisam estar preenchidos.</p>':ol(['Abra <b>Auditoria de EPI</b> no menu e toque na auditoria que quer ver.','Só aparecem as auditorias já <b>concluídas</b> e assinadas. Toque em <b>PDF</b> ou <b>Word</b> para baixar.']))],
   ['Novo relatório fotográfico',tec,
     '<p>Na tela <b>Início</b>, toque em <b>Relatório fotográfico</b>. O formulário tem etapas que abrem e fecham ao tocar no título. Para salvar é preciso que a empresa tenha um <b>contrato vigente</b>.</p>'+
     ol(['<b>Identificação:</b> data, empresa e <b>unidade</b>. O <b>CNPJ da empresa</b> aparece sozinho ao escolher a empresa. A unidade é obrigatória e é ela que faz o relatório entrar nos <b>Indicadores</b> por unidade. Ela <b>não sai</b> no relatório de campo. O seu nome sai no relatório como quem realizou o trabalho.','<b>Empresa executante:</b> quem executou o serviço. Se você informar o nome, o <b>CNPJ</b> é obrigatório e precisa ser um CNPJ válido. Só a empresa executante sai no relatório (a empresa do passo 1 é o cliente e não aparece). Preencha também o <b>Escola / unidade atendida</b>: é o que sai na caixa ESCOLA / UNIDADE.','<b>Fotos:</b> as fotos ficam em grupos. Use <b>Tirar foto</b> ou <b>Galeria</b>. Para remover uma foto, toque no <b>X</b> vermelho dela. Os grupos podem ser renomeados, adicionados ou removidos.','<b>Detalhes do serviço:</b> serviços, segurança, riscos e observações.','<b>Responsável técnico:</b> nome, função e registro profissional. Já vêm do seu cadastro.'])+
@@ -1481,7 +1489,7 @@ function viewManual(){
     '<h3>Como sai o PDF e o Word da inspeção</h3>'+
     li(['<b>1. Identificação:</b> empresa, CNPJ, unidade, setor/local, endereço e realizado por. O número e a data da inspeção ficam no cabeçalho.','<b>2. Itens e não conformidades identificados:</b> cada item traz <b>1. Evidência fotográfica</b>, <b>2. Não conformidade</b> (título do item e requisito legal descumprido) e <b>3. Plano de ação</b> (ação, local, responsável, prazo e situação).','<b>3. Parecer técnico e conclusão:</b> resumo da inspeção, das ações e das ações vencidas, seguido da assinatura do responsável técnico.','A <b>situação</b> da ação aparece em cores: <b>Em andamento</b> (amarelo, dentro do prazo), <b>Vencido</b> (vermelho, o prazo passou; muda sozinho) e <b>Concluído</b> (verde).','A inspeção de segurança <b>não traz a matriz de riscos nem o nível de risco</b>. A matriz continua no relatório de campo (relatório fotográfico).'])],
   ['Baixar o PDF e o Word',true,
-    '<p>Em <b>Relatórios e inspeções</b>, abra o relatório desejado e toque em <b>PDF</b> ou <b>Word</b>. O documento sai com a logomarca, o CNPJ da empresa, as fotos e o responsável técnico. Todas as páginas trazem no rodapé o número do relatório, a data de geração e o número da página. O <b>PDF</b> é o documento oficial e não pode ser editado; o Word serve para ajustes.</p>'+(tec&&!tecS?'<p>Para <b>excluir</b> um relatório, abra-o, toque em <b>Excluir</b> e confirme. A exclusão não pode ser desfeita.</p>':'')+(tecS?'<p>O <b>Técnico SST não exclui</b> relatórios, inspeções, itens, ações nem rascunhos. Se precisar apagar algo, peça a um Técnico ADM.</p>':'')],
+    '<p>Em <b>Relatórios fotográficos</b> ou <b>Inspeções de segurança</b>, abra o desejado e toque em <b>PDF</b> ou <b>Word</b>. O documento sai com a logomarca, o CNPJ da empresa, as fotos e o responsável técnico. Todas as páginas trazem no rodapé o número do relatório, a data de geração e o número da página. O <b>PDF</b> é o documento oficial e não pode ser editado; o Word serve para ajustes.</p>'+(tec&&!tecS?'<p>Para <b>excluir</b> um relatório, abra-o, toque em <b>Excluir</b> e confirme. A exclusão não pode ser desfeita.</p>':'')+(tecS?'<p>O <b>Técnico SST não exclui</b> relatórios, inspeções, itens, ações nem rascunhos. Se precisar apagar algo, peça a um Técnico ADM.</p>':'')],
   ['Indicadores',true,
     '<p>Mostram o andamento dos relatórios e das inspeções. Use os filtros por <b>empresa, unidade, período e tipo de relatório</b> (fotográfico ou inspeção de segurança). Os gráficos e números mudam conforme o filtro.</p><p>Para levar os números para um documento, toque em <b>PDF</b> ou <b>Word</b> no alto da tela. O arquivo sai com os filtros que estão escolhidos naquele momento: resumo, conformidade, risco das não conformidades, planos de ação, normas, quantidade por mês e por empresa e unidade.</p>'],
   ['Cadastro de empresas',emp,
@@ -1510,16 +1518,19 @@ function viewManual(){
 }
 
 /* ---------- inspeções ---------- */
+function tipoLista(){return S.view==='relfoto'?'foto':(S.view==='inspsg'?'insp':'')}
 function viewInsps(){
-  return head('Relatórios e inspeções','Abra um relatório ou inspeção para consultar, exportar em PDF ou Word e imprimir. Para criar um novo, use a tela Início.')+
+  var tl=tipoLista();
+  return head(tl==='foto'?'Relatórios fotográficos':(tl==='insp'?'Inspeções de segurança':'Relatórios e inspeções'),tl==='foto'?'Abra um relatório para consultar, exportar em PDF ou Word e imprimir. Para criar um novo, use a tela Início.':(tl==='insp'?'Abra uma inspeção para consultar, exportar em PDF ou Word e imprimir. Para criar uma nova, use a tela Início.':'Abra um relatório ou inspeção para consultar, exportar em PDF ou Word e imprimir. Para criar um novo, use a tela Início.'))+
   '<div class="busca busca-sec"><label class="sr" for="q-insp">Buscar</label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q-insp" type="search" data-inp="q-insp" placeholder="Número, empresa ou setor" value="'+esc(S.f.q)+'"></div>'+
   '<div class="card"><div class="list" id="lista">'+listaInsp()+'</div></div>';
 }
 function listaInsp(){
   var q=S.f.q.trim().toLowerCase();
+  var tl=tipoLista();
   var L=S.insp.slice().sort(function(a,b){return (b.numero||0)-(a.numero||0)||byData(a,b)}).filter(function(i){
-    return (S.f.insp==='todas'||stInsp(i)===S.f.insp)&&(!q||(num(i)+' '+empNome(i)+' '+i.unidade+' '+i.setor+' '+i.responsavel).toLowerCase().indexOf(q)>-1)});
-  if(!L.length)return '<p class="muted pad">'+(S.insp.length?'Nenhum relatório com esse filtro.':'Nenhum relatório registrado ainda.')+'</p>';
+    return (!tl||(tl==='insp')===isIns(i))&&(S.f.insp==='todas'||stInsp(i)===S.f.insp)&&(!q||(num(i)+' '+empNome(i)+' '+i.unidade+' '+i.setor+' '+i.responsavel).toLowerCase().indexOf(q)>-1)});
+  if(!L.length)return '<p class="muted pad">'+(S.insp.length?'Nenhum registro com esse filtro.':(tl==='insp'?'Nenhuma inspeção registrada ainda.':'Nenhum relatório registrado ainda.'))+'</p>';
   return L.map(function(i){var n=ncsDe(i.id).length,en=empNome(i),s=i.rascunho?'Rascunho':stInsp(i);
     return '<button type="button" class="row ri" data-act="open-insp" data-id="'+esc(i.id)+'"><span class="ri-top"><span class="insp-num">'+tr(i)+' Nº '+num(i)+'</span><span class="row-side">'+(i.rascunho?chip('Rascunho','neutral'):chip(s,sk(s)))+(i.revisao==='pendente'?' '+chip('Pendente de revisão','warn'):'')+(i._semNumero?' '+chip('Aguardando envio','info'):'')+'</span></span><b>'+esc(locDe(i)||empNome(i)||'Relatório')+'</b><span class="ri-meta muted"><span>'+fmt(i.data)+(en?' · '+esc(en):'')+'</span><span>'+esc(i.responsavel||'sem responsável')+' · '+n+(n===1?' item':' itens')+(i.fotos&&i.fotos.length?' · '+i.fotos.length+' foto(s)':'')+'</span></span></button>'}).join('');
 }
