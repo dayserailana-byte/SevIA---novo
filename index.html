@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-23-0850 rodape-sem-nome --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-23-1030 auditoria-epi-na --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <script>(function(){function t(){var m='auto';try{m=localStorage.getItem('sevia-tema')||'auto'}catch(e){}return m==='escuro'||(m==='auto'&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'escuro':'claro'}window.__aplicaTema=function(){var x=t(),d=document.documentElement;d.setAttribute('data-tema',x);var c=document.querySelector('meta[name="theme-color"]');if(c)c.setAttribute('content',x==='escuro'?'#000000':'#000000')};window.__aplicaTema();try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',window.__aplicaTema)}catch(e){}})()</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -413,6 +413,19 @@ html[data-tema="escuro"] svg circle[stroke="#3A3A3A"]{stroke:#6A6A6A}
 .tema-ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
 .tema-op .btn{gap:8px}
 .tema-op .btn[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.ae-prog{height:6px;border-radius:6px;background:var(--border);margin:-4px 0 14px;overflow:hidden}.ae-prog i{display:block;height:100%;background:var(--accent)}
+.ae-h2{font-size:1.05rem;margin:0 0 10px}.ae-it{margin-top:12px}.ae-it-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.ae-lin{display:flex;flex-direction:column;gap:6px;margin-top:12px}.ae-tgs{display:flex;gap:8px;flex-wrap:wrap}
+.ae-tg{font:inherit;min-height:44px;padding:8px 16px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface);color:inherit;cursor:pointer}
+.ae-tg.on{background:#1B7F3B;border-color:#1B7F3B;color:#fff;font-weight:700}.ae-tg.on.ruim{background:#C62828;border-color:#C62828}
+.ae-sug{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.ae-ass{border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px;background:var(--surface)}
+.ae-ass-h{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:6px}.ae-ass-f{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px}
+canvas.ae-pad{display:block;width:100%;height:120px;background:#fff;border:1.5px dashed #888;border-radius:10px;touch-action:none;cursor:crosshair}
+.ae-aviso{padding:12px 14px;border-radius:10px;background:var(--warn-bg);color:var(--warn-fg);font-weight:600}.ae-aviso.ok{background:var(--ok-bg);color:var(--ok-fg)}
+.ae-nav{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap}.ae-nav .btn{flex:1 1 160px}
+.ae-tb{width:100%;border-collapse:collapse;font-size:.92rem}.ae-tb th,.ae-tb td{border:1px solid var(--border);padding:8px;text-align:left}.ae-tb th{background:var(--neutral-bg)}.ae-tb td.ruim{color:#C62828;font-weight:700}
+.ae-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.ae-img{display:block;width:100%;max-width:260px;background:#fff;border-radius:8px;margin-top:6px}
 </style></head><body>
 
 <div id="app"></div>
@@ -434,7 +447,7 @@ var SETORES=['Produção','Manutenção','Almoxarifado','Área externa','Adminis
 var GRAUS=['Crítico','Alto','Médio','Baixo'];
 var GO={'Crítico':0,'Alto':1,'Médio':2,'Baixo':3};
 var MESES=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-var VIEWS=['manual','usuarios','teste','painel','concluidas','indicadores','empresas','contratos','cadastros','config','inspecoes','ncs','acoes','relatorios'];
+var VIEWS=['manual','usuarios','teste','painel','concluidas','indicadores','empresas','contratos','cadastros','config','inspecoes','epis','ncs','acoes','relatorios'];
 var CLASSES=['Não conformidade','Condição insegura','Ato inseguro','Observação'];
 var PRIOS=['Alta','Média','Baixa'];
 var PENDENTE='Referência normativa pendente de validação';
@@ -450,9 +463,9 @@ var CD={};CAMPOS.forEach(function(c){CD[c[0]]=c});
 /* responsável técnico: o que está no relatório e, se vazio, o cadastro do usuário */
 function respTec(i){var eu=window.SEVIA_EU||{};return {nome:i.respNome||eu.nome||i.responsavel||'',funcao:i.respFuncao||eu.funcao||'',reg:i.regProf||eu.registro||''}}
 var GRP=[['Empresa executante',['execNome','execCnpj','representante','equipe','codigoLocal','escolaUnidade','endereco']],['Serviços e local de trabalho',['servicos','atividades','localTrabalho']],['Segurança no trabalho',['apr','condFerramentas','isolamento','atividadeEspecial','epi','ordemServico','exames','capacitacoes']],['Riscos ocupacionais',['rFis','rQuim','rBio','rErgo','rAcid','rOutros','rNota']],['Considerações finais e referências',['consideracoes','referencias']],['Responsável técnico',['respNome','respFuncao','regProf']]];
-var S={marca:null,db:null,assets:null,downloads:null,sample:null,dbFail:false,insp:[],ncs:[],acoes:[],empresas:[],contratos:[],cad:null,user:null,me:{id:'',name:''},perfil:'Administradora',canWrite:true,acessos:null,mig:false,skipHash:false,
-  R:{insp:[],ncs:[],acoes:[],empresas:[],contratos:[],usuarios:[]},
-  loaded:{i:false,n:false,a:false,e:false,c:false,k:false,x:false,p:false},view:'painel',route:null,hist:[],
+var S={marca:null,db:null,assets:null,downloads:null,sample:null,dbFail:false,insp:[],ncs:[],acoes:[],empresas:[],contratos:[],epis:[],cad:null,user:null,me:{id:'',name:''},perfil:'Administradora',canWrite:true,acessos:null,mig:false,skipHash:false,
+  R:{insp:[],ncs:[],acoes:[],empresas:[],contratos:[],usuarios:[],epis:[]},
+  loaded:{i:false,n:false,a:false,e:false,c:false,k:false,x:false,p:false,ep:false},view:'painel',route:null,hist:[],
   f:{insp:'todas',nc:'todas',acoes:'todas',acEmp:'todas',acUn:'todas',acSet:'todas',ncEmp:'todas',ncUn:'todas',ncSet:'todas',q:''},pf:{empresa:'todas',unidade:'todas',periodo:'12m',tipo:'todos'},modalOk:null,saving:false};
 
 /* ---------- utilidades ---------- */
@@ -464,7 +477,7 @@ function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
 function normaFmt(t){t=String(t||'').trim();if(!t||/pendente/i.test(t))return t;var m=t.match(/^(NR|NBR|IT)[\s\-\u2013]*(\d+)\s*(?:[,;\-\u2013\u2014:]*\s*(?:sub)?(?:item|itens)?\s*[:.]?\s*(\d+(?:\.\d+)*\.?))?\s*$/i);if(!m)return t;var o=m[1].toUpperCase()+' - '+m[2];if(m[3])o+=' - item '+m[3].replace(/\.$/,'');return o}
 function slug(s){return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
 function toast(msg){var t=$('#toast');t.textContent=msg;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(function(){t.hidden=true},3600)}
-function ready(){var l=S.loaded;return l.i&&l.n&&l.a&&l.e&&l.c&&l.k&&l.x&&l.p}
+function ready(){var l=S.loaded;return l.i&&l.n&&l.a&&l.e&&l.c&&l.k&&l.x&&l.p&&l.ep}
 function vencida(a){return a.status!=='Concluída'&&!!a.prazo&&a.prazo<hoje()}
 function stAcao(a){return vencida(a)?'Vencida':(a.status==='Concluída'?'Concluída':'Em andamento')}
 /* nos relatórios: dentro do prazo = Em andamento (amarelo); prazo vencido = Vencido (vermelho); concluído = verde */
@@ -514,7 +527,7 @@ function contVigente(empId){
 function empAcesso(){var u=S.acessos&&S.acessos.usuarios&&S.acessos.usuarios[S.me.id];return u&&u.empresaId||''}
 function escopo(){
   var R=S.R;
-  if(S.perfil!=='Cliente/ADM'){S.insp=R.insp;S.ncs=R.ncs;S.acoes=R.acoes;S.empresas=R.empresas;S.contratos=R.contratos;return}
+  if(S.perfil!=='Cliente/ADM'){S.insp=R.insp;S.ncs=R.ncs;S.acoes=R.acoes;S.empresas=R.empresas;S.contratos=R.contratos;S.epis=R.epis;return}
   var eid=empAcesso();
   S.empresas=R.empresas.filter(function(e){return eid&&e.id===eid});
   S.insp=R.insp.filter(function(i){return eid&&i.empresaId===eid});
@@ -523,6 +536,7 @@ function escopo(){
   var ns={};S.ncs.forEach(function(n){ns[n.id]=1});
   S.acoes=R.acoes.filter(function(a){return ns[a.ncId]});
   S.contratos=R.contratos.filter(function(c){return eid&&c.empresaId===eid});
+  S.epis=R.epis.filter(function(x){return eid&&x.empresaId===eid&&x.status==='Concluída'});
 }
 function migra(){
   if(S.mig||!S.canWrite||!S.db||!ready())return;
@@ -540,6 +554,7 @@ var ICONES={
   empresas:['#7B3FBF','<rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2"/>'],
   contratos:['#0E8A8A','<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/>'],
   cadastros:['#C27C00','<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>'],
+  epis:['#0E8A8A','<path d="M12 3l8 3v6c0 4.5-3.2 7.8-8 9-4.8-1.2-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>'],
   inspecoes:['#1B7F3B','<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9zM9 13l2 2 4-4"/>'],
   ncs:['#C62828','<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>'],
   acoes:['#FA6905','<path d="M5 21V4M5 4h12l-2 4 2 4H5"/>'],
@@ -608,7 +623,7 @@ function go(route,opt){
   S.route=route;renderMain();window.scrollTo(0,0);
 }
 function back(){autoGuarda();S.route=S.hist.length?S.hist.pop():null;renderMain();window.scrollTo(0,0)}
-var COLR={usuarios:'usuarios',inspecoes:'insp',ncs:'ncs',acoes:'acoes',empresas:'empresas',contratos:'contratos'};
+var COLR={usuarios:'usuarios',inspecoes:'insp',ncs:'ncs',acoes:'acoes',empresas:'empresas',contratos:'contratos',epis:'epis'};
 function upsert(col,id,data){var k=COLR[col];if(!k)return;var o=Object.assign({},data,{id:id}),l=S.R[k],i=-1;l.forEach(function(x,j){if(x.id===id)i=j});if(i>-1)l[i]=o;else l.push(o);escopo()}
 async function sync(){
   if(!S.db||S.syncing)return;S.syncing=true;
@@ -677,7 +692,7 @@ function renderNav(){
   var temIns=S.insp.some(isIns);
   var grupos=[
     [null,[['painel','Início',0,0]]],
-    ['Registrar',[['inspecoes','Relatórios e inspeções',0,0]]],
+    ['Registrar',[['inspecoes','Relatórios e inspeções',0,0],['epis','Auditoria de EPI',0,0]]],
     ['Acompanhar',(temIns?[['ncs','Não conformidades',ncAb,0],['acoes','Plano de ação',venc,1]]:[]).concat([['concluidas','Relatórios concluídos',0,0],['indicadores','Indicadores',0,0]])],
     ['Cadastros',[['empresas','Empresa',0,0],['contratos','Contratos',0,0]].concat(podeUsuarios()?[['usuarios','Usuários e acessos',0,0]]:[])],
     ['Ajuda',[['manual','Manual do usuário',0,0],['config','Configurações',0,0]]]
@@ -710,6 +725,7 @@ function renderMain(){
   var op=[].map.call(w.querySelectorAll('details.stp'),function(x){return x.open});
   w.innerHTML=h;
   var nd=w.querySelectorAll('details.stp');if(op.length&&op.length===nd.length)[].forEach.call(nd,function(x,i){x.open=op[i]});
+  if(S.route&&S.route.name==='epi-form')epiPads();
 }
 function viewTab(){
   switch(S.view){
@@ -723,6 +739,7 @@ function viewTab(){
     case 'config':return viewConfig();
     case 'teste':return viewTeste();
     case 'inspecoes':return viewInsps();
+    case 'epis':return viewEpis();
     case 'ncs':return viewNcs();
     case 'acoes':return viewAcoes();
     case 'relatorios':return viewRel();
@@ -734,6 +751,8 @@ function viewRoute(){
   switch(r.name){
     case 'insp':return viewInsp(r.id);
     case 'insp-form':return formInsp(r);
+    case 'epi':return viewEpi(r.id);
+    case 'epi-form':return formEpi(r);
     case 'nc':return viewNc(r.id);
     case 'nc-form':return formNc(r);
     case 'acao-form':return formAcao(r);
@@ -802,7 +821,8 @@ function acoesRapidas(titulo){
   var chev='<svg class="qa-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
   return (titulo?'<h2 class="sec-t">'+titulo+'</h2>':'')+'<div class="qa">'+
   '<button type="button" class="qa-c" data-act="new-insp"><span class="qa-i" aria-hidden="true">&#128247;</span><span class="qa-t"><b>Relatório fotográfico</b><small>Fotos em grupos, serviços e responsável técnico</small></span>'+chev+'</button>'+
-  '<button type="button" class="qa-c" data-act="new-insp" data-tipo="inspecao"><span class="qa-i" aria-hidden="true">&#9989;</span><span class="qa-t"><b>Inspeção de segurança</b><small>Itens com risco, requisito legal e plano de ação</small></span>'+chev+'</button></div>';
+  '<button type="button" class="qa-c" data-act="new-insp" data-tipo="inspecao"><span class="qa-i" aria-hidden="true">&#9989;</span><span class="qa-t"><b>Inspeção de segurança</b><small>Itens com risco, requisito legal e plano de ação</small></span>'+chev+'</button>'+
+  '<button type="button" class="qa-c" data-act="ae-new"><span class="qa-i" aria-hidden="true">&#129466;</span><span class="qa-t"><b>Auditoria de EPI</b><small>Conferência dos EPIs com o trabalhador, supervisor e TST assinando</small></span>'+chev+'</button></div>';
 }
 function viewPainel(){
   var h=new Date().getHours(),t=h<12?'Bom dia':(h<18?'Boa tarde':'Boa noite');
@@ -1056,6 +1076,313 @@ function formContrato(r){
   '</div><div class="actions"><button class="btn btn-primary" type="submit">Salvar contrato</button><button type="button" class="btn btn-ghost" data-act="back">Cancelar</button>'+(r.id?btn('Excluir','del-contrato',r.id,'btn-danger'):'')+'</div></form>';
 }
 
+/* ---------- Auditoria de EPI ---------- */
+var EPI_TIPOS=['Capacete de segurança','Óculos de proteção','Protetor auricular','Luvas de proteção','Calçado de segurança (botina)','Máscara / respirador','Cinto de segurança tipo paraquedista','Protetor facial','Uniforme / vestimenta','Mangote'];
+var EPI_OPC={uso:['Sim','Não'],conservacao:['Bom','Precisa trocar'],higienizacao:['Adequada','Inadequada'],tamanho:['Adequado','Inadequado'],treinamento:['Sim','Não']};
+var EPI_ROT={uso:'Estava usando o EPI no momento da auditoria?',conservacao:'Estado de conservação',higienizacao:'Higienização',tamanho:'Tamanho',treinamento:'Treinamento recebido'};
+var EPI_RUIM={'Precisa trocar':1,'Inadequada':1,'Inadequado':1,'Não':1};
+var EPI_OBS1='Parabéns, o trabalhador usa os EPIs corretamente.',EPI_OBS2='O trabalhador não estava usando o EPI.';
+var EPI_RASC='sevia-epi-rascunho';
+function epiItem(){return {tipo:'',uso:'Sim',conservacao:'Bom',higienizacao:'Adequada',tamanho:'Adequado',treinamento:'Sim'}}
+function epiNum(e){return e&&e.numero?String(e.numero).padStart(5,'0'):'-----'}
+function epiProx(){return Math.max.apply(null,S.R.epis.map(function(i){return i.numero||0}).concat([0]))+1}
+function epiVazio(){
+  var eu=window.SEVIA_EU||{};
+  return {empresaId:S.empresas.length===1?S.empresas[0].id:'',unidade:'',setor:'',data:hoje(),tstNome:eu.nome||S.me.name||'',tstFuncao:eu.funcao||'',tstRegistro:eu.registro||'',
+    trab:{nome:'',doc:'',funcao:''},itens:[epiItem()],observacao:'',acoes:'',
+    ass:{trab:{img:'',quando:0},sup:{nome:'',funcao:'',img:'',quando:0},tst:{img:'',quando:0}}};
+}
+function epiAss(d){d.ass=d.ass||{};['trab','sup','tst'].forEach(function(k){d.ass[k]=d.ass[k]||{img:'',quando:0}});return d.ass}
+function epiFalta(d){var a=epiAss(d),n=0;['trab','sup','tst'].forEach(function(k){if(!a[k].img)n++});return n}
+function epiQuando(t){if(!t)return '';var x=new Date(t);return x.toLocaleDateString('pt-BR')+' às '+x.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}
+function epiGet(o,p){return p.split('.').reduce(function(a,k){return a==null?a:a[k]},o)}
+function epiSet(o,p,v){var k=p.split('.'),l=k.pop(),t=k.reduce(function(a,x){return a[x]},o);t[l]=v}
+function epiRascSalva(){try{var r=S.route;if(!r||r.name!=='epi-form'||r.id||!r._sujo)return;localStorage.setItem(EPI_RASC,JSON.stringify({uid:S.me.id,quando:Date.now(),draft:r.draft}))}catch(e){}}
+function epiRascLer(){try{var o=JSON.parse(localStorage.getItem(EPI_RASC)||'null');if(!o||!o.draft||o.uid!==S.me.id||Date.now()-o.quando>2*864e5)return null;return o.draft}catch(e){return null}}
+function epiRascLimpa(){try{localStorage.removeItem(EPI_RASC)}catch(e){}}
+function epiChipSt(e){return e.status==='Concluída'?chip('Concluída','ok'):chip('Em andamento','warn')}
+function viewEpis(){
+  var L=S.epis.slice().sort(function(a,b){return (b.numero||0)-(a.numero||0)});
+  var abertas=L.filter(function(e){return e.status!=='Concluída'}).length;
+  return head('Auditoria de EPI','Conferência dos EPIs com o trabalhador, o supervisor e o TST assinando.',S.canWrite?btn('Nova auditoria','ae-new','','btn-primary'):'')+
+  (abertas&&S.canWrite?'<div class="banner"><span>'+abertas+(abertas===1?' auditoria aguardando assinaturas.':' auditorias aguardando assinaturas.')+'</span></div>':'')+
+  '<div class="card"><div class="list">'+(L.length?L.map(function(e){
+    return '<button type="button" class="row" data-act="ae-open" data-id="'+esc(e.id)+'"><span class="row-main" style="cursor:inherit"><span class="insp-num">Auditoria de EPI Nº '+epiNum(e)+'</span><b>'+esc((e.trab&&e.trab.nome)||'Trabalhador')+'</b><span class="muted small">'+esc(empNome(e)||'')+' · '+esc(e.unidade||'')+' · '+esc(e.setor||'')+' · '+fmt(e.data)+'</span></span><span class="row-side">'+epiChipSt(e)+'</span></button>'}).join(''):'<p class="muted pad">Nenhuma auditoria de EPI ainda.'+(S.canWrite?' Toque em &ldquo;Nova auditoria&rdquo; para começar.':'')+'</p>')+'</div></div>';
+}
+function epiTog(i,k,v,cur){
+  return '<button type="button" class="ae-tg'+(cur===v?(EPI_RUIM[v]?' on ruim':' on'):'')+'" data-act="ae-tg" data-i="'+i+'" data-k="'+k+'" data-v="'+esc(v)+'" aria-pressed="'+(cur===v)+'">'+esc(v)+'</button>';
+}
+function epiUnSetores(d){
+  var e=empDe(d.empresaId),us=unObjs(e),un=us.filter(function(u){return u.nome===d.unidade})[0];
+  return {un:us.map(function(u){return u.nome}),set:un?un.setores:uniq([].concat.apply([],us.map(function(u){return u.setores||[]})))};
+}
+function epiPad(who,rot,d,extra){
+  var a=epiAss(d)[who];
+  return '<div class="ae-ass"><div class="ae-ass-h"><b>'+rot+'</b><span class="ae-st small" data-st="'+who+'">'+(a.img?'Assinado em '+epiQuando(a.quando):'Aguardando assinatura')+'</span></div>'+(extra||'')+
+  '<canvas class="ae-pad" data-who="'+who+'" width="640" height="240" aria-label="Espaço para assinatura de '+rot+'"></canvas>'+
+  '<div class="ae-ass-f"><span class="muted small">Assine com o dedo no quadro acima.</span><button type="button" class="btn btn-ghost" data-act="ae-limpa" data-who="'+who+'">Limpar</button></div></div>';
+}
+function formEpi(r){
+  var d=r.draft,et=r.etapa||1,emp=[['','Selecione a empresa']].concat(S.empresas.map(function(e){return [e.id,e.nome]})),ul=epiUnSetores(d);
+  var passos=['Dados da auditoria','EPIs do trabalhador','Observações e assinaturas'];
+  var h=backBtn()+head(r.id?'Auditoria de EPI Nº '+epiNum(r):'Nova auditoria de EPI','Etapa '+et+' de 3 · '+passos[et-1])+
+  '<div class="ae-prog" aria-hidden="true"><i style="width:'+Math.round(et*100/3)+'%"></i></div>';
+  if(et===1){
+    h+='<div class="card form"><div class="fields">'+
+      field('Empresa','ae-emp','<select id="ae-emp" data-ep="empresaId" required>'+opts(emp,d.empresaId)+'</select>','full')+
+      field('Unidade','ae-un','<input id="ae-un" data-ep="unidade" list="ae-dl-un" required value="'+esc(d.unidade)+'" placeholder="Ex.: Unidade Castanhal" autocomplete="off">'+datalist('ae-dl-un',ul.un))+
+      field('Setor','ae-set','<input id="ae-set" data-ep="setor" list="ae-dl-set" required value="'+esc(d.setor)+'" placeholder="Ex.: Manutenção" autocomplete="off">'+datalist('ae-dl-set',ul.set))+
+      field('Data da auditoria','ae-data','<input id="ae-data" data-ep="data" type="date" required value="'+esc(d.data)+'">')+
+      field('Nome do TST que fez a auditoria','ae-tst','<input id="ae-tst" data-ep="tstNome" required value="'+esc(d.tstNome)+'" autocomplete="off">')+
+      field('Função do TST','ae-tstf','<input id="ae-tstf" data-ep="tstFuncao" value="'+esc(d.tstFuncao)+'" autocomplete="off">')+
+      field('Registro profissional do TST','ae-tstr','<input id="ae-tstr" data-ep="tstRegistro" value="'+esc(d.tstRegistro)+'" autocomplete="off">')+
+    '</div></div>';
+  }else if(et===2){
+    h+='<div class="card form"><h2 class="ae-h2">Trabalhador</h2><div class="fields">'+
+      field('Nome do trabalhador','ae-tn','<input id="ae-tn" data-ep="trab.nome" required value="'+esc(d.trab.nome)+'" autocomplete="off">','full')+
+      field('Matrícula ou CPF','ae-td','<input id="ae-td" data-ep="trab.doc" required value="'+esc(d.trab.doc)+'" autocomplete="off" inputmode="numeric">')+
+      field('Função','ae-tf','<input id="ae-tf" data-ep="trab.funcao" required value="'+esc(d.trab.funcao)+'" autocomplete="off">')+
+    '</div></div>'+
+    '<h2 class="ae-h2" style="margin:18px 2px 8px">Conferência dos EPIs</h2>'+datalist('ae-dl-tipo',EPI_TIPOS)+
+    d.itens.map(function(it,i){
+      return '<div class="card ae-it"><div class="ae-it-h"><b>EPI '+(i+1)+'</b>'+(d.itens.length>1?'<button type="button" class="btn btn-ghost" data-act="ae-rm" data-i="'+i+'">Remover</button>':'')+'</div>'+
+      field('Tipo de EPI','ae-ti'+i,'<input id="ae-ti'+i+'" data-ep="itens.'+i+'.tipo" list="ae-dl-tipo" value="'+esc(it.tipo)+'" placeholder="Escolha ou digite o EPI" autocomplete="off">')+
+      Object.keys(EPI_OPC).map(function(k){if(k!=='uso'&&it.uso==='Não')return '<div class="ae-lin"><span>'+EPI_ROT[k]+'</span><span class="muted small">N/A (não se aplica, o EPI não estava em uso)</span></div>';return '<div class="ae-lin"><span>'+EPI_ROT[k]+(k==='conservacao'?' <small class="muted">(se precisa trocar)</small>':'')+'</span><span class="ae-tgs">'+EPI_OPC[k].map(function(v){return epiTog(i,k,v,it[k])}).join('')+'</span></div>'}).join('')+'</div>'}).join('')+
+    '<button type="button" class="btn btn-ghost" data-act="ae-add" style="width:100%">+ Adicionar EPI</button>';
+  }else{
+    var ass=epiAss(d);
+    h+='<div class="card form"><div class="fields">'+
+      field('Observações e ações corretivas','ae-obs','<textarea id="ae-obs" data-ep="observacao" placeholder="O TST escreve aqui se o trabalhador está de parabéns ou se não estava usando o EPI.">'+esc(d.observacao)+'</textarea>','full')+
+      '<div class="field full"><span class="muted small">Atalhos:</span><div class="ae-sug"><button type="button" class="btn btn-ghost" data-act="ae-sug" data-v="1">Parabéns, usa corretamente</button><button type="button" class="btn btn-ghost" data-act="ae-sug" data-v="2">Não estava usando o EPI</button></div></div>'+
+      field('Ações corretivas combinadas (opcional)','ae-acao','<textarea id="ae-acao" data-ep="acoes" placeholder="Ex.: Trocar o protetor auricular em até 7 dias.">'+esc(d.acoes)+'</textarea>','full')+
+    '</div></div>'+
+    '<h2 class="ae-h2" style="margin:18px 2px 8px">Assinaturas</h2>'+
+    epiPad('trab','Trabalhador',d,'<p class="muted small" style="margin:0 0 6px">'+esc(d.trab.nome||'')+(d.trab.doc?' · '+esc(d.trab.doc):'')+'</p>')+
+    epiPad('sup','Supervisor ou encarregado',d,'<div class="fields" style="margin-bottom:8px">'+field('Nome do supervisor ou encarregado','ae-sn','<input id="ae-sn" data-ep="ass.sup.nome" required value="'+esc(ass.sup.nome)+'" autocomplete="off">')+field('Função','ae-sf','<input id="ae-sf" data-ep="ass.sup.funcao" value="'+esc(ass.sup.funcao)+'" autocomplete="off">')+'</div>')+
+    epiPad('tst','TST responsável',d,'<p class="muted small" style="margin:0 0 6px">'+esc(d.tstNome||'')+(d.tstRegistro?' · '+esc(d.tstRegistro):'')+'</p>')+
+    '<p class="ae-aviso" id="ae-falta"></p>';
+  }
+  h+='<div class="actions ae-nav">'+(et>1?'<button type="button" class="btn btn-ghost" data-act="ae-prev">Voltar</button>':'')+
+    (et<3?'<button type="button" class="btn btn-primary" data-act="ae-next">Continuar</button>':'<button type="button" class="btn btn-ghost" data-act="ae-save">Salvar e continuar depois</button><button type="button" class="btn btn-primary" id="ae-concluir" data-act="ae-fim">Assinar como TST e concluir</button>')+'</div>';
+  if(et<3)h+='<p class="center"><button type="button" class="btn btn-ghost" data-act="ae-save">Salvar e sair</button></p>';
+  return h;
+}
+function epiResumo(){
+  var r=S.route;if(!r||r.name!=='epi-form')return;var d=r.draft,f=epiFalta(d),a=epiAss(d);
+  var el=$('#ae-falta'),bt=$('#ae-concluir');
+  if(el){el.textContent=f?('Falta'+(f>1?'m ':' ')+f+(f>1?' assinaturas':' assinatura')+' para concluir.'):'Todas as assinaturas foram coletadas. Toque em concluir.';el.className='ae-aviso'+(f?'':' ok')}
+  if(bt)bt.disabled=!!f;
+  ['trab','sup','tst'].forEach(function(k){var s=document.querySelector('.ae-st[data-st="'+k+'"]');if(s)s.textContent=a[k].img?'Assinado em '+epiQuando(a[k].quando):'Aguardando assinatura'});
+}
+function epiPads(){
+  var r=S.route;if(!r||r.name!=='epi-form')return;
+  [].forEach.call(document.querySelectorAll('canvas.ae-pad'),function(cv){
+    var who=cv.dataset.who,ctx=cv.getContext('2d'),a=epiAss(r.draft)[who],des=false,mexeu=false;
+    ctx.lineWidth=4;ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#111';
+    if(a.img){var im=new Image();im.onload=function(){ctx.drawImage(im,0,0,cv.width,cv.height)};im.src=a.img}
+    function pt(e){var b=cv.getBoundingClientRect();return {x:(e.clientX-b.left)*cv.width/b.width,y:(e.clientY-b.top)*cv.height/b.height}}
+    cv.addEventListener('pointerdown',function(e){
+      var d=r.draft;
+      if(who==='trab'&&(!d.trab.nome||!d.trab.doc)){toast('Preencha o nome e a matrícula ou CPF do trabalhador antes de assinar.');return}
+      if(who==='sup'&&!String(d.ass.sup.nome||'').trim()){toast('Preencha o nome do supervisor ou encarregado antes de assinar.');var i=$('#ae-sn');if(i)i.focus();return}
+      if(who==='tst'&&!String(d.tstNome||'').trim()){toast('Informe o nome do TST na etapa 1.');return}
+      e.preventDefault();try{cv.setPointerCapture(e.pointerId)}catch(x){}
+      des=true;mexeu=false;var p=pt(e);ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x+.1,p.y+.1);ctx.stroke();
+    });
+    cv.addEventListener('pointermove',function(e){if(!des)return;e.preventDefault();mexeu=true;var p=pt(e);ctx.lineTo(p.x,p.y);ctx.stroke();ctx.beginPath();ctx.moveTo(p.x,p.y)});
+    function fim(){
+      if(!des)return;des=false;
+      if(!mexeu){ctx.clearRect(0,0,cv.width,cv.height);if(a.img){var im2=new Image();im2.onload=function(){ctx.drawImage(im2,0,0,cv.width,cv.height)};im2.src=a.img}return}
+      var o=epiAss(r.draft)[who];o.img=cv.toDataURL('image/png');o.quando=Date.now();r._sujo=true;epiRascSalva();epiResumo();
+    }
+    cv.addEventListener('pointerup',fim);cv.addEventListener('pointercancel',fim);
+  });
+  epiResumo();
+}
+function epiValida(d,et){
+  if(et>=1){
+    if(!d.empresaId){toast('Escolha a empresa.');return false}
+    if(!String(d.unidade).trim()){toast('Informe a unidade.');return false}
+    if(!String(d.setor).trim()){toast('Informe o setor.');return false}
+    if(!d.data){toast('Informe a data.');return false}
+    if(!String(d.tstNome).trim()){toast('Informe o nome do TST.');return false}
+  }
+  if(et>=2){
+    if(!String(d.trab.nome).trim()){toast('Informe o nome do trabalhador.');return false}
+    if(!String(d.trab.doc).trim()){toast('Informe a matrícula ou o CPF do trabalhador.');return false}
+    if(!String(d.trab.funcao).trim()){toast('Informe a função do trabalhador.');return false}
+    if(!d.itens.some(function(i){return String(i.tipo).trim()})){toast('Informe o tipo de pelo menos um EPI.');return false}
+  }
+  return true;
+}
+async function epiSalvar(concluir){
+  var r=S.route;if(!r||r.name!=='epi-form'||r.salvando)return;var d=r.draft;
+  if(!epiValida(d,2))return;
+  if(concluir){
+    if(epiFalta(d)){toast('Faltam assinaturas para concluir.');return}
+    if(!String(d.ass.sup.nome||'').trim()){toast('Informe o nome do supervisor ou encarregado.');return}
+  }
+  r.salvando=true;
+  try{
+    var ex=r.id?S.R.epis.filter(function(x){return x.id===r.id})[0]:null;
+    if(ex&&ex.status==='Concluída'){toast('Esta auditoria já foi concluída e não pode ser alterada.');r.salvando=false;return}
+    var ref=r.id?S.db.doc('epis/'+r.id):S.db.collection('epis').doc();
+    var em=empDe(d.empresaId),itens=d.itens.filter(function(i){return String(i.tipo).trim()}).map(function(i){if(i.uso==='Não')['conservacao','higienizacao','tamanho','treinamento'].forEach(function(k){i[k]='N/A'});return i});
+    var dados=Object.assign({},ex||{},d,{itens:itens,empresaNome:em?em.nome:'',numero:(ex&&ex.numero)||epiProx(),status:concluir?'Concluída':'Em andamento',
+      concluidaEm:concluir?Date.now():0,realizadoPorId:(ex&&ex.realizadoPorId)||S.me.id||'',criadoEm:(ex&&ex.criadoEm)||Date.now(),atualizadoEm:Date.now()});
+    delete dados.id;
+    await ref.set(dados);upsert('epis',ref.id,dados);
+    epiRascLimpa();S.route=null;S.hist=[];renderMain();window.scrollTo(0,0);
+    toast(concluir?'Auditoria concluída e assinada.':'Auditoria salva. Falta coletar as assinaturas.');
+  }catch(er){console.error(er);r.salvando=false;toast('Não foi possível salvar. Verifique a conexão e tente de novo.')}
+}
+function viewEpi(id){
+  var e=S.epis.filter(function(x){return x.id===id})[0];if(!e)return backBtn()+'<p class="muted">Auditoria não encontrada.</p>';
+  var a=e.ass||{},S3=[['Trabalhador',(e.trab&&e.trab.nome)||'',(e.trab&&e.trab.doc)||'',a.trab],['Supervisor ou encarregado',(a.sup&&a.sup.nome)||'',(a.sup&&a.sup.funcao)||'',a.sup],['TST responsável',e.tstNome||'',[e.tstFuncao,e.tstRegistro].filter(Boolean).join(' · '),a.tst]];
+  var conc=e.status==='Concluída';
+  return backBtn()+head('Auditoria de EPI Nº '+epiNum(e),(empNome(e)||'')+' · '+(e.unidade||'')+' · '+(e.setor||'')+' · '+fmt(e.data),
+    (conc?btn('PDF','ae-pdf',e.id,'btn-primary')+btn('Word','ae-word',e.id,'btn-ghost'):'')+(!conc&&S.canWrite?btn('Continuar auditoria','ae-edit',e.id,'btn-primary'):'')+(S.canWrite&&S.perfil!=='Técnico SST'?btn('Excluir','ae-del',e.id,'btn-danger'):''))+
+  '<div class="card"><p>'+epiChipSt(e)+'</p><p><b>Trabalhador:</b> '+esc(e.trab.nome)+' · '+esc(e.trab.doc)+' · '+esc(e.trab.funcao)+'</p><p><b>TST:</b> '+esc(e.tstNome||'-')+'</p></div>'+
+  '<div class="card" style="margin-top:12px;overflow-x:auto"><table class="ae-tb"><thead><tr><th>Nº</th><th>EPI</th><th>Em uso</th><th>Conservação</th><th>Higienização</th><th>Tamanho</th><th>Treinamento</th></tr></thead><tbody>'+
+  (e.itens||[]).map(function(it,i){function c(v){return '<td'+(EPI_RUIM[v]?' class="ruim"':'')+'>'+esc(v)+'</td>'}return '<tr><td>'+(i+1)+'</td><td>'+esc(it.tipo)+'</td>'+c(it.uso||'Sim')+c(it.conservacao)+c(it.higienizacao)+c(it.tamanho)+c(it.treinamento)+'</tr>'}).join('')+'</tbody></table></div>'+
+  '<div class="card" style="margin-top:12px"><b>Observações e ações corretivas</b><p>'+esc(e.observacao||'-').replace(/\n/g,'<br>')+'</p>'+(e.acoes?'<p><b>Ações corretivas:</b> '+esc(e.acoes).replace(/\n/g,'<br>')+'</p>':'')+'</div>'+
+  '<div class="ae-3" style="margin-top:12px">'+S3.map(function(s){return '<div class="card"><b>'+s[0]+'</b>'+(s[3]&&s[3].img?'<img class="ae-img" src="'+s[3].img+'" alt="Assinatura">':'<p class="muted small">Sem assinatura</p>')+'<p style="margin:6px 0 0">'+esc(s[1])+'</p><p class="muted small" style="margin:0">'+esc(s[2])+'</p>'+(s[3]&&s[3].quando?'<p class="muted small" style="margin:0">'+epiQuando(s[3].quando)+'</p>':'')+'</div>'}).join('')+'</div>';
+}
+function epiB64(u){var b=atob(String(u).split(',')[1]||''),n=b.length,a=new Uint8Array(n);for(var i=0;i<n;i++)a[i]=b.charCodeAt(i);return a}
+async function epiPDF(id){
+  var J=window.jspdf&&window.jspdf.jsPDF,e=S.epis.filter(function(x){return x.id===id})[0];
+  if(!e)return;if(!J||!S.downloads){toast('A geração de PDF não está disponível agora.');return}
+  toast('Gerando a auditoria…');
+  var empO=empDe(e.empresaId),logoId=(empO&&empO.logo)||(S.marca&&S.marca.logo)||'',logo=logoId?await imgLogoD(logoId):null;
+  var doc=new J({unit:'mm',format:'a4'}),PW=210,M=12,CW=PW-2*M,y=M,LH=4.4,GRY=[217,217,217],a=e.ass||{};
+  doc.setLineWidth(.25);doc.setDrawColor(0,0,0);
+  function font(b,s){doc.setFont('helvetica',b?'bold':'normal');doc.setFontSize(s||9)}
+  function need(h){if(y+h>282){doc.addPage();y=M}}
+  function wr(t,w,b,s){font(b,s);return doc.splitTextToSize(String(t==null?'':t),w)}
+  /* cabeçalho */
+  doc.rect(M,y,CW,20);doc.line(M+46,y,M+46,y+20);doc.line(PW-M-34,y,PW-M-34,y+20);
+  if(logo){var r0=Math.min(40/logo.w,16/logo.h);doc.addImage(logo.d,'PNG',M+3,y+2+(16-logo.h*r0)/2,logo.w*r0,logo.h*r0)}
+  font(1,15);doc.text('AUDITORIA DE EPI',M+46+(CW-80)/2,y+12,{align:'center'});
+  font(0,8);doc.text('Nº',PW-M-17,y+7,{align:'center'});font(1,15);doc.text(epiNum(e),PW-M-17,y+15,{align:'center'});y+=24;
+  function par(l1,v1,l2,v2){
+    var hw=CW/2,A=wr(v1,hw-4),B=wr(v2,hw-4),n=Math.max(A.length,B.length,1),h=5.5+n*LH+1.5;need(h);
+    doc.setFillColor(GRY[0],GRY[1],GRY[2]);doc.rect(M,y,hw,5.5,'FD');doc.rect(M+hw,y,hw,5.5,'FD');font(1,8);doc.text(l1,M+2,y+3.9);doc.text(l2,M+hw+2,y+3.9);
+    doc.rect(M,y+5.5,hw,h-5.5);doc.rect(M+hw,y+5.5,hw,h-5.5);font(0,9.5);
+    A.forEach(function(t,k){doc.text(t,M+2,y+5.5+LH*(k+1)-.4)});B.forEach(function(t,k){doc.text(t,M+hw+2,y+5.5+LH*(k+1)-.4)});y+=h+2;
+  }
+  function tit(t){need(14);doc.setFillColor(17,17,17);doc.rect(M,y,CW,6.5,'F');font(1,9.5);doc.setTextColor(255,255,255);doc.text(t,M+2.5,y+4.5);doc.setTextColor(0,0,0);y+=8.5}
+  par('EMPRESA',empNome(e)||'-','UNIDADE',e.unidade||'-');
+  par('SETOR',e.setor||'-','DATA DA AUDITORIA',fmt(e.data));
+  par('TST QUE REALIZOU A AUDITORIA',e.tstNome||'-','FUNÇÃO / REGISTRO',[e.tstFuncao,e.tstRegistro].filter(Boolean).join(' · ')||'-');
+  tit('TRABALHADOR');
+  var t=e.trab||{},w3=CW/3;need(14);
+  [['NOME',t.nome],['MATRÍCULA OU CPF',t.doc],['FUNÇÃO',t.funcao]].forEach(function(c,k){var x=M+k*w3;doc.setFillColor(GRY[0],GRY[1],GRY[2]);doc.rect(x,y,w3,5.5,'FD');font(1,8);doc.text(c[0],x+2,y+3.9);doc.rect(x,y+5.5,w3,7);font(0,9.5);doc.text(wr(c[1]||'-',w3-4)[0],x+2,y+10.3)});y+=15;
+  tit('CONFERÊNCIA DOS EPIs');
+  var W=[.06,.26,.11,.16,.15,.13,.13].map(function(p){return CW*p});
+  function cab(){need(14);var x=M;['Nº','Tipo de EPI','Em uso','Conservação','Higienização','Tamanho','Treinamento'].forEach(function(h,k){doc.setFillColor(GRY[0],GRY[1],GRY[2]);doc.rect(x,y,W[k],6.5,'FD');font(1,8);doc.text(h,x+W[k]/2,y+4.3,{align:'center'});x+=W[k]});y+=6.5}
+  cab();
+  (e.itens||[]).forEach(function(it,i){
+    var tl=wr(it.tipo,W[1]-3,0,9),h=Math.max(7,tl.length*LH+2.5);
+    if(y+h>282){doc.addPage();y=M;cab()}
+    var x=M,cel=[String(i+1),null,it.uso||'Sim',it.conservacao,it.higienizacao,it.tamanho,it.treinamento];
+    cel.forEach(function(v,k){doc.rect(x,y,W[k],h);
+      if(k===1){font(0,9);tl.forEach(function(l,j){doc.text(l,x+1.5,y+LH*(j+1)-.2+.6)})}
+      else{font(EPI_RUIM[v]?1:0,9);doc.text(String(v==null?'':v),x+W[k]/2,y+h/2+1.3,{align:'center'})}
+      x+=W[k]});
+    y+=h});
+  y+=4;
+  function caixa(tt,txt){var L=wr(txt||'-',CW-4,0,9.5);need(14);doc.setFillColor(GRY[0],GRY[1],GRY[2]);doc.rect(M,y,CW,5.5,'FD');font(1,8);doc.text(tt,M+2,y+3.9);y+=5.5;var seg=y;
+    L.forEach(function(l){if(y+LH+1.5>282){doc.rect(M,seg,CW,y-seg+1);doc.addPage();y=M;seg=y}font(0,9.5);doc.text(l,M+2,y+LH-.6);y+=LH});y+=1.5;doc.rect(M,seg,CW,y-seg);y+=3}
+  caixa('OBSERVAÇÕES E AÇÕES CORRETIVAS',(e.observacao||'-')+(e.acoes?'\nAções corretivas: '+e.acoes:''));
+  need(52);y+=2;tit('ASSINATURAS');
+  var sw=CW/3,bx=[['Trabalhador',t.nome,t.doc,a.trab],['Supervisor ou encarregado',a.sup&&a.sup.nome,a.sup&&a.sup.funcao,a.sup],['TST responsável',e.tstNome,[e.tstFuncao,e.tstRegistro].filter(Boolean).join(' · '),a.tst]];
+  bx.forEach(function(b,k){var x=M+k*sw;doc.rect(x,y,sw,46);
+    if(b[3]&&b[3].img){try{doc.addImage(b[3].img,'PNG',x+4,y+2,sw-8,(sw-8)*240/640)}catch(er){}}
+    doc.line(x+5,y+22,x+sw-5,y+22);font(1,8.5);doc.text(wr(b[1]||'-',sw-6,1,8.5)[0],x+sw/2,y+27,{align:'center'});
+    font(0,8);doc.text(wr(b[2]||'',sw-6,0,8)[0]||'',x+sw/2,y+31.5,{align:'center'});doc.text(b[0],x+sw/2,y+36,{align:'center'});
+    doc.text(b[3]&&b[3].quando?epiQuando(b[3].quando):'',x+sw/2,y+41,{align:'center'})});
+  y+=48;
+  var np=doc.internal.getNumberOfPages(),gen=new Date().toLocaleDateString('pt-BR');
+  for(var p=1;p<=np;p++){doc.setPage(p);font(0,8);doc.setTextColor(68,68,68);doc.setDrawColor(201,201,201);doc.setLineWidth(.2);doc.line(M,287,PW-M,287);doc.text('Auditoria de EPI nº '+epiNum(e)+'  |  Gerado em '+gen,M,291);doc.text('Página '+p+' de '+np,PW-M,291,{align:'right'})}
+  try{await S.downloads.save({filename:'auditoria-epi-'+epiNum(e)+'-'+slug((e.trab&&e.trab.nome)||'trabalhador')+'.pdf',data:doc.output('arraybuffer')});toast('Auditoria pronta.')}
+  catch(er){if(!er||er.code!=='declined'){console.error(er);toast('Não foi possível salvar o PDF.')}}
+}
+async function epiWord(id){
+  var D=window.docx,e=S.epis.filter(function(x){return x.id===id})[0];
+  if(!e)return;if(!D||!S.downloads){toast('A geração de Word não está disponível agora.');return}
+  toast('Gerando a auditoria em Word…');
+  var empW=empDe(e.empresaId),logoW=(empW&&empW.logo)||(S.marca&&S.marca.logo)||'',logo=logoW?await imgLogoB(logoW):null,a=e.ass||{},t=e.trab||{};
+  var TW=9638,bd={style:D.BorderStyle.SINGLE,size:6,color:'000000'},B={top:bd,bottom:bd,left:bd,right:bd};
+  function P(tx,o){o=o||{};return new D.Paragraph({alignment:o.al,spacing:{after:o.after||0,before:o.before||0},children:[new D.TextRun({text:String(tx==null?'':tx),bold:!!o.b,size:o.size||20,color:o.color||'000000'})]})}
+  function C(ch,w,o){o=o||{};return new D.TableCell({width:{size:Math.round(TW*w/100),type:D.WidthType.DXA},columnSpan:o.span,borders:B,verticalAlign:D.VerticalAlign.CENTER,shading:o.fill?{type:D.ShadingType.CLEAR,fill:o.fill,color:'auto'}:undefined,margins:{top:60,bottom:60,left:100,right:100},children:Array.isArray(ch)?ch:[ch]})}
+  function T(rows,ws){return new D.Table({width:{size:TW,type:D.WidthType.DXA},layout:D.TableLayoutType.FIXED,columnWidths:ws.map(function(w){return Math.round(TW*w/100)}),rows:rows})}
+  function par(l1,v1,l2,v2){return T([new D.TableRow({children:[C(P(l1,{b:1,size:16}),50,{fill:'D9D9D9'}),C(P(l2,{b:1,size:16}),50,{fill:'D9D9D9'})]}),new D.TableRow({children:[C(P(v1||'-'),50),C(P(v2||'-'),50)]})],[50,50])}
+  function tit(x){return T([new D.TableRow({children:[C(P(x,{b:1,color:'FFFFFF',size:19}),100,{fill:'111111'})]})],[100])}
+  function esp(){return P('',{after:100})}
+  var kids=[];
+  kids.push(T([new D.TableRow({children:[
+    C(logo?new D.Paragraph({children:[new D.ImageRun({type:'png',data:logo.d,transformation:{width:Math.round(logo.w*Math.min(110/logo.w,45/logo.h)),height:Math.round(logo.h*Math.min(110/logo.w,45/logo.h))}})]}):P(''),24),
+    C(P('AUDITORIA DE EPI',{b:1,size:30,al:D.AlignmentType.CENTER}),54),
+    C([P('Nº',{size:16,al:D.AlignmentType.CENTER}),P(epiNum(e),{b:1,size:30,al:D.AlignmentType.CENTER})],22)]})],[24,54,22]),esp());
+  kids.push(par('EMPRESA',empNome(e),'UNIDADE',e.unidade),esp(),par('SETOR',e.setor,'DATA DA AUDITORIA',fmt(e.data)),esp(),par('TST QUE REALIZOU A AUDITORIA',e.tstNome,'FUNÇÃO / REGISTRO',[e.tstFuncao,e.tstRegistro].filter(Boolean).join(' · ')),esp());
+  kids.push(tit('TRABALHADOR'),T([new D.TableRow({children:[C(P('NOME',{b:1,size:16}),40,{fill:'D9D9D9'}),C(P('MATRÍCULA OU CPF',{b:1,size:16}),30,{fill:'D9D9D9'}),C(P('FUNÇÃO',{b:1,size:16}),30,{fill:'D9D9D9'})]}),new D.TableRow({children:[C(P(t.nome||'-'),40),C(P(t.doc||'-'),30),C(P(t.funcao||'-'),30)]})],[40,30,30]),esp());
+  var ws=[6,26,11,16,15,13,13],hd=['Nº','Tipo de EPI','Em uso','Conservação','Higienização','Tamanho','Treinamento'];
+  kids.push(tit('CONFERÊNCIA DOS EPIs'),T([new D.TableRow({tableHeader:true,children:hd.map(function(h,k){return C(P(h,{b:1,size:17,al:D.AlignmentType.CENTER}),ws[k],{fill:'D9D9D9'})})})].concat((e.itens||[]).map(function(it,i){
+    return new D.TableRow({cantSplit:true,children:[C(P(String(i+1),{al:D.AlignmentType.CENTER}),ws[0]),C(P(it.tipo),ws[1])].concat(['uso','conservacao','higienizacao','tamanho','treinamento'].map(function(k,j){return C(P(it[k]||(k==='uso'?'Sim':''),{b:!!EPI_RUIM[it[k]],al:D.AlignmentType.CENTER}),ws[j+2])}))})})),ws),esp());
+  kids.push(T([new D.TableRow({children:[C(P('OBSERVAÇÕES E AÇÕES CORRETIVAS',{b:1,size:16}),100,{fill:'D9D9D9'})]}),new D.TableRow({children:[C([P(e.observacao||'-')].concat(e.acoes?[P('Ações corretivas: '+e.acoes,{before:60})]:[]),100)]})],[100]),esp());
+  function sg(titl,nome,fn,s){var ch=[];ch.push(s&&s.img?new D.Paragraph({alignment:D.AlignmentType.CENTER,children:[new D.ImageRun({type:'png',data:epiB64(s.img),transformation:{width:150,height:56}})]}):P('',{after:600}));
+    ch.push(P('______________________',{al:D.AlignmentType.CENTER}),P(nome||'-',{b:1,size:17,al:D.AlignmentType.CENTER}),P(fn||'',{size:16,al:D.AlignmentType.CENTER}),P(titl,{size:16,al:D.AlignmentType.CENTER}),P(s&&s.quando?epiQuando(s.quando):'',{size:15,al:D.AlignmentType.CENTER}));return C(ch,33)}
+  kids.push(tit('ASSINATURAS'),new D.Table({width:{size:TW,type:D.WidthType.DXA},layout:D.TableLayoutType.FIXED,columnWidths:[3213,3213,3212],rows:[new D.TableRow({cantSplit:true,children:[sg('Trabalhador',t.nome,t.doc,a.trab),sg('Supervisor ou encarregado',a.sup&&a.sup.nome,a.sup&&a.sup.funcao,a.sup),sg('TST responsável',e.tstNome,[e.tstFuncao,e.tstRegistro].filter(Boolean).join(' · '),a.tst)]})]}));
+  var doc=new D.Document({creator:'',title:'Auditoria de EPI '+epiNum(e),styles:{default:{document:{run:{font:'Arial',size:20}}}},
+    sections:[{properties:{page:{size:{width:11906,height:16838},margin:{top:1134,bottom:1134,left:1134,right:1134}}},
+      footers:{default:new D.Footer({children:[new D.Paragraph({tabStops:[{type:D.TabStopType.RIGHT,position:9638}],children:[new D.TextRun({text:'Auditoria de EPI nº '+epiNum(e)+'  |  Gerado em '+new Date().toLocaleDateString('pt-BR'),size:16,color:'444444'}),new D.TextRun({children:[new D.Tab(),'Página '],size:16,color:'444444'}),new D.TextRun({children:[D.PageNumber.CURRENT],size:16,color:'444444'}),new D.TextRun({text:' de ',size:16,color:'444444'}),new D.TextRun({children:[D.PageNumber.TOTAL_PAGES],size:16,color:'444444'})]})]})},
+      children:kids}]});
+  try{var blob=await D.Packer.toBlob(doc);await S.downloads.save({filename:'auditoria-epi-'+epiNum(e)+'-'+slug((e.trab&&e.trab.nome)||'trabalhador')+'.docx',data:blob});toast('Auditoria pronta.')}
+  catch(er){if(!er||er.code!=='declined'){console.error(er);toast('Não foi possível salvar o arquivo Word.')}}
+}
+function epiRender(){var y=window.scrollY;renderMain();window.scrollTo(0,y)}
+document.addEventListener('input',function(e){
+  var el=e.target.closest&&e.target.closest('[data-ep]');if(!el||!S.route||S.route.name!=='epi-form')return;
+  if(el.dataset.ep==='empresaId')return;
+  epiSet(S.route.draft,el.dataset.ep,el.value);S.route._sujo=true;epiRascSalva();
+});
+document.addEventListener('change',function(e){
+  var el=e.target.closest&&e.target.closest('[data-ep]');if(!el||!S.route||S.route.name!=='epi-form'||el.dataset.ep!=='empresaId')return;
+  var d=S.route.draft;d.empresaId=el.value;d.unidade='';d.setor='';S.route._sujo=true;epiRender();
+});
+document.addEventListener('click',function(e){
+  var el=e.target.closest&&e.target.closest('[data-act^="ae-"]');if(!el)return;
+  var a=el.dataset.act,id=el.dataset.id,r=S.route,d=r&&r.draft;
+  switch(a){
+    case 'ae-new':
+      var rasc=epiRascLer(),n={name:'epi-form',etapa:1,draft:rasc||epiVazio(),_sujo:!!rasc};
+      if(rasc){epiAss(n.draft);toast('Rascunho recuperado.')}
+      abre('epis',n);break;
+    case 'ae-open':go({name:'epi',id:id});break;
+    case 'ae-edit':var ex=S.epis.filter(function(x){return x.id===id})[0];if(!ex)break;
+      var cp=JSON.parse(JSON.stringify(ex));delete cp.id;epiAss(cp);go({name:'epi-form',id:id,numero:ex.numero,etapa:1,draft:cp});break;
+    case 'ae-tg':var it=d.itens[+el.dataset.i];it[el.dataset.k]=el.dataset.v;r._sujo=true;
+      if(el.dataset.k==='uso'){var pd=epiItem();['conservacao','higienizacao','tamanho','treinamento'].forEach(function(k){it[k]=el.dataset.v==='Não'?'N/A':pd[k]});epiRascSalva();epiRender();break}
+      epiRascSalva();
+      [].forEach.call(el.parentNode.children,function(b){b.className='ae-tg';b.setAttribute('aria-pressed','false')});
+      el.className='ae-tg on'+(EPI_RUIM[el.dataset.v]?' ruim':'');el.setAttribute('aria-pressed','true');break;
+    case 'ae-add':d.itens.push(epiItem());r._sujo=true;epiRender();break;
+    case 'ae-rm':d.itens.splice(+el.dataset.i,1);r._sujo=true;epiRender();break;
+    case 'ae-next':if(!epiValida(d,r.etapa))break;r.etapa++;renderMain();window.scrollTo(0,0);break;
+    case 'ae-prev':r.etapa--;renderMain();window.scrollTo(0,0);break;
+    case 'ae-sug':var o=$('#ae-obs');d.observacao=el.dataset.v==='1'?EPI_OBS1:EPI_OBS2;if(o)o.value=d.observacao;r._sujo=true;epiRascSalva();break;
+    case 'ae-limpa':var w=el.dataset.who,cv=document.querySelector('canvas.ae-pad[data-who="'+w+'"]');
+      if(cv)cv.getContext('2d').clearRect(0,0,cv.width,cv.height);epiAss(d)[w]={img:'',quando:0};if(w==='sup'){d.ass.sup.nome=($('#ae-sn')||{}).value||'';d.ass.sup.funcao=($('#ae-sf')||{}).value||''}r._sujo=true;epiResumo();break;
+    case 'ae-save':epiSalvar(false);break;
+    case 'ae-fim':if(epiFalta(d)){toast('Faltam assinaturas para concluir.');break}
+      confirmar('Concluir auditoria','Depois de concluída, a auditoria fica travada e não pode mais ser alterada. Deseja concluir?','Concluir',function(){epiSalvar(true)});
+      var mb=document.querySelector('#modal .btn-danger');if(mb)mb.className='btn btn-primary';break;
+    case 'ae-del':confirmar('Excluir auditoria de EPI','Atenção: a auditoria e as assinaturas serão apagadas e não dá para desfazer. Deseja mesmo excluir?','Excluir',async function(){try{await S.db.doc('epis/'+id).delete();S.R.epis=S.R.epis.filter(function(x){return x.id!==id});escopo();S.route=null;S.hist=[];toast('Auditoria excluída.')}catch(er){console.error(er);toast('Não foi possível excluir.')}renderMain()});break;
+    case 'ae-pdf':epiPDF(id);break;
+    case 'ae-word':epiWord(id);break;
+  }
+});
+
 /* ---------- cadastros ---------- */
 function cardCad(titulo,kind,lista,ph){
   return '<section class="card"><div class="card-h"><h2>'+titulo+'</h2></div><form class="inline-add" data-form="cad" data-kind="'+kind+'" autocomplete="off"><input aria-label="Novo item em '+titulo+'" placeholder="'+ph+'"><button class="btn btn-primary" type="submit">Adicionar</button></form><div class="list">'+
@@ -1131,6 +1458,8 @@ function viewManual(){
       podeUsuarios()?['<b>Usuários e acessos:</b> '+(adm?'cadastro dos usuários e liberação das empresas de cada técnico.':'criação do login de Técnico SST e de Cliente das suas empresas.')]:[]))],
   ['Consultar e baixar seus relatórios',cli,
     ol(['Abra <b>Relatórios e inspeções</b> e toque no relatório que quer ver.','Para baixar, toque em <b>PDF</b> ou <b>Word</b> dentro do relatório.','Em <b>Indicadores</b>, use os filtros de unidade, período e tipo de relatório para acompanhar os números da sua empresa.'])+'<p>Você só consulta. Para corrigir ou incluir algo, fale com o responsável técnico da sua empresa.</p>'],
+  ['Auditoria de EPI',true,
+    (tec?ol(['Na tela <b>Início</b> toque em <b>Auditoria de EPI</b> (ou abra <b>Auditoria de EPI</b> no menu e toque em <b>Nova auditoria</b>).','<b>Etapa 1:</b> escolha a empresa e informe unidade, setor, data e o nome do TST que fez a auditoria.','<b>Etapa 2:</b> informe o nome, a matrícula ou CPF e a função do trabalhador. Para cada EPI escolha o tipo e marque o estado de conservação (bom ou precisa trocar), a higienização, o tamanho e se recebeu treinamento. Toque em <b>+ Adicionar EPI</b> para incluir outro.','<b>Etapa 3:</b> escreva as observações e ações corretivas (há atalhos para &ldquo;parabéns&rdquo; e &ldquo;não estava usando o EPI&rdquo;). Em seguida o <b>trabalhador</b>, o <b>supervisor ou encarregado</b> e o <b>TST</b> assinam com o dedo na tela.','Com as três assinaturas, toque em <b>Assinar como TST e concluir</b>. A auditoria concluída fica <b>travada</b> e não pode ser alterada; se algo estiver errado, faça uma nova auditoria.','Se faltar alguma assinatura, toque em <b>Salvar e continuar depois</b>. A auditoria fica <b>em andamento</b> e pode ser retomada em Auditoria de EPI.','Na auditoria concluída, toque em <b>PDF</b> ou <b>Word</b> para baixar.'])+'<p>Para assinar, o nome do trabalhador e a matrícula ou CPF precisam estar preenchidos.</p>':ol(['Abra <b>Auditoria de EPI</b> no menu e toque na auditoria que quer ver.','Só aparecem as auditorias já <b>concluídas</b> e assinadas. Toque em <b>PDF</b> ou <b>Word</b> para baixar.']))],
   ['Novo relatório fotográfico',tec,
     '<p>Na tela <b>Início</b>, toque em <b>Relatório fotográfico</b>. O formulário tem etapas que abrem e fecham ao tocar no título. Para salvar é preciso que a empresa tenha um <b>contrato vigente</b>.</p>'+
     ol(['<b>Identificação:</b> data, empresa e <b>unidade</b>. O <b>CNPJ da empresa</b> aparece sozinho ao escolher a empresa. A unidade é obrigatória e é ela que faz o relatório entrar nos <b>Indicadores</b> por unidade. Ela <b>não sai</b> no relatório de campo. O seu nome sai no relatório como quem realizou o trabalho.','<b>Empresa executante:</b> quem executou o serviço. Se você informar o nome, o <b>CNPJ</b> é obrigatório e precisa ser um CNPJ válido. Só a empresa executante sai no relatório (a empresa do passo 1 é o cliente e não aparece). Preencha também o <b>Escola / unidade atendida</b>: é o que sai na caixa ESCOLA / UNIDADE.','<b>Fotos:</b> as fotos ficam em grupos. Use <b>Tirar foto</b> ou <b>Galeria</b>. Para remover uma foto, toque no <b>X</b> vermelho dela. Os grupos podem ser renomeados, adicionados ou removidos.','<b>Detalhes do serviço:</b> serviços, segurança, riscos e observações.','<b>Responsável técnico:</b> nome, função e registro profissional. Já vêm do seu cadastro.'])+
@@ -3479,7 +3808,7 @@ var espera=setInterval(function(){
   c.use('db').then(function(db){
     S.db=db;
     if(!db){S.dbFail=true;renderMain();return}
-    assina('inspecoes','i','insp');assina('ncs','n','ncs');assina('acoes','a','acoes');assina('empresas','e','empresas');assina('contratos','k','contratos');assina('usuarios','u','usuarios');
+    assina('inspecoes','i','insp');assina('ncs','n','ncs');assina('acoes','a','acoes');assina('empresas','e','empresas');assina('contratos','k','contratos');assina('epis','ep','epis');assina('usuarios','u','usuarios');
     S.db.doc('config/acessos').onSnapshot(function(snap){S.acessos=snap.exists?snap.data():null;S.loaded.x=true;escopo();refresh()},falha);
     S.db.doc('config/marca').onSnapshot(function(snap){S.marca=snap.exists?snap.data():null;refresh()},falha);
   S.db.doc('config/cadastros').onSnapshot(function(snap){S.cad=snap.exists?snap.data():null;S.loaded.c=true;refresh()},falha);
