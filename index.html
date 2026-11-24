@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-24-2015 fds-ia --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-24-2040 excel-quimico --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <script>(function(){function t(){var m='auto';try{m=localStorage.getItem('sevia-tema')||'auto'}catch(e){}return m==='escuro'||(m==='auto'&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'escuro':'claro'}window.__aplicaTema=function(){var x=t(),d=document.documentElement;d.setAttribute('data-tema',x);var c=document.querySelector('meta[name="theme-color"]');if(c)c.setAttribute('content',x==='escuro'?'#000000':'#000000')};window.__aplicaTema();try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',window.__aplicaTema)}catch(e){}})()</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1722,7 +1722,7 @@ function viewQuim(){
   var uns=[['todas','Todas']].concat(unidadesDe(f.empresa).map(function(u){return [u,u]}));
   var sets=[['todos','Todos']].concat(uniq([].concat.apply([],S.R.quimicos.filter(function(p){return p.empresaId===f.empresa}).map(function(p){return p.setores||[]}))).sort().map(function(u){return [u,u]}));
   var fns=[['todas','Todas']].concat(quimFuncoesDe(f.empresa,'').map(function(u){return [u,u]}));
-  var imp=S.downloads&&L.length?btn('PDF','qm-pdf','','btn-primary')+btn('Word','qm-word','','btn-primary'):'';
+  var imp=S.downloads&&L.length?btn('PDF','qm-pdf','','btn-primary')+btn('Word','qm-word','','btn-primary')+btn('Excel','qm-excel','','btn-primary'):'';
   return head('Inventário de produtos químicos','Produtos químicos por empresa, com enquadramento no Decreto 3.048/99, NR-15, Tabela 24 do eSocial e ACGIH.',imp)+
   '<section class="card"><div class="fields">'+
     field('Empresa','qf-emp','<select id="qf-emp" data-chg="qm-f-emp">'+opts(emp,f.empresa)+'</select>')+
@@ -1975,6 +1975,31 @@ async function quimPDF(){
   try{await S.downloads.save({filename:'inventario-quimico-'+slug(emp?emp.nome:'')+'-'+new Date().toISOString().slice(0,10)+'.pdf',data:doc.output('arraybuffer')});toast('Inventário pronto.')}
   catch(e){if(!e||e.code!=='declined'){console.error(e);toast('Não foi possível salvar o PDF.')}}
 }
+async function quimExcel(){
+  var Z=window.JSZip;
+  if(!Z||!S.downloads){toast('A geração de Excel não está disponível agora.');return}
+  var L=quimFiltrados();if(!L.length){toast('Não há produtos neste filtro.');return}
+  var f=quimFiltro(),emp=empDe(f.empresa),FDS='Ficha com dados de segurança (FDS)',cols=[];
+  L.forEach(function(p){quimSecoes(p).forEach(function(sc){sc[1].forEach(function(r){if(cols.indexOf(r[0])<0)cols.push(r[0])})})});
+  var H=['Empresa','Unidade','Produto','CAS'].concat(cols),rows=[H];
+  L.forEach(function(p){var m={};quimSecoes(p).forEach(function(sc){sc[1].forEach(function(r){m[r[0]]=(r[0]===FDS&&r[2])?r[2]:r[1]})});
+    rows.push([emp?emp.nome:(p.empresaNome||''),p.unidade||'',p.nome||'',p.cas||''].concat(cols.map(function(c){return m[c]==null?'':m[c]})))});
+  var res=[['Item','Valor'],['Empresa',emp?emp.nome:'-'],['CNPJ',(emp&&emp.cnpj)||'-'],['Unidade',f.unidade==='todas'?'Todas':f.unidade],['Agrupado por',f.agrupar==='f'?'Função':'Setor'],['Produtos',String(L.length)],['Gerado em',new Date().toLocaleDateString('pt-BR')],['Responsável técnico',(function(){var rt=respTec({});return [rt.nome,rt.funcao,rt.reg?'Registro MTE: '+rt.reg:''].filter(Boolean).join(' — ')})()]];
+  var w1=[24,18,26,14].concat(cols.map(function(c){return /Agravos|Emerg|Procedimentos|Incompat|Setores|Funções|Frases|NR-15|Decreto|ACGIH|eSocial|utilização|Proteção|armazenamento|Local/i.test(c)?40:22}));
+  xlsxDuasAbas('Inventário',rows,w1,'Identificação',res,[24,50],'inventario-quimico-'+slug(emp?emp.nome:'')+'-'+new Date().toISOString().slice(0,10)+'.xlsx');
+}
+async function xlsxDuasAbas(n1,r1,w1,n2,r2,w2,arq){
+  var Z=window.JSZip,z=new Z(),X='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
+  z.file('[Content_Types].xml',X+'<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/worksheets/sheet2.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>');
+  z.file('_rels/.rels',X+'<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>');
+  z.file('xl/workbook.xml',X+'<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="'+xe(n1)+'" sheetId="1" r:id="rId1"/><sheet name="'+xe(n2)+'" sheetId="2" r:id="rId2"/></sheets></workbook>');
+  z.file('xl/_rels/workbook.xml.rels',X+'<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet2.xml"/><Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>');
+  z.file('xl/styles.xml',X+'<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Arial"/></font><font><b/><sz val="11"/><name val="Arial"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFEEEEEE"/></patternFill></fill></fills><borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FFBBBBBB"/></left><right style="thin"><color rgb="FFBBBBBB"/></right><top style="thin"><color rgb="FFBBBBBB"/></top><bottom style="thin"><color rgb="FFBBBBBB"/></bottom><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="3"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>');
+  z.file('xl/worksheets/sheet1.xml',sheetXml(r1,w1));
+  z.file('xl/worksheets/sheet2.xml',sheetXml(r2,w2));
+  try{var blob=await z.generateAsync({type:'blob',mimeType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});await S.downloads.save({filename:arq,data:blob});toast('Planilha pronta.')}
+  catch(e){if(!e||e.code!=='declined'){console.error(e);toast('Não foi possível salvar a planilha.')}}
+}
 async function quimWord(){
   var D=window.docx;
   if(!D||!S.downloads){toast('A geração de Word não está disponível agora.');return}
@@ -2045,6 +2070,7 @@ document.addEventListener('click',function(e){
     case 'qm-save':quimSalva();break;
     case 'qm-pdf':quimPDF();break;
     case 'qm-word':quimWord();break;
+    case 'qm-excel':quimExcel();break;
   }
 });
 /* ---------- inventários: máquinas (NR-12) e combate a incêndio ---------- */
