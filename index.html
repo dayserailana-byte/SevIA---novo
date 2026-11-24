@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head>
-<!-- versao-sevia 2026-11-24-1700 pdf-coluna --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
+<!-- versao-sevia 2026-11-24-1745 listas-setor-funcao --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#000000"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SevIA"><script>window.__pwa=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwa=e});window.addEventListener("appinstalled",function(){window.__pwa=null});if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="sevia-supabase.js"></script><title>SevIA SST 4.0</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <script>(function(){function t(){var m='auto';try{m=localStorage.getItem('sevia-tema')||'auto'}catch(e){}return m==='escuro'||(m==='auto'&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'escuro':'claro'}window.__aplicaTema=function(){var x=t(),d=document.documentElement;d.setAttribute('data-tema',x);var c=document.querySelector('meta[name="theme-color"]');if(c)c.setAttribute('content',x==='escuro'?'#000000':'#000000')};window.__aplicaTema();try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',window.__aplicaTema)}catch(e){}})()</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -368,6 +368,15 @@ html.menu-on,html.menu-on body{overflow:hidden!important}
 .side{position:sticky!important;top:0;z-index:45}
 .cn-fix{position:sticky;top:calc(var(--side-h,70px) - 2px);z-index:25;background:var(--bg);box-shadow:0 0 0 100vmax var(--bg);clip-path:inset(0 -100vmax);padding:8px 0 4px}
 .cn-fix .cn{margin:6px 0 6px}
+.qm-dd-b{width:100%;display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--surface);border:1.5px solid var(--fg);border-radius:10px;color:var(--fg);padding:12px 14px;font:inherit;font-weight:600;cursor:pointer;min-height:48px}
+.qm-dd-b[aria-expanded=true] .qm-ar{transform:rotate(180deg)}
+.qm-dd-l{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-top:6px;padding:4px;max-height:60vh;overflow:auto}
+.qm-op{width:100%;display:flex;align-items:center;gap:12px;background:none;border:0;border-radius:8px;color:var(--fg);padding:10px;font:inherit;text-align:left;cursor:pointer;min-height:46px}
+.qm-op:hover{background:rgba(127,127,127,.15)}
+.qm-ck{width:22px;height:22px;flex:none;border:2px solid var(--fg);border-radius:6px;display:grid;place-items:center;font-size:15px;font-weight:800;line-height:1}
+.qm-ck.on{background:var(--accent);border-color:var(--accent);color:#000}
+.qm-tg{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.qm-tg span{background:rgba(250,105,5,.18);border-radius:99px;padding:4px 10px;font-size:13px}
 .cn-fix::before{content:"";position:absolute;left:0;right:0;top:-14px;height:14px;background:var(--bg)}
 .side-av{position:absolute;top:50%;right:max(16px,env(safe-area-inset-right,0px));transform:translateY(-50%);border-radius:50%;border:2px solid var(--side-fg);display:block;line-height:0;text-decoration:none}
 .av{display:inline-grid;place-items:center;border-radius:50%;overflow:hidden;color:#fff;flex:none;font-weight:600;font-family:Inter,sans-serif;user-select:none}
@@ -1731,6 +1740,11 @@ function viewQuim(){
   '<div class="card" style="margin-top:12px"><p><b>Nenhum produto neste filtro.</b></p><p class="muted">Para cadastrar, use Criar novo na tela inicial: digite o número CAS e a IA traz o enquadramento para você conferir.</p></div>'));
 }
 function chipsQ(lista,sel,act){return '<div class="ch" style="display:flex;flex-wrap:wrap;gap:6px">'+(lista.length?lista.map(function(x){var on=sel.indexOf(x)>-1;return '<button type="button" class="btn '+(on?'btn-primary':'btn-ghost')+'" data-act="'+act+'" data-v="'+esc(x)+'" aria-pressed="'+on+'">'+esc(x)+'</button>'}).join(''):'<span class="muted small">Nenhum item cadastrado.</span>')+'</div>'}
+function listaQ(r,k,lista,sel,act,um,varios,extra){
+  var ab=r.dd===k,n=sel.length,tx=n?n+' '+(n>1?varios:um):'Escolher '+varios;
+  return '<button type="button" class="qm-dd-b" data-act="qm-dd" data-k="'+k+'" aria-expanded="'+ab+'"><span>'+esc(tx)+'</span><span class="qm-ar" aria-hidden="true">&#9662;</span></button>'+
+  (ab?'<div class="qm-dd-l">'+(lista.length?lista.map(function(x){var on=sel.indexOf(x)>-1;return '<button type="button" class="qm-op" role="checkbox" aria-checked="'+on+'" data-act="'+act+'" data-v="'+esc(x)+'"><span class="qm-ck'+(on?' on':'')+'" aria-hidden="true">'+(on?'&#10003;':'')+'</span><span>'+esc(x)+'</span></button>'}).join(''):'<p class="muted small" style="padding:8px 10px;margin:0">Nenhum item cadastrado.</p>')+(extra||'')+'<button type="button" class="btn btn-primary" data-act="qm-dd" data-k="'+k+'" style="width:100%;margin-top:6px">Pronto</button></div>':'')+
+  '<div class="qm-tg">'+(n?sel.map(function(x){return '<span>'+esc(x)+'</span>'}).join(''):'<em class="muted small">Nenhum item escolhido</em>')+'</div>'}
 function formQuim(r){
   var d=r.draft,e=empDe(d.empresaId),uns=unObjs(e).map(function(u){return u.nome}),
     setL=d.unidade?setoresDe(d.empresaId,d.unidade):[],fnL=uniq(quimFuncoesDe(d.empresaId,d.unidade).concat(d.funcoes)).sort(),enq=d.enq||{};
@@ -1741,9 +1755,8 @@ function formQuim(r){
     field('Empresa','qm-emp','<select id="qm-emp" data-chg="qm-emp">'+opts(S.empresas.map(function(x){return [x.id,x.nome]}),d.empresaId)+'</select>')+
     field('Unidade','qm-un','<select id="qm-un" data-chg="qm-un"><option value="">Escolha a unidade</option>'+opts(uns.map(function(u){return [u,u]}),d.unidade)+'</select>')+
     field('Nome comercial','qm-nome','<input id="qm-nome" value="'+esc(d.nome)+'" placeholder="Ex.: Thinner">','full')+
-    '<div class="field full"><span class="lbl">Setores onde é usado</span>'+(d.unidade?chipsQ(setL,d.setores,'qm-set'):'<p class="muted small">Escolha a unidade para ver os setores.</p>')+'</div>'+
-    '<div class="field full"><span class="lbl">Funções que usam</span>'+chipsQ(fnL,d.funcoes,'qm-fn')+
-      '<div class="inline-add" style="margin-top:8px"><input id="qm-fn-novo" placeholder="Outra função (ex.: Pintor)" aria-label="Outra função"><button type="button" class="btn btn-ghost" data-act="qm-fn-add">Adicionar função</button></div></div>'+
+    '<div class="field full"><span class="lbl">Setores onde é usado</span>'+(d.unidade?listaQ(r,'set',setL,d.setores,'qm-set','setor escolhido','setores escolhidos'):'<p class="muted small">Escolha a unidade para ver os setores.</p>')+'</div>'+
+    '<div class="field full"><span class="lbl">Funções que usam</span>'+listaQ(r,'fn',fnL,d.funcoes,'qm-fn','função escolhida','funções escolhidas','<div class="inline-add" style="margin:8px 0 0"><input id="qm-fn-novo" placeholder="Outra função (ex.: Pintor)" aria-label="Outra função"><button type="button" class="btn btn-ghost" data-act="qm-fn-add">Adicionar função</button></div>')+'</div>'+
     field('Número CAS','qm-cas','<div class="inline-add" style="margin:0"><input id="qm-cas" value="'+esc(d.cas)+'" placeholder="71-43-2" inputmode="numeric" style="flex:1"><button type="button" class="btn btn-primary" data-act="qm-busca">Buscar enquadramento</button></div><p id="qm-st" class="muted small" role="status" style="margin:6px 0 0">'+(d.iaEm?'Sugestão da IA preenchida. Confira cada campo.':'')+'</p>','full')+
   '</div></section>'+
   '<section class="card" style="margin-top:12px"><div class="card-h"><h2>Exposição do trabalhador</h2></div><div class="fields">'+
@@ -1838,7 +1851,7 @@ async function quimPDF(){
   G.forEach(function(g){
     ft(1,10,[255,255,255]);var tw=doc.getTextWidth(g[0]),ex=doc.splitTextToSize(g[2]||'',CW-tw-12),hh=Math.max(7,ex.length*3.8+3.2);need(hh+22);doc.setFillColor(0,0,0);doc.rect(M,y,CW,hh,'F');ft(1,10,[255,255,255]);doc.text(g[0],M+3,y+4.9);if(g[2]){ft(0,8,[255,255,255]);doc.text(ex,M+CW-3,y+4.6,{align:'right'})}y+=hh+3;
     g[1].forEach(function(p){
-      var rows=quimLinhas(p).map(function(l){return [l[0],doc.splitTextToSize(String(l[1]),VW)]});
+      ft(0,8.5);var rows=quimLinhas(p).map(function(l){return [l[0],doc.splitTextToSize(String(l[1]).replace(/\u00b3/g,'3').replace(/\u00b2/g,'2'),VW-2)]});
       var h=9+rows.reduce(function(a,rw){return a+rw[1].length*3.9+1.2},0)+1;
       need(h+3);
       doc.setFillColor(255,255,255);doc.setDrawColor(227,227,223);doc.setLineWidth(0.3);doc.roundedRect(M,y,CW,h,2,2,'FD');
@@ -1915,6 +1928,7 @@ document.addEventListener('click',function(e){
     case 'qm-aval':if(d){quimLe();d.aval=d.aval===el.dataset.v?'':el.dataset.v;if(!/quantitativa/i.test(d.aval)){d.avalRes='';d.lt=''}renderMain()}break;
     case 'qm-fn-add':if(d){quimLe();var n=((document.getElementById('qm-fn-novo')||{}).value||'').trim();if(!n){toast('Digite o nome da função.');break}
       var ja=quimFuncoesDe(d.empresaId,d.unidade).filter(function(x){return x.toLowerCase()===n.toLowerCase()})[0];n=ja||n;if(d.funcoes.indexOf(n)<0)d.funcoes.push(n);renderMain()}break;
+    case 'qm-dd':if(d){quimLe();r.dd=(r.dd===el.dataset.k)?'':el.dataset.k;renderMain()}break;
     case 'qm-busca':quimBusca();break;
     case 'qm-save':quimSalva();break;
     case 'qm-pdf':quimPDF();break;
